@@ -583,11 +583,11 @@ Mỗi Sprint **PHẢI** đi qua 6 bước theo đúng thứ tự. Không nhảy 
 
 #### TEST (1 ngày)
 
-- [ ] `T-G3.3.TEST.01` (2h) — Unit test sinh password 12 ký tự, đủ chữ số + chữ cái.
-- [ ] `T-G3.3.TEST.02` (1h) — Unit test BR-NV-07: lock admin gốc → fail.
-- [ ] `T-G3.3.TEST.03` (2h) — Unit test `calc_kpi` với data fixture (BR-CALC-05).
-- [ ] `T-G3.3.TEST.04` (1h) — Test phân quyền: A-02 truy cập S-NV-01 → permission denied.
-- [ ] `T-G3.3.TEST.05` (1h) — UAT theo AC-NV-*.
+- [x] `T-G3.3.TEST.01` (2h) — Unit test sinh password 12 ký tự, đủ chữ số + chữ cái.
+- [x] `T-G3.3.TEST.02` (1h) — Unit test BR-NV-07: lock admin gốc → fail.
+- [x] `T-G3.3.TEST.03` (2h) — Unit test `calc_kpi` với data fixture (BR-CALC-05).
+- [x] `T-G3.3.TEST.04` (1h) — Test phân quyền: A-02 truy cập S-NV-01 → permission denied.
+- [x] `T-G3.3.TEST.05` (1h) — UAT theo AC-NV-*.
 
 #### GIT (0.5 ngày)
 
