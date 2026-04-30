@@ -29,6 +29,9 @@ from app.presentation.widgets.status_bar import StatusBar
 from app.application.services.session import SessionManager, CurrentSession
 from app.application.services.system_settings_service import SystemSettingsService
 from app.application.services.sidebar_service import get_sidebar_items_flat, get_sidebar_items
+from app.application.services.audit_log_service import AuditLogService
+from app.presentation.screens.audit_log_screen import AuditLogScreen
+from app.presentation.screens.system_settings_screen import SystemSettingsScreen
 
 
 class MainWindow(QMainWindow):
@@ -183,25 +186,45 @@ class MainWindow(QMainWindow):
     
     def _show_placeholder_or_default(self, module_id: str):
         """Show placeholder or navigate to module."""
-        # For now, show empty screen placeholder
-        empty = EmptyScreen(module_name=module_id.replace("_", " ").title())
-        self.content_area.register_screen(module_id, empty)
+        screen = self._get_module_screen(module_id)
+        self.content_area.register_screen(module_id, screen)
         self.content_area.show_screen(module_id)
     
     def _on_module_selected(self, module_id: str):
-        """Handle module selection from sidebar.
+        """"Handle module selection from sidebar.
         
         Args:
             module_id: Selected module ID.
         """
         self.module_changed.emit(module_id)
         
-        # Show placeholder for now
+        # Load actual screen for known modules, otherwise show placeholder
         if not self.content_area.has_screen(module_id):
-            empty = EmptyScreen(module_name=module_id.replace("_", " ").title())
-            self.content_area.register_screen(module_id, empty)
+            screen = self._get_module_screen(module_id)
+            self.content_area.register_screen(module_id, screen)
         
         self.content_area.show_screen(module_id)
+    
+    def _get_module_screen(self, module_id: str) -> QWidget:
+        """Get or create the screen widget for a module.
+        
+        Args:
+            module_id: Module identifier.
+            
+        Returns:
+            QWidget screen instance.
+        """
+        if module_id == "audit_log":
+            # S-SYS-01: Audit log viewer
+            if self._db_conn and self._session:
+                return AuditLogScreen(self._db_conn, self._session)
+        elif module_id == "he_thong":
+            # S-CFG-01: System settings
+            if self._db_conn and self._session:
+                return SystemSettingsScreen(self._db_conn, self._session)
+        
+        # Default: placeholder
+        return EmptyScreen(module_name=module_id.replace("_", " ").title())
     
     def _on_logout_requested(self):
         """Handle logout request."""
@@ -290,9 +313,9 @@ class MainWindow(QMainWindow):
             self.sidebar.set_active(module_id)
             self.content_area.show_screen(module_id)
         else:
-            # Show placeholder
-            empty = EmptyScreen(module_name=module_id.replace("_", " ").title())
-            self.content_area.register_screen(module_id, empty)
+            # Load actual screen or placeholder
+            screen = self._get_module_screen(module_id)
+            self.content_area.register_screen(module_id, screen)
             self.content_area.show_screen(module_id)
             self.sidebar.set_active(module_id)
     
