@@ -796,10 +796,10 @@ Mỗi Sprint **PHẢI** đi qua 6 bước theo đúng thứ tự. Không nhảy 
 
 #### UI (2 ngày)
 
-- [ ] `T-G4.2.UI.01` (3h) — `S-KM-01` Promo List: badge trạng thái (BR-FLOW KM) + nút Pause/Resume.
-- [ ] `T-G4.2.UI.02` (4h) — `S-KM-02` Promo Form: dropdown 4 loại + dynamic field (giá trị tiền/% theo loại) + multi-select phạm vi (hãng/dòng/xe/tồn-lâu).
-- [ ] `T-G4.2.UI.03` (3h) — `S-KM-03` Effectiveness Report: KpiCard (số HĐ, doanh thu, tổng giảm) + biểu đồ cột so sánh KM.
-- [ ] `T-G4.2.UI.04` (1h) — Filter by trạng thái + thời gian + loại KM trong list.
+- [x] `T-G4.2.UI.01` (3h) — `S-KM-01` Promo List: badge trạng thái (BR-FLOW KM) + nút Pause/Resume. ✅ Done
+- [x] `T-G4.2.UI.02` (4h) — `S-KM-02` Promo Form: dropdown 4 loại + dynamic field (giá trị tiền/% theo loại) + multi-select phạm vi (hãng/dòng/xe/tồn-lâu). ✅ Done
+- [x] `T-G4.2.UI.03` (3h) — `S-KM-03` Effectiveness Report: KpiCard (số HĐ, doanh thu, tổng giảm) + biểu đồ cột so sánh KM. ✅ Done
+- [x] `T-G4.2.UI.04` (1h) — Filter by trạng thái + thời gian + loại KM trong list. ✅ Done
 
 #### TEST (1 ngày)
 
