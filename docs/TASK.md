@@ -803,11 +803,11 @@ Mỗi Sprint **PHẢI** đi qua 6 bước theo đúng thứ tự. Không nhảy 
 
 #### TEST (1 ngày)
 
-- [ ] `T-G4.2.TEST.01` (2h) — Unit test `find_applicable` cho 5 case (xe có KM hãng / dòng / cụ thể / tồn-lâu / không match).
-- [ ] `T-G4.2.TEST.02` (2h) — Unit test `calculate_discount` cho 4 loại KM × 2 kiểu (tiền/%).
-- [ ] `T-G4.2.TEST.03` (1h) — Test daily job TRG-06: KM `den_ngay = yesterday` → `ket_thuc`.
-- [ ] `T-G4.2.TEST.04` (1h) — Test `report_effectiveness` với data fixture.
-- [ ] `T-G4.2.TEST.05` (1h) — UAT theo AC-KM-*.
+- [x] `T-G4.2.TEST.01` (2h) — Unit test `find_applicable` cho 5 case (xe có KM hãng / dòng / cụ thể / tồn-lâu / không match). ✅ Done
+- [x] `T-G4.2.TEST.02` (2h) — Unit test `calculate_discount` cho 4 loại KM × 2 kiểu (tiền/%). ✅ Done
+- [x] `T-G4.2.TEST.03` (1h) — Test daily job TRG-06: KM `den_ngay = yesterday` → `ket_thuc`. ✅ Done
+- [x] `T-G4.2.TEST.04` (1h) — Test `report_effectiveness` với data fixture. ✅ Done
+- [x] `T-G4.2.TEST.05` (1h) — UAT theo AC-KM-*. ✅ Done
 
 #### GIT (0.25 ngày)
 
