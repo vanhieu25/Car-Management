@@ -13,6 +13,7 @@ from app.infrastructure.database.migrations.migration_010_marketing import run a
 from app.infrastructure.database.migrations.migration_011_khieu_nai import run as run_011
 from app.infrastructure.database.migrations.migration_012_audit_settings import run as run_012
 from app.infrastructure.database.migrations.migration_013_indexes import run as run_013
+from app.infrastructure.database.migrations.migration_014_password_change_flag import run as run_014
 
 
 MIGRATIONS = [
@@ -29,4 +30,5 @@ MIGRATIONS = [
     (11, "011_khieu_nai", run_011),
     (12, "012_audit_settings", run_012),
     (13, "013_indexes", run_013),
+    (14, "014_password_change_flag", run_014),
 ]

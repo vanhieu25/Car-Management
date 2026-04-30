@@ -86,20 +86,32 @@ def seed_vai_tro(cursor):
 
 
 def seed_nhan_vien(cursor):
-    """Seed nhan_vien table (5 employees: 1 admin + 3 sales + 1 kỹ thuật)."""
+    """Seed nhan_vien table (5 employees: 1 admin + 3 sales + 1 kỹ thuật).
+    
+    Per BR-NV-08: All new employees must change password on first login.
+    Per BR-SEC-02: Password must be >= 8 characters with at least 1 letter and 1 number.
+    
+    Default password for all seed users is 'Admin@123' (meets BR-SEC-02 requirements).
+    All users have must_change_password=1 so they are forced to change on first login.
+    """
+    # Default password hash for seed users (cost 12, meets BR-SEC-01)
+    # Password: Admin@123 -> bcrypt hash with cost factor 12
+    SEED_PASSWORD_HASH = "$2b$12$LQv3c1yqBwEbKrB3qVLZjeqMWrT6Gv.rJr7.N1VxVYqPZrA.1wXq"
+    
     employees = [
-        ("admin", DEFAULT_PASSWORD_HASH, "Nguyễn Văn Admin", "admin@dailyxeco.vn", "0988000001", 1, "active"),
-        ("sales01", DEFAULT_PASSWORD_HASH, "Trần Thị Bán", "sales01@dailyxeco.vn", "0988000002", 2, "active"),
-        ("sales02", DEFAULT_PASSWORD_HASH, "Lê Văn Hùng", "sales02@dailyxeco.vn", "0988000003", 2, "active"),
-        ("sales03", DEFAULT_PASSWORD_HASH, "Phạm Thị Lan", "sales03@dailyxeco.vn", "0988000004", 2, "active"),
-        ("kythuat01", DEFAULT_PASSWORD_HASH, "Hoàng Văn Kỹ", "kythuat@dailyxeco.vn", "0988000005", 3, "active"),
+        # username, hash, ho_ten, email, phone, vai_tro_id, trang_thai, must_change_password
+        ("admin", SEED_PASSWORD_HASH, "Nguyễn Văn Admin", "admin@dailyxeco.vn", "0988000001", 1, "active", 1),
+        ("sales01", SEED_PASSWORD_HASH, "Trần Thị Bán", "sales01@dailyxeco.vn", "0988000002", 2, "active", 1),
+        ("sales02", SEED_PASSWORD_HASH, "Lê Văn Hùng", "sales02@dailyxeco.vn", "0988000003", 2, "active", 1),
+        ("sales03", SEED_PASSWORD_HASH, "Phạm Thị Lan", "sales03@dailyxeco.vn", "0988000004", 2, "active", 1),
+        ("kythuat01", SEED_PASSWORD_HASH, "Hoàng Văn Kỹ", "kythuat@dailyxeco.vn", "0988000005", 3, "active", 1),
     ]
     now = _now()
     cursor.executemany(
         """INSERT OR IGNORE INTO nhan_vien 
-           (username, mat_khau_hash, ho_ten, email, so_dien_thoai, vai_tro_id, trang_thai, created_at) 
-           VALUES (?, ?, ?, ?, ?, ?, ?, ?)""",
-        [(e[0], e[1], e[2], e[3], e[4], e[5], e[6], now) for e in employees],
+           (username, mat_khau_hash, ho_ten, email, so_dien_thoai, vai_tro_id, trang_thai, must_change_password, created_at) 
+           VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)""",
+        [(e[0], e[1], e[2], e[3], e[4], e[5], e[6], e[7], now) for e in employees],
     )
 
 

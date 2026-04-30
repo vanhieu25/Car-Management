@@ -300,14 +300,14 @@ Mỗi Sprint **PHẢI** đi qua 6 bước theo đúng thứ tự. Không nhảy 
 
 #### REQ (0.5 ngày)
 
-- [ ] `T-G2.2.REQ.01` (1h) — Đọc BRD §4.7 (BR-SEC-01..09) + §5.15 (Bảo mật).
-- [ ] `T-G2.2.REQ.02` (1h) — Đọc UC-SEC-01..04 và AC-SEC-01..03 (Mục 9 BRD).
-- [ ] `T-G2.2.REQ.03` (1h) — Vẽ luồng `S-AUTH-01` (đăng nhập), `S-AUTH-02` (đổi mật khẩu).
+- [x] `T-G2.2.REQ.01` (1h) — Đọc BRD §4.7 (BR-SEC-01..09) + §5.15 (Bảo mật).
+- [x] `T-G2.2.REQ.02` (1h) — Đọc UC-SEC-01..04 và AC-SEC-01..03 (Mục 9 BRD).
+- [x] `T-G2.2.REQ.03` (1h) — Vẽ luồng `S-AUTH-01` (đăng nhập), `S-AUTH-02` (đổi mật khẩu).
 
 #### DB (0.5 ngày)
 
-- [ ] `T-G2.2.DB.01` (1h) — Bổ sung trigger/check: `lan_dang_nhap_sai`, `khoa_den` (BR-SEC-05 — khoá 5 lần sai 15 phút).
-- [ ] `T-G2.2.DB.02` (1h) — Seed admin gốc: `username=admin`, mật khẩu mặc định bcrypt-hashed (BR-NV-08).
+- [x] `T-G2.2.DB.01` (1h) — Bổ sung trigger/check: `lan_dang_nhap_sai`, `khoa_den` (BR-SEC-05 — khoá 5 lần sai 15 phút). → Đã có trong migration_001, cần thêm cột `must_change_password` (BR-NV-08).
+- [x] `T-G2.2.DB.02` (1h) — Seed admin gốc: `username=admin`, mật khẩu mặc định bcrypt-hashed (BR-NV-08).
 
 #### BE (3 ngày)
 
