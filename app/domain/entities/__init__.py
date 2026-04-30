@@ -43,6 +43,9 @@ class NhanVien(BaseEntity):
     trang_thai: str = "active"
     lan_dang_nhap_sai: int = 0
     khoa_den: Optional[str] = None
+    must_change_password: int = 0
+    password_min_length: int = 8
+    last_password_change: Optional[str] = None
 
 
 @dataclass
