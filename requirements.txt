@@ -1,0 +1,6 @@
+PyQt6==6.6.1
+bcrypt==4.2.0
+Jinja2==3.1.4
+WeasyPrint==60.2
+openpyxl==3.1.5
+Pillow==10.4.0
