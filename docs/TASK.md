@@ -679,16 +679,16 @@ Mỗi Sprint **PHẢI** đi qua 6 bước theo đúng thứ tự. Không nhảy 
 
 #### UI (4 ngày)
 
-- [ ] `T-G3.5.UI.01` (3h) — `S-HD-01` Contract List: bảng + filter trạng thái/ngày/KH/NV + badge trạng thái BR-FLOW.
-- [ ] `T-G3.5.UI.02` (4h) `[BLOCKER]` — `S-HD-02` Wizard B1 — chọn/tạo KH (search hoặc tạo mới inline gọi `S-KH-02`).
-- [ ] `T-G3.5.UI.03` (4h) — Wizard B2 — chọn xe + thêm PK (multi-select); hiển thị **giá đang được snapshot** với tooltip "Giá này sẽ cố định trên HĐ".
-- [ ] `T-G3.5.UI.04` (3h) — Wizard B3 — chọn KM phù hợp (auto load KM còn hiệu lực + áp dụng được cho xe đã chọn — BR-KM-04).
-- [ ] `T-G3.5.UI.05` (3h) — Wizard B4 — preview tổng tiền + breakdown (BR-CALC-01) + ghi chú + nút "Xác nhận lưu".
-- [ ] `T-G3.5.UI.06` (2h) — Validation step-by-step: không cho Next nếu thiếu field bắt buộc.
-- [ ] `T-G3.5.UI.07` (3h) — `S-HD-03` Contract Detail: thông tin đầy đủ + nút "Thanh toán", "Giao xe", "Hủy" (theo state machine BR-FLOW).
-- [ ] `T-G3.5.UI.08` (1h) — Confirm dialog "Hủy HĐ" + bắt buộc nhập `ly_do_huy` ≥ 10 ký tự (BR-UI-04).
-- [ ] `T-G3.5.UI.09` (3h) — `S-HD-04` PDF Preview: render PDF inline (QPdfView hoặc QWebEngineView) + nút "In" / "Xuất file".
-- [ ] `T-G3.5.UI.10` (1h) — Lịch sử trạng thái HĐ (timeline): tạo → thanh toán → giao xe / hủy.
+- [x] `T-G3.5.UI.01` (3h) — `S-HD-01` Contract List: bảng + filter trạng thái/ngày/KH/NV + badge trạng thái BR-FLOW.
+- [x] `T-G3.5.UI.02` (4h) `[BLOCKER]` — `S-HD-02` Wizard B1 — chọn/tạo KH (search hoặc tạo mới inline gọi `S-KH-02`).
+- [x] `T-G3.5.UI.03` (4h) — Wizard B2 — chọn xe + thêm PK (multi-select); hiển thị **giá đang được snapshot** với tooltip "Giá này sẽ cố định trên HĐ".
+- [x] `T-G3.5.UI.04` (3h) — Wizard B3 — chọn KM phù hợp (auto load KM còn hiệu lực + áp dụng được cho xe đã chọn — BR-KM-04).
+- [x] `T-G3.5.UI.05` (3h) — Wizard B4 — preview tổng tiền + breakdown (BR-CALC-01) + ghi chú + nút "Xác nhận lưu".
+- [x] `T-G3.5.UI.06` (2h) — Validation step-by-step: không cho Next nếu thiếu field bắt buộc.
+- [x] `T-G3.5.UI.07` (3h) — `S-HD-03` Contract Detail: thông tin đầy đủ + nút "Thanh toán", "Giao xe", "Hủy" (theo state machine BR-FLOW).
+- [x] `T-G3.5.UI.08` (1h) — Confirm dialog "Hủy HĐ" + bắt buộc nhập `ly_do_huy` ≥ 10 ký tự (BR-UI-04).
+- [x] `T-G3.5.UI.09` (3h) — `S-HD-04` PDF Preview: render PDF inline (QPdfView hoặc QWebEngineView) + nút "In" / "Xuất file".
+- [x] `T-G3.5.UI.10` (1h) — Lịch sử trạng thái HĐ (timeline): tạo → thanh toán → giao xe / hủy.
 
 #### TEST (2 ngày)
 
