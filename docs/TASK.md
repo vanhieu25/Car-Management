@@ -756,10 +756,10 @@ Mỗi Sprint **PHẢI** đi qua 6 bước theo đúng thứ tự. Không nhảy 
 
 #### TEST (1 ngày)
 
-- [ ] `T-G4.1.TEST.01` (2h) — Unit test `Combo.calculate_price` 5 case.
-- [ ] `T-G4.1.TEST.02` (1h) — Test combo phải có ≥ 2 PK (BR-PK-04).
-- [ ] `T-G4.1.TEST.03` (1h) — Test `adjust_inventory` không cho âm (BR-PK-05).
-- [ ] `T-G4.1.TEST.04` (1h) — UAT theo AC-PK-*.
+- [x] `T-G4.1.TEST.01` (2h) — Unit test `Combo.calculate_price` 5 case.
+- [x] `T-G4.1.TEST.02` (1h) — Test combo phải có ≥ 2 PK (BR-PK-04).
+- [x] `T-G4.1.TEST.03` (1h) — Test `adjust_inventory` không cho âm (BR-PK-05).
+- [x] `T-G4.1.TEST.04` (1h) — UAT theo AC-PK-*.
 
 #### GIT (0.25 ngày)
 
