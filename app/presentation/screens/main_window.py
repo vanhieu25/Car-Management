@@ -35,6 +35,9 @@ from app.presentation.screens.system_settings_screen import SystemSettingsScreen
 from app.presentation.screens.vehicle_list_screen import VehicleListScreen
 from app.presentation.screens.vehicle_form_dialog import VehicleFormDialog
 from app.presentation.screens.vehicle_detail_screen import VehicleDetailScreen
+from app.presentation.screens.customer_list_screen import CustomerListScreen
+from app.presentation.screens.customer_form_dialog import CustomerFormDialog
+from app.presentation.screens.customer_detail_screen import CustomerDetailScreen
 
 
 class MainWindow(QMainWindow):
@@ -234,6 +237,15 @@ class MainWindow(QMainWindow):
                 screen.edit_vehicle_clicked.connect(self._show_vehicle_form)
                 screen.view_vehicle_clicked.connect(self._show_vehicle_detail)
                 return screen
+        elif module_id == "khach_hang":
+            # S-KH-01: Customer list
+            if self._db_conn and self._session:
+                screen = CustomerListScreen(self._db_conn, self._session)
+                # Connect signals
+                screen.add_customer_clicked.connect(lambda: self._show_customer_form(None))
+                screen.edit_customer_clicked.connect(self._show_customer_form)
+                screen.view_customer_clicked.connect(self._show_customer_detail)
+                return screen
         
         # Default: placeholder
         return EmptyScreen(module_name=module_id.replace("_", " ").title())
@@ -277,6 +289,49 @@ class MainWindow(QMainWindow):
         # Refresh vehicle list if visible
         if self.content_area.has_screen("xe"):
             screen = self.content_area.get_screen("xe")
+            if hasattr(screen, 'refresh'):
+                screen.refresh()
+    
+    def _show_customer_form(self, khach_hang_id: int = None):
+        """Show customer add/edit form dialog.
+        
+        Args:
+            khach_hang_id: Customer ID to edit, or None for add new.
+        """
+        from app.presentation.screens.customer_form_dialog import CustomerFormDialog
+        from app.domain.entities import KhachHang
+        
+        khach_hang = None
+        if khach_hang_id:
+            # Create a minimal KhachHang entity for the form
+            khach_hang = KhachHang()
+            khach_hang.id = khach_hang_id
+        
+        dialog = CustomerFormDialog(self._db_conn, self._session, khach_hang, self)
+        dialog.saved.connect(self._on_customer_saved)
+        dialog.exec()
+    
+    def _show_customer_detail(self, khach_hang_id: int):
+        """Show customer detail screen.
+        
+        Args:
+            khach_hang_id: Customer ID to display.
+        """
+        from app.presentation.screens.customer_detail_screen import CustomerDetailScreen
+        
+        screen = CustomerDetailScreen(self._db_conn, self._session, khach_hang_id, self)
+        screen.edit_clicked.connect(self._show_customer_form)
+        screen.close_clicked.connect(lambda: self.navigate_to("khach_hang"))
+        
+        # Replace current screen with detail
+        self.content_area.register_screen("khach_hang_detail", screen)
+        self.content_area.show_screen("khach_hang_detail")
+    
+    def _on_customer_saved(self):
+        """Handle customer saved signal - refresh list."""
+        # Refresh customer list if visible
+        if self.content_area.has_screen("khach_hang"):
+            screen = self.content_area.get_screen("khach_hang")
             if hasattr(screen, 'refresh'):
                 screen.refresh()
     
