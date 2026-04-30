@@ -350,19 +350,19 @@ Mỗi Sprint **PHẢI** đi qua 6 bước theo đúng thứ tự. Không nhảy 
 
 #### REQ (0.5 ngày)
 
-- [ ] `T-G2.3.REQ.01` (1h) — Đọc `UI_UX_PLAN.md` mục 5.1 (triết lý) + 5.2 (cấu trúc layout).
-- [ ] `T-G2.3.REQ.02` (1h) — Đọc `design/DESIGN-apple.md` để chốt color, typography, spacing.
-- [ ] `T-G2.3.REQ.03` (0.5h) — Map sidebar theo phân quyền — A-01 thấy 15 mục, A-02 thấy 11, A-03 thấy 5.
+- [x] `T-G2.3.REQ.01` (1h) — Đọc `UI_UX_PLAN.md` mục 5.1 (triết lý) + 5.2 (cấu trúc layout).
+- [x] `T-G2.3.REQ.02` (1h) — Đọc `design/DESIGN-apple.md` để chốt color, typography, spacing.
+- [x] `T-G2.3.REQ.03` (0.5h) — Map sidebar theo phân quyền — A-01 thấy 15 mục, A-02 thấy 11, A-03 thấy 5.
 
 #### DB (N/A)
 
-- [ ] `T-G2.3.DB.01` (0.5h) — Bảng `system_settings` cấp dữ liệu cho top-bar (logo + tên đại lý).
+- [x] `T-G2.3.DB.01` (0.5h) — Bảng `system_settings` đã có từ migration_012, chứa: ten_dai_ly, dia_chi, so_dien_thoai, email, thoi_han_bh_default, muc_toi_thieu_ton_kho.
 
 #### BE (1 ngày)
 
-- [ ] `T-G2.3.BE.01` (1h) — Service `system_settings_service.py`: load config (logo, tên đại lý, version).
-- [ ] `T-G2.3.BE.02` (2h) — Navigation registry: dict `module_id → screen_class` để sidebar gọi động.
-- [ ] `T-G2.3.BE.03` (1h) — Filter sidebar items theo role hiện tại (`session.current_user.role`).
+- [x] `T-G2.3.BE.01` (1h) — Service `system_settings_service.py`: load config (logo, tên đại lý, version).
+- [x] `T-G2.3.BE.02` (2h) — Navigation registry: dict `module_id → screen_class` để sidebar gọi động.
+- [x] `T-G2.3.BE.03` (1h) — Filter sidebar items theo role hiện tại (`session.current_user.role`).
 
 #### UI (3 ngày)
 
