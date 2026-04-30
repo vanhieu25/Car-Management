@@ -614,18 +614,18 @@ Mỗi Sprint **PHẢI** đi qua 6 bước theo đúng thứ tự. Không nhảy 
 
 #### BE (1.5 ngày)
 
-- [ ] `T-G3.4.BE.01` (2h) — `NhapKhoRepository` + `NhapKhoService.create(data)` — tăng `xe.so_luong_ton` hoặc `phu_kien.ton_kho` (TRG-05).
-- [ ] `T-G3.4.BE.02` (2h) — `KhoService.get_inventory_overview()` — group theo dòng xe, hiển thị tồn kho + giá trị tồn (BR-KHO-06).
-- [ ] `T-G3.4.BE.03` (1h) — `KhoService.get_low_stock_items()` — list xe + PK có tồn ≤ ngưỡng (BR-KHO-02).
-- [ ] `T-G3.4.BE.04` (2h) — Trigger TRG-01 (giảm tồn khi HĐ thanh toán) — implement ở `HopDongService.set_paid()` (sẽ dùng ở G3.5).
-- [ ] `T-G3.4.BE.05` (1h) — Trigger TRG-04 (auto chuyển `xe.trang_thai = da_ban` khi tồn=0) — implement ở `XeService.adjust_inventory`.
+- [x] `T-G3.4.BE.01` (2h) — `NhapKhoRepository` + `NhapKhoService.create(data)` — tăng `xe.so_luong_ton` hoặc `phu_kien.ton_kho` (TRG-05).
+- [x] `T-G3.4.BE.02` (2h) — `KhoService.get_inventory_overview()` — group theo dòng xe, hiển thị tồn kho + giá trị tồn (BR-KHO-06).
+- [x] `T-G3.4.BE.03` (1h) — `KhoService.get_low_stock_items()` — list xe + PK có tồn ≤ ngưỡng (BR-KHO-02).
+- [x] `T-G3.4.BE.04` (2h) — Trigger TRG-01 (giảm tồn khi HĐ thanh toán) — implement ở `HopDongService.set_paid()` (sẽ dùng ở G3.5).
+- [x] `T-G3.4.BE.05` (1h) — Trigger TRG-04 (auto chuyển `xe.trang_thai = da_ban` khi tồn=0) — implement ở `XeService.adjust_inventory`.
 
 #### UI (1.5 ngày)
 
-- [ ] `T-G3.4.UI.01` (3h) — `S-KHO-01` Inventory Overview: bảng group theo dòng xe + hightlight đỏ tồn ≤ ngưỡng + footer tổng giá trị.
-- [ ] `T-G3.4.UI.02` (3h) — `S-KHO-02` Stock-in Form: chọn NCC + xe/PK + số lượng + giá nhập + ngày → submit.
-- [ ] `T-G3.4.UI.03` (1h) — Bảng "Lịch sử nhập kho gần nhất" (10 record cuối) ở tab dưới `S-KHO-02`.
-- [ ] `T-G3.4.UI.04` (1h) — Toast notification "Đã nhập kho thành công, tồn mới = X" sau khi tạo.
+- [x] `T-G3.4.UI.01` (3h) — `S-KHO-01` Inventory Overview: bảng group theo dòng xe + hightlight đỏ tồn ≤ ngưỡng + footer tổng giá trị.
+- [x] `T-G3.4.UI.02` (3h) — `S-KHO-02` Stock-in Form: chọn NCC + xe/PK + số lượng + giá nhập + ngày → submit.
+- [x] `T-G3.4.UI.03` (1h) — Bảng "Lịch sử nhập kho gần nhất" (10 record cuối) ở tab dưới `S-KHO-02`.
+- [x] `T-G3.4.UI.04` (1h) — Toast notification "Đã nhập kho thành công, tồn mới = X" sau khi tạo.
 
 #### TEST (1 ngày)
 
