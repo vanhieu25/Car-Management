@@ -256,6 +256,7 @@ class LoginScreen(QDialog):
             ho_ten=user.ho_ten,
             vai_tro_id=user.vai_tro_id,
             vai_tro_ma=self._get_role_ma(user.vai_tro_id),
+            must_change_password=result.must_change_password,
         )
         
         # Check if password change required

@@ -28,6 +28,7 @@ class CurrentSession:
     vai_tro_ma: str
     login_time: datetime = field(default_factory=datetime.now)
     last_activity: datetime = field(default_factory=datetime.now)
+    must_change_password: bool = False  # BR-NV-08: Force password change on first login
     
     def is_expired(self) -> bool:
         """Check if session has expired due to inactivity.
@@ -110,6 +111,7 @@ class SessionManager:
         ho_ten: str,
         vai_tro_id: int,
         vai_tro_ma: str,
+        must_change_password: bool = False,
     ) -> CurrentSession:
         """Start a new session for a logged-in user.
         
@@ -119,6 +121,7 @@ class SessionManager:
             ho_ten: User's full name.
             vai_tro_id: User's role ID.
             vai_tro_ma: User's role code (admin/sales/ky_thuat_bh).
+            must_change_password: Force password change on first login (BR-NV-08).
             
         Returns:
             New CurrentSession object.
@@ -132,6 +135,7 @@ class SessionManager:
                 vai_tro_ma=vai_tro_ma,
                 login_time=datetime.now(),
                 last_activity=datetime.now(),
+                must_change_password=must_change_password,
             )
             return self._current_session
 

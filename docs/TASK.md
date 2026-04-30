@@ -366,15 +366,15 @@ Mỗi Sprint **PHẢI** đi qua 6 bước theo đúng thứ tự. Không nhảy 
 
 #### UI (3 ngày)
 
-- [ ] `T-G2.3.UI.01` (3h) — `MainWindow` với 4 area: top-bar (44px), sidebar (240px), content (stack), status-bar (28px).
-- [ ] `T-G2.3.UI.02` (2h) — `TopBar` widget: logo + tên đại lý + user dropdown (Hồ sơ / Đổi mật khẩu / Đăng xuất).
-- [ ] `T-G2.3.UI.03` (3h) — `Sidebar` widget: list 15 module + icon + highlight active item (nền `#f5f5f7`).
-- [ ] `T-G2.3.UI.04` (2h) — `StatusBar` widget: user · thời gian (cập nhật mỗi giây) · version · trạng thái DB.
-- [ ] `T-G2.3.UI.05` (3h) — `ContentArea` (`QStackedWidget`): chuyển màn hình theo signal sidebar.
+- [x] `T-G2.3.UI.01` (3h) — `MainWindow` với 4 area: top-bar (44px), sidebar (240px), content (stack), status-bar (28px).
+- [x] `T-G2.3.UI.02` (2h) — `TopBar` widget: logo + tên đại lý + user dropdown (Hồ sơ / Đổi mật khẩu / Đăng xuất).
+- [x] `T-G2.3.UI.03` (3h) — `Sidebar` widget: list 15 module + icon + highlight active item (nền `#f5f5f7`).
+- [x] `T-G2.3.UI.04` (2h) — `StatusBar` widget: user · thời gian (cập nhật mỗi giây) · version · trạng thái DB.
+- [x] `T-G2.3.UI.05` (3h) — `ContentArea` (`QStackedWidget`): chuyển màn hình theo signal sidebar.
 - [ ] `T-G2.3.UI.06` (3h) — Component library cơ bản (Mục 5.7 UI/UX): `PrimaryButton`, `SecondaryButton`, `DangerButton`, `MoneyLabel`, `DateLabel`, `StatusBadge`, `KpiCard`, `SearchBar`, `FilterChip`, `ToastNotification`.
 - [ ] `T-G2.3.UI.07` (2h) — Style sheet `apple_light.qss` đầy đủ: nút pill, font system, spacing, hover.
 - [ ] `T-G2.3.UI.08` (1h) — Phím tắt: `Ctrl+1..9` chuyển module, `Ctrl+L` logout, `F1` help.
-- [ ] `T-G2.3.UI.09` (1h) — Empty/Loading/Error/Permission Denied states (Mục 5.8 UI/UX) — base widget tái sử dụng.
+- [x] `T-G2.3.UI.09` (1h) — Empty/Loading/Error/Permission Denied states (Mục 5.8 UI/UX) — base widget tái sử dụng.
 
 #### TEST (1 ngày)
 

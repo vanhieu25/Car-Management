@@ -1,0 +1,340 @@
+"""MainWindow - primary application window with Apple-style layout.
+
+Layout structure:
+┌───────────────────────────────────────────────────────────────┐
+│  TopBar (44px)    | Logo | Dealer Name     | User · Menu    │
+├──────────────┬────────────────────────────────────────────────┤
+│              │                                                │
+│  Sidebar     │            ContentArea                        │
+│  (240px)     │         (QStackedWidget)                      │
+│              │                                                │
+├──────────────┴────────────────────────────────────────────────┤
+│  StatusBar (28px) | User · Time · Version · DB Status        │
+└───────────────────────────────────────────────────────────────┘
+
+Signals:
+    logout_requested: User requested logout
+    module_changed(module_id: str): Active module changed
+"""
+
+from PyQt6.QtWidgets import QMainWindow, QWidget, QVBoxLayout, QHBoxLayout, QFrame
+from PyQt6.QtCore import pyqtSignal, Qt, QTimer
+from PyQt6.QtGui import QKeySequence
+
+from app.presentation.widgets.top_bar import TopBar
+from app.presentation.widgets.sidebar import Sidebar
+from app.presentation.widgets.content_area import ContentArea, EmptyScreen
+from app.presentation.widgets.status_bar import StatusBar
+
+from app.application.services.session import SessionManager, CurrentSession
+from app.application.services.system_settings_service import SystemSettingsService
+from app.application.services.sidebar_service import get_sidebar_items_flat, get_sidebar_items
+
+
+class MainWindow(QMainWindow):
+    """Main application window.
+    
+    Contains TopBar, Sidebar, ContentArea, and StatusBar.
+    Manages screen navigation and user session.
+    
+    Signals:
+        logout_requested: Emitted when user clicks logout.
+        module_changed(module_id: str): Emitted when active module changes.
+    """
+    
+    logout_requested = pyqtSignal()
+    module_changed = pyqtSignal(str)
+    
+    def __init__(self, session: CurrentSession = None, parent=None):
+        """Initialize MainWindow.
+        
+        Args:
+            session: CurrentSession instance with user info.
+            parent: Parent widget.
+        """
+        super().__init__(parent)
+        
+        self._session = session
+        self._db_conn = None
+        self._settings_service = None
+        self._navigation_registered = False
+        
+        self._setup_ui()
+        self._setup_connections()
+        self._apply_styles()
+        self._load_user_session()
+        
+        # Set initial size
+        self.setMinimumSize(1280, 720)
+        self.resize(1400, 800)
+    
+    def _setup_ui(self):
+        """Set up the UI components."""
+        # Central widget
+        central = QWidget()
+        self.setCentralWidget(central)
+        
+        # Main layout
+        main_layout = QVBoxLayout(central)
+        main_layout.setContentsMargins(0, 0, 0, 0)
+        main_layout.setSpacing(0)
+        
+        # TopBar
+        self.top_bar = TopBar()
+        main_layout.addWidget(self.top_bar)
+        
+        # Content area with sidebar
+        content_layout = QHBoxLayout()
+        content_layout.setContentsMargins(0, 0, 0, 0)
+        content_layout.setSpacing(0)
+        
+        # Sidebar
+        self.sidebar = Sidebar()
+        content_layout.addWidget(self.sidebar)
+        
+        # ContentArea
+        self.content_area = ContentArea()
+        content_layout.addWidget(self.content_area, stretch=1)
+        
+        main_layout.addLayout(content_layout, stretch=1)
+        
+        # StatusBar
+        self.status_bar = StatusBar()
+        main_layout.addWidget(self.status_bar)
+        
+        # Window title
+        self.setWindowTitle("Car Management")
+    
+    def _setup_connections(self):
+        """Set up signal connections."""
+        # Sidebar -> ContentArea
+        self.sidebar.module_selected.connect(self._on_module_selected)
+        
+        # TopBar signals
+        self.top_bar.logout_clicked.connect(self._on_logout_requested)
+        self.top_bar.change_password_clicked.connect(self._on_change_password_requested)
+        self.top_bar.profile_clicked.connect(self._on_profile_requested)
+    
+    def _apply_styles(self):
+        """Apply Apple-style stylesheet."""
+        self.setStyleSheet("""
+            QMainWindow {
+                background-color: #ffffff;
+            }
+            QWidget {
+                font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+            }
+        """)
+    
+    def _load_user_session(self):
+        """Load user session and configure UI."""
+        if self._session:
+            # Set user info in top bar
+            self.top_bar.set_user_info(
+                username=self._session.username,
+                ho_ten=self._session.ho_ten,
+                vai_tro=self._session.vai_tro_ma,
+            )
+            
+            # Set status bar user
+            self.status_bar.set_user(
+                self._session.username,
+                self._session.vai_tro_ma,
+            )
+            
+            # Load sidebar items based on role
+            self._load_sidebar_items()
+    
+    def _load_sidebar_items(self):
+        """Load and display sidebar items based on user role."""
+        if not self._session:
+            return
+        
+        # Get sidebar items for this role
+        items = get_sidebar_items_flat(self._session.vai_tro_id)
+        
+        # Convert to format for sidebar
+        sidebar_data = [
+            (item.module_id, item.label, item.icon, item.permission_module)
+            for item in items
+        ]
+        
+        # Get groups for proper organization
+        groups = get_sidebar_items(self._session.vai_tro_id)
+        
+        # Clear and rebuild sidebar
+        self.sidebar.clear()
+        
+        # Add items grouped
+        for group in groups:
+            for item in group.items:
+                self.sidebar.add_item(
+                    module_id=item.module_id,
+                    label=item.label,
+                    icon=item.icon,
+                    group=group.name,
+                )
+        
+        # Set default active
+        if items:
+            default_module = items[0].module_id
+            self.sidebar.set_active(default_module)
+            self._show_placeholder_or_default(default_module)
+    
+    def _show_placeholder_or_default(self, module_id: str):
+        """Show placeholder or navigate to module."""
+        # For now, show empty screen placeholder
+        empty = EmptyScreen(module_name=module_id.replace("_", " ").title())
+        self.content_area.register_screen(module_id, empty)
+        self.content_area.show_screen(module_id)
+    
+    def _on_module_selected(self, module_id: str):
+        """Handle module selection from sidebar.
+        
+        Args:
+            module_id: Selected module ID.
+        """
+        self.module_changed.emit(module_id)
+        
+        # Show placeholder for now
+        if not self.content_area.has_screen(module_id):
+            empty = EmptyScreen(module_name=module_id.replace("_", " ").title())
+            self.content_area.register_screen(module_id, empty)
+        
+        self.content_area.show_screen(module_id)
+    
+    def _on_logout_requested(self):
+        """Handle logout request."""
+        self.logout_requested.emit()
+    
+    def _on_change_password_requested(self):
+        """Handle change password request."""
+        # Emit signal or show dialog
+        self.module_changed.emit("change_password")
+    
+    def _on_profile_requested(self):
+        """Handle profile request."""
+        # Emit signal or show dialog
+        self.module_changed.emit("profile")
+    
+    def set_db_connection(self, conn):
+        """Set database connection for services.
+        
+        Args:
+            conn: sqlite3.Connection instance.
+        """
+        self._db_conn = conn
+        self._settings_service = SystemSettingsService(conn)
+        
+        # Load settings
+        settings = self._settings_service.load_settings()
+        
+        # Update top bar with dealer info
+        self.top_bar.set_dealer_name(settings.ten_dai_ly)
+        
+        # Update status bar version
+        self.status_bar.set_version(f"v{settings.version}")
+        
+        # Check DB connection
+        self._check_db_connection()
+    
+    def _check_db_connection(self):
+        """Check database connection and update status."""
+        if self._db_conn:
+            try:
+                cursor = self._db_conn.execute("SELECT 1")
+                cursor.fetchone()
+                self.status_bar.set_db_status(True)
+            except Exception as e:
+                self.status_bar.set_db_status(False, f"● Lỗi DB")
+        else:
+            self.status_bar.set_db_status(False, "● Chưa kết nối")
+    
+    def set_session(self, session: CurrentSession):
+        """Set the current session.
+        
+        Args:
+            session: CurrentSession instance.
+        """
+        self._session = session
+        self._load_user_session()
+    
+    def get_session(self) -> CurrentSession:
+        """Get the current session.
+        
+        Returns:
+            CurrentSession instance or None.
+        """
+        return self._session
+    
+    def register_screen(self, module_id: str, screen: QWidget):
+        """Register a screen for a module.
+        
+        Args:
+            module_id: Module identifier.
+            screen: QWidget screen instance.
+        """
+        self.content_area.register_screen(module_id, screen)
+    
+    def navigate_to(self, module_id: str):
+        """Navigate to a specific module.
+        
+        Args:
+            module_id: Module ID to navigate to.
+        """
+        if module_id in ["change_password", "profile"]:
+            # Handle special modules
+            return
+        
+        if module_id in self.content_area._screens:
+            self.sidebar.set_active(module_id)
+            self.content_area.show_screen(module_id)
+        else:
+            # Show placeholder
+            empty = EmptyScreen(module_name=module_id.replace("_", " ").title())
+            self.content_area.register_screen(module_id, empty)
+            self.content_area.show_screen(module_id)
+            self.sidebar.set_active(module_id)
+    
+    def closeEvent(self, event):
+        """Handle window close event.
+        
+        Args:
+            event: Close event.
+        """
+        # Stop timers
+        self.status_bar.stop_timer()
+        
+        # Accept close
+        event.accept()
+    
+    def keyPressEvent(self, event):
+        """Handle keyboard shortcuts.
+        
+        Args:
+            event: Key press event.
+        """
+        # Ctrl+1..9 for module switching
+        if event.modifiers() & Qt.KeyboardModifier.ControlModifier:
+            key = event.key()
+            
+            # Number keys 1-9
+            if Qt.Key.Key_1 <= key <= Qt.Key.Key_9:
+                index = key - Qt.Key.Key_1
+                items = get_sidebar_items_flat(self._session.vai_tro_id if self._session else 1)
+                
+                if index < len(items):
+                    self.navigate_to(items[index].module_id)
+                    return
+            
+            # Ctrl+L for logout
+            if key == Qt.Key.Key_L:
+                self._on_logout_requested()
+                return
+        
+        # F1 for help
+        if event.key() == Qt.Key.Key_F1:
+            # TODO: Show help dialog
+            return
+        
+        super().keyPressEvent(event)
