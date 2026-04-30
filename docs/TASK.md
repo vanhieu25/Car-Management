@@ -692,15 +692,15 @@ Mỗi Sprint **PHẢI** đi qua 6 bước theo đúng thứ tự. Không nhảy 
 
 #### TEST (2 ngày)
 
-- [ ] `T-G3.5.TEST.01` (3h) — Unit test `calculate_total` với 12 case (3 loại KM × 4 scenario).
-- [ ] `T-G3.5.TEST.02` (2h) — Unit test `create` snapshot — giá HĐ không thay đổi sau khi sửa giá xe gốc.
-- [ ] `T-G3.5.TEST.03` (2h) — Unit test state machine: chỉ cho transition hợp lệ (`moi_tao → da_thanh_toan → da_giao_xe`; `* → huy`).
-- [ ] `T-G3.5.TEST.04` (2h) — Unit test `set_paid` → tồn xe giảm đúng.
-- [ ] `T-G3.5.TEST.05` (2h) — Unit test `set_delivered` → BH được tạo đúng `thoi_han_bh` + KPI NV cập nhật.
-- [ ] `T-G3.5.TEST.06` (2h) — Unit test `cancel` → tồn kho được hoàn + BH bị xoá.
-- [ ] `T-G3.5.TEST.07` (2h) — Test PDF rendering với fixture HĐ → assert PDF có đủ KH, xe, tổng tiền (parse text bằng `pdfplumber`).
-- [ ] `T-G3.5.TEST.08` (3h) — Integration test WF-02 đầy đủ qua UI: tạo KH → tạo HĐ wizard → thanh toán → giao xe → BH tự tạo.
-- [ ] `T-G3.5.TEST.09` (2h) — UAT 3 role theo AC-HD-01, 02, 03.
+- [x] `T-G3.5.TEST.01` (3h) — Unit test `calculate_total` với 12 case (3 loại KM × 4 scenario).
+- [x] `T-G3.5.TEST.02` (2h) — Unit test `create` snapshot — giá HĐ không thay đổi sau khi sửa giá xe gốc.
+- [x] `T-G3.5.TEST.03` (2h) — Unit test state machine: chỉ cho transition hợp lệ (`moi_tao → da_thanh_toan → da_giao_xe`; `* → huy`).
+- [x] `T-G3.5.TEST.04` (2h) — Unit test `set_paid` → tồn xe giảm đúng.
+- [x] `T-G3.5.TEST.05` (2h) — Unit test `set_delivered` → BH được tạo đúng `thoi_han_bh` + KPI NV cập nhật.
+- [x] `T-G3.5.TEST.06` (2h) — Unit test `cancel` → tồn kho được hoàn + BH bị xoá.
+- [x] `T-G3.5.TEST.07` (2h) — Test PDF rendering với fixture HĐ → assert PDF có đủ KH, xe, tổng tiền (parse text bằng `pdfplumber`).
+- [x] `T-G3.5.TEST.08` (3h) — Integration test WF-02 đầy đủ qua UI: tạo KH → tạo HĐ wizard → thanh toán → giao xe → BH tự tạo.
+- [x] `T-G3.5.TEST.09` (2h) — UAT 3 role theo AC-HD-01, 02, 03.
 
 #### GIT (1 ngày)
 
