@@ -664,18 +664,18 @@ Mỗi Sprint **PHẢI** đi qua 6 bước theo đúng thứ tự. Không nhảy 
 
 #### BE (4 ngày)
 
-- [ ] `T-G3.5.BE.01` (2h) — `HopDongRepository` đầy đủ + `next_ma_hop_dong()`.
-- [ ] `T-G3.5.BE.02` (3h) `[BLOCKER]` — `HopDongService.calculate_total(xe_id, pk_list, km_id)` — BR-CALC-01, 02; **trả về breakdown** (giá xe, tổng PK, tiền giảm, tổng).
-- [ ] `T-G3.5.BE.03` (3h) — `HopDongService.create(data)` — validate đủ 4 bước → snapshot giá → insert `hop_dong` + `hop_dong_phu_kien` trong transaction.
-- [ ] `T-G3.5.BE.04` (2h) — `HopDongService.update(id, data)` — chỉ cho `moi_tao` (BR-HD-09). HĐ `da_thanh_toan` chỉ A-01.
-- [ ] `T-G3.5.BE.05` (3h) `[BLOCKER]` — `HopDongService.set_paid(id)` — BR-HD-03: chuyển trạng thái + ghi `ngay_thanh_toan` + **giảm tồn kho (TRG-01)** + audit log.
-- [ ] `T-G3.5.BE.06` (3h) `[BLOCKER]` — `HopDongService.set_delivered(id)` — BR-HD-04: chuyển trạng thái + ghi `ngay_giao_xe` + **tự sinh `bao_hanh` (TRG-02)** + cập nhật KH (BR-CALC-03) + cập nhật KPI NV.
-- [ ] `T-G3.5.BE.07` (2h) — `HopDongService.cancel(id, reason)` — BR-HD-05 (chỉ A-01): hoàn tồn kho + xoá BH/TG liên quan + ghi `ly_do_huy` (TRG-03).
-- [ ] `T-G3.5.BE.08` (3h) — `HopDongService.search(filter)` — phân trang + filter trạng thái/ngày/KH/NV.
-- [ ] `T-G3.5.BE.09` (3h) `[BLOCKER]` — `PdfRenderer` wrapper Jinja2 + WeasyPrint: load template `contract.html` + CSS, render PDF.
-- [ ] `T-G3.5.BE.10` (2h) — Tạo template `resources/templates/contract.html` (Jinja2): full layout HĐ (header, KH, xe, bảng PK, KM, tổng, BH, chữ ký).
-- [ ] `T-G3.5.BE.11` (1h) — Tạo CSS `resources/templates/contract.css` (in A4, font system).
-- [ ] `T-G3.5.BE.12` (1h) — `HopDongService.export_pdf(id, output_path)` — render và lưu file.
+- [x] `T-G3.5.BE.01` (2h) — `HopDongRepository` đầy đủ + `next_ma_hop_dong()`.
+- [x] `T-G3.5.BE.02` (3h) `[BLOCKER]` — `HopDongService.calculate_total(xe_id, pk_list, km_id)` — BR-CALC-01, 02; **trả về breakdown** (giá xe, tổng PK, tiền giảm, tổng).
+- [x] `T-G3.5.BE.03` (3h) — `HopDongService.create(data)` — validate đủ 4 bước → snapshot giá → insert `hop_dong` + `hop_dong_phu_kien` trong transaction.
+- [x] `T-G3.5.BE.04` (2h) — `HopDongService.update(id, data)` — chỉ cho `moi_tao` (BR-HD-09). HĐ `da_thanh_toan` chỉ A-01.
+- [x] `T-G3.5.BE.05` (3h) `[BLOCKER]` — `HopDongService.set_paid(id)` — BR-HD-03: chuyển trạng thái + ghi `ngay_thanh_toan` + **giảm tồn kho (TRG-01)** + audit log.
+- [x] `T-G3.5.BE.06` (3h) `[BLOCKER]` — `HopDongService.set_delivered(id)` — BR-HD-04: chuyển trạng thái + ghi `ngay_giao_xe` + **tự sinh `bao_hanh` (TRG-02)** + cập nhật KH (BR-CALC-03) + cập nhật KPI NV.
+- [x] `T-G3.5.BE.07` (2h) — `HopDongService.cancel(id, reason)` — BR-HD-05 (chỉ A-01): hoàn tồn kho + xoá BH/TG liên quan + ghi `ly_do_huy` (TRG-03).
+- [x] `T-G3.5.BE.08` (3h) — `HopDongService.search(filter)` — phân trang + filter trạng thái/ngày/KH/NV.
+- [x] `T-G3.5.BE.09` (3h) `[BLOCKER]` — `PdfRenderer` wrapper Jinja2 + WeasyPrint: load template `contract.html` + CSS, render PDF.
+- [x] `T-G3.5.BE.10` (2h) — Tạo template `resources/templates/contract.html` (Jinja2): full layout HĐ (header, KH, xe, bảng PK, KM, tổng, BH, chữ ký).
+- [x] `T-G3.5.BE.11` (1h) — Tạo CSS `resources/templates/contract.css` (in A4, font system).
+- [x] `T-G3.5.BE.12` (1h) — `HopDongService.export_pdf(id, output_path)` — render và lưu file.
 
 #### UI (4 ngày)
 
