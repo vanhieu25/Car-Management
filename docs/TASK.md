@@ -835,19 +835,19 @@ Mỗi Sprint **PHẢI** đi qua 6 bước theo đúng thứ tự. Không nhảy 
 
 #### BE (2 ngày)
 
-- [ ] `T-G4.3.BE.01` (1h) — `BaoHanhRepository` + `find_expiring_in(days)`.
-- [ ] `T-G4.3.BE.02` (2h) — `BaoHanhService.auto_create_from_hop_dong(hd_id)` — gọi từ TRG-02 (đã viết ở G3.5).
-- [ ] `T-G4.3.BE.03` (3h) — `BaoHanhService.create_request(bh_id, data)` — validate ngày trong hạn BH, phân loại (miễn phí/tính phí — BR-BH-04), assign kỹ thuật.
-- [ ] `T-G4.3.BE.04` (2h) — `BaoHanhService.update_request(req_id, status, ...)` — chuyển trạng thái yêu cầu (BR-BH-05).
-- [ ] `T-G4.3.BE.05` (2h) — `BaoHanhService.find_expiring_in_30_days()` — BR-BH-03 (cho dashboard).
-- [ ] `T-G4.3.BE.06` (3h) — Render phiếu BH PDF với Jinja2+WeasyPrint (BR-BH-07) — template `warranty.html`.
+- [x] `T-G4.3.BE.01` (1h) — `BaoHanhRepository` + `find_expiring_in(days)`.
+- [x] `T-G4.3.BE.02` (2h) — `BaoHanhService.auto_create_from_hop_dong(hd_id)` — gọi từ TRG-02 (đã viết ở G3.5).
+- [x] `T-G4.3.BE.03` (3h) — `BaoHanhService.create_request(bh_id, data)` — validate ngày trong hạn BH, phân loại (miễn phí/tính phí — BR-BH-04), assign kỹ thuật.
+- [x] `T-G4.3.BE.04` (2h) — `BaoHanhService.update_request(req_id, status, ...)` — chuyển trạng thái yêu cầu (BR-BH-05).
+- [x] `T-G4.3.BE.05` (2h) — `BaoHanhService.find_expiring_in_30_days()` — BR-BH-03 (cho dashboard).
+- [x] `T-G4.3.BE.06` (3h) — Render phiếu BH PDF với Jinja2+WeasyPrint (BR-BH-07) — template `warranty.html`.
 
 #### UI (2 ngày)
 
-- [ ] `T-G4.3.UI.01` (3h) — `S-BH-01` Warranty List: filter trạng thái (còn HL/sắp hết/hết hạn) + highlight cảnh báo 30 ngày.
-- [ ] `T-G4.3.UI.02` (2h) — `S-BH-02` Warranty Detail: thông tin xe, KH, thời hạn, phạm vi + danh sách yêu cầu.
-- [ ] `T-G4.3.UI.03` (4h) — `S-BH-03` Create Request Form: ngày đến, nội dung sửa, phân loại (auto suggest theo lỗi), chi phí, KT phụ trách.
-- [ ] `T-G4.3.UI.04` (3h) — `S-BH-04` Print Warranty Slip: preview PDF + nút in.
+- [x] `T-G4.3.UI.01` (3h) — `S-BH-01` Warranty List: filter trạng thái (còn HL/sắp hết/hết hạn) + highlight cảnh báo 30 ngày.
+- [x] `T-G4.3.UI.02` (2h) — `S-BH-02` Warranty Detail: thông tin xe, KH, thời hạn, phạm vi + danh sách yêu cầu.
+- [x] `T-G4.3.UI.03` (4h) — `S-BH-03` Create Request Form: ngày đến, nội dung sửa, phân loại (auto suggest theo lỗi), chi phí, KT phụ trách.
+- [x] `T-G4.3.UI.04` (3h) — `S-BH-04` Print Warranty Slip: preview PDF + nút in.
 
 #### TEST (1 ngày)
 

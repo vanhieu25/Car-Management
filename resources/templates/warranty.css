@@ -1,0 +1,235 @@
+/* Warranty CSS - A4 print-friendly styles */
+
+@page {
+    size: A4;
+    margin: 0;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: "Segoe UI", "DejaVu Sans", Arial, sans-serif;
+    font-size: 12pt;
+    line-height: 1.5;
+    color: #333;
+    background: white;
+}
+
+.page {
+    width: 210mm;
+    min-height: 297mm;
+    padding: 15mm 20mm;
+    margin: 0 auto;
+    background: white;
+    box-shadow: none;
+}
+
+/* Header */
+.header {
+    text-align: center;
+    border-bottom: 2px solid #0066cc;
+    padding-bottom: 10px;
+    margin-bottom: 20px;
+}
+
+.header .dealer-name {
+    font-size: 18pt;
+    font-weight: bold;
+    color: #0066cc;
+    margin-bottom: 5px;
+}
+
+.header .dealer-info {
+    font-size: 10pt;
+    color: #666;
+}
+
+.warranty-title {
+    font-size: 16pt;
+    font-weight: bold;
+    text-align: center;
+    margin: 15px 0;
+    text-transform: uppercase;
+    color: #333;
+}
+
+.warranty-code {
+    text-align: center;
+    font-size: 11pt;
+    color: #666;
+    margin-bottom: 20px;
+}
+
+/* Sections */
+.section {
+    margin-bottom: 15px;
+}
+
+.section-title {
+    font-size: 11pt;
+    font-weight: bold;
+    background: #e8f4fd;
+    padding: 5px 10px;
+    border-left: 3px solid #0066cc;
+    margin-bottom: 8px;
+}
+
+.section-content {
+    padding-left: 10px;
+}
+
+/* Info table */
+.info-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.info-table td {
+    padding: 4px 8px;
+    vertical-align: top;
+}
+
+.info-table td.label {
+    width: 35%;
+    font-weight: bold;
+    color: #555;
+}
+
+.info-table td.value {
+    width: 65%;
+}
+
+/* Items table */
+.items-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 10px 0;
+}
+
+.items-table th {
+    background: #0066cc;
+    color: white;
+    padding: 8px 6px;
+    text-align: left;
+    font-size: 10pt;
+}
+
+.items-table td {
+    padding: 6px;
+    border-bottom: 1px solid #ddd;
+    vertical-align: top;
+}
+
+.items-table tr:nth-child(even) {
+    background: #f9f9f9;
+}
+
+.text-right {
+    text-align: right;
+}
+
+.text-center {
+    text-align: center;
+}
+
+/* Status badges */
+.status-active {
+    color: #34c759;
+    font-weight: bold;
+}
+
+.status-expired {
+    color: #ff3b30;
+    font-weight: bold;
+}
+
+/* Warranty period highlight */
+.warranty-period {
+    background: #f0f7ff;
+    border: 2px solid #0066cc;
+    border-radius: 8px;
+    padding: 16px;
+    margin: 15px 0;
+    text-align: center;
+}
+
+.warranty-period .dates {
+    font-size: 14pt;
+    font-weight: bold;
+    color: #0066cc;
+}
+
+.warranty-period .duration {
+    font-size: 11pt;
+    color: #666;
+    margin-top: 5px;
+}
+
+/* Scope box */
+.scope-box {
+    background: #f5f5f5;
+    padding: 10px;
+    border-radius: 4px;
+    margin: 10px 0;
+}
+
+/* Signature area */
+.signature-area {
+    margin-top: 40px;
+}
+
+.signature-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.signature-table td {
+    width: 33%;
+    text-align: center;
+    vertical-align: top;
+    padding: 10px;
+}
+
+.signature-table .name {
+    font-weight: bold;
+    margin-top: 80px;
+    margin-bottom: 5px;
+}
+
+.signature-line {
+    border-top: 1px solid #333;
+    margin-top: 60px;
+    padding-top: 5px;
+}
+
+/* Footer */
+.footer {
+    margin-top: 30px;
+    padding-top: 10px;
+    border-top: 1px solid #ccc;
+    font-size: 9pt;
+    color: #888;
+    text-align: center;
+}
+
+.highlight {
+    color: #0066cc;
+    font-weight: bold;
+}
+
+/* Print-specific */
+@media print {
+    body {
+        background: white;
+    }
+
+    .page {
+        box-shadow: none;
+        margin: 0;
+        padding: 10mm 15mm;
+    }
+}

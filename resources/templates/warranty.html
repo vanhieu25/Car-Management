@@ -1,0 +1,426 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Phiếu Bảo Hành - {{ bao_hanh.id if bao_hanh else '' }}</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: "Segoe UI", Arial, sans-serif;
+            font-size: 12pt;
+            line-height: 1.5;
+            color: #333;
+        }
+
+        .page {
+            width: 210mm;
+            min-height: 297mm;
+            padding: 15mm 20mm;
+            margin: 0 auto;
+            background: white;
+        }
+
+        /* Header */
+        .header {
+            text-align: center;
+            border-bottom: 2px solid #0066cc;
+            padding-bottom: 10px;
+            margin-bottom: 20px;
+        }
+
+        .header .dealer-name {
+            font-size: 18pt;
+            font-weight: bold;
+            color: #0066cc;
+            margin-bottom: 5px;
+        }
+
+        .header .dealer-info {
+            font-size: 10pt;
+            color: #666;
+        }
+
+        .warranty-title {
+            font-size: 16pt;
+            font-weight: bold;
+            text-align: center;
+            margin: 15px 0;
+            text-transform: uppercase;
+            color: #333;
+        }
+
+        .warranty-code {
+            text-align: center;
+            font-size: 11pt;
+            color: #666;
+            margin-bottom: 20px;
+        }
+
+        /* Sections */
+        .section {
+            margin-bottom: 15px;
+        }
+
+        .section-title {
+            font-size: 11pt;
+            font-weight: bold;
+            background: #e8f4fd;
+            padding: 5px 10px;
+            border-left: 3px solid #0066cc;
+            margin-bottom: 8px;
+        }
+
+        .section-content {
+            padding-left: 10px;
+        }
+
+        /* Info table */
+        .info-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .info-table td {
+            padding: 4px 8px;
+            vertical-align: top;
+        }
+
+        .info-table td.label {
+            width: 35%;
+            font-weight: bold;
+            color: #555;
+        }
+
+        .info-table td.value {
+            width: 65%;
+        }
+
+        /* Items table */
+        .items-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 10px 0;
+        }
+
+        .items-table th {
+            background: #0066cc;
+            color: white;
+            padding: 8px 6px;
+            text-align: left;
+            font-size: 10pt;
+        }
+
+        .items-table td {
+            padding: 6px;
+            border-bottom: 1px solid #ddd;
+            vertical-align: top;
+        }
+
+        .items-table tr:nth-child(even) {
+            background: #f9f9f9;
+        }
+
+        .text-right {
+            text-align: right;
+        }
+
+        .text-center {
+            text-align: center;
+        }
+
+        /* Status badges */
+        .status-active {
+            color: #34c759;
+            font-weight: bold;
+        }
+
+        .status-expired {
+            color: #ff3b30;
+            font-weight: bold;
+        }
+
+        /* Warranty period highlight */
+        .warranty-period {
+            background: #f0f7ff;
+            border: 2px solid #0066cc;
+            border-radius: 8px;
+            padding: 16px;
+            margin: 15px 0;
+            text-align: center;
+        }
+
+        .warranty-period .dates {
+            font-size: 14pt;
+            font-weight: bold;
+            color: #0066cc;
+        }
+
+        .warranty-period .duration {
+            font-size: 11pt;
+            color: #666;
+            margin-top: 5px;
+        }
+
+        /* Scope box */
+        .scope-box {
+            background: #f5f5f5;
+            padding: 10px;
+            border-radius: 4px;
+            margin: 10px 0;
+        }
+
+        /* Signature area */
+        .signature-area {
+            margin-top: 40px;
+            page-break-inside: avoid;
+        }
+
+        .signature-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .signature-table td {
+            width: 33%;
+            text-align: center;
+            vertical-align: top;
+            padding: 10px;
+        }
+
+        .signature-table .name {
+            font-weight: bold;
+            margin-top: 80px;
+            margin-bottom: 5px;
+        }
+
+        .signature-line {
+            border-top: 1px solid #333;
+            margin-top: 60px;
+            padding-top: 5px;
+        }
+
+        /* Footer */
+        .footer {
+            margin-top: 30px;
+            padding-top: 10px;
+            border-top: 1px solid #ccc;
+            font-size: 9pt;
+            color: #888;
+            text-align: center;
+        }
+
+        .highlight {
+            color: #0066cc;
+            font-weight: bold;
+        }
+
+        /* Print-specific */
+        @media print {
+            body {
+                background: white;
+            }
+
+            .page {
+                box-shadow: none;
+                margin: 0;
+                padding: 10mm 15mm;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="page">
+        <!-- Header -->
+        <div class="header">
+            <div class="dealer-name">{{ system_settings.get('ten_dai_ly', 'CÔNG TY TNHH Ô TÔ ABC') }}</div>
+            <div class="dealer-info">
+                Địa chỉ: {{ system_settings.get('dia_chi_dai_ly', '123 Đường ABC, Quận 1, TP.HCM') }} |
+                Tel: {{ system_settings.get('so_dien_thoai_dai_ly', '0123-456-789') }} |
+                Email: {{ system_settings.get('email_dai_ly', 'contact@otovn.vn') }}
+            </div>
+        </div>
+
+        <!-- Warranty Title -->
+        <div class="warranty-title">PHIẾU BẢO HÀNH</div>
+        <div class="warranty-code">
+            Mã bảo hành: BH{{ bao_hanh.id if bao_hanh else '' }} |
+            Mã hợp đồng: {{ hop_dong.ma_hop_dong if hop_dong else '' }}
+        </div>
+
+        <!-- Warranty Period -->
+        <div class="warranty-period">
+            <div class="dates">
+                {{ bao_hanh.ngay_bat_dau if bao_hanh else '' }} — {{ bao_hanh.ngay_ket_thuc if bao_hanh else '' }}
+            </div>
+            <div class="duration">
+                Thời hạn bảo hành: <strong>{{ bao_hanh.thoi_han_bh if bao_hanh else 24 }} tháng</strong>
+                &nbsp;|&nbsp;
+                Trạng thái:
+                {% if bao_hanh and bao_hanh.trang_thai == 'con_hieu_luc' %}
+                    <span class="status-active">CÒN HIỆU LỰC</span>
+                {% else %}
+                    <span class="status-expired">HẾT HẠN</span>
+                {% endif %}
+            </div>
+        </div>
+
+        <!-- Customer Info -->
+        <div class="section">
+            <div class="section-title">I. THÔNG TIN KHÁCH HÀNG</div>
+            <div class="section-content">
+                <table class="info-table">
+                    <tr>
+                        <td class="label">Họ tên:</td>
+                        <td class="value">{{ khach_hang.ho_ten if khach_hang else '' }}</td>
+                    </tr>
+                    <tr>
+                        <td class="label">Số điện thoại:</td>
+                        <td class="value">{{ khach_hang.so_dien_thoai if khach_hang else '' }}</td>
+                    </tr>
+                    <tr>
+                        <td class="label">Email:</td>
+                        <td class="value">{{ khach_hang.email if khach_hang else '' }}</td>
+                    </tr>
+                    <tr>
+                        <td class="label">Địa chỉ:</td>
+                        <td class="value">{{ khach_hang.dia_chi if khach_hang else '' }}</td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+
+        <!-- Vehicle Info -->
+        <div class="section">
+            <div class="section-title">II. THÔNG TIN XE</div>
+            <div class="section-content">
+                <table class="info-table">
+                    <tr>
+                        <td class="label">Hãng xe:</td>
+                        <td class="value">{{ xe.hang if xe else '' }}</td>
+                    </tr>
+                    <tr>
+                        <td class="label">Dòng xe:</td>
+                        <td class="value">{{ xe.dong_xe if xe else '' }}</td>
+                    </tr>
+                    <tr>
+                        <td class="label">Năm sản xuất:</td>
+                        <td class="value">{{ xe.nam_san_xuat if xe else '' }}</td>
+                    </tr>
+                    <tr>
+                        <td class="label">Màu sắc:</td>
+                        <td class="value">{{ xe.mau_sac if xe else '' }}</td>
+                    </tr>
+                    <tr>
+                        <td class="label">Mã xe:</td>
+                        <td class="value">{{ xe.ma_xe if xe else '' }}</td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+
+        <!-- Warranty Scope -->
+        <div class="section">
+            <div class="section-title">III. PHẠM VI BẢO HÀNH</div>
+            <div class="section-content">
+                <div class="scope-box">
+                    <p><strong>Phạm vi bảo hành:</strong> {{ bao_hanh.pham_vi if bao_hanh and bao_hanh.pham_vi else 'Bảo hành toàn diện theo điều khoản chuẩn của nhà sản xuất' }}</p>
+                    <p style="margin-top: 10px; color: #666; font-size: 10pt;">
+                        <em>* Bảo hành không áp dụng đối với các trường hợp hỏng hóc do sử dụng sai, tai nạn, ngập nước, va đập mạnh hoặc tự ý sửa chữa không qua trung tâm bảo hành.</em>
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Warranty Requests History -->
+        {% if yeu_cau_list %}
+        <div class="section">
+            <div class="section-title">IV. LỊCH SỬ YÊU CẦU BẢO HÀNH</div>
+            <div class="section-content">
+                <table class="items-table">
+                    <thead>
+                        <tr>
+                            <th>STT</th>
+                            <th>Ngày yêu cầu</th>
+                            <th>Loại</th>
+                            <th>Mô tả tình trạng</th>
+                            <th>Kỹ thuật phụ trách</th>
+                            <th>Chi phí</th>
+                            <th>Trạng thái</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for yc in yeu_cau_list %}
+                        <tr>
+                            <td class="text-center">{{ loop.index }}</td>
+                            <td>{{ yc.ngay_yeu_cau[:10] if yc.ngay_yeu_cau else '' }}</td>
+                            <td>
+                                {% if yc.loai_yeu_cau == 'bao_duong' %}Bảo dưỡng
+                                {% elif yc.loai_yeu_cau == 'sua_chua' %}Sửa chữa
+                                {% elif yc.loai_yeu_cau == 'thay_the' %}Thay thế
+                                {% else %}{{ yc.loai_yeu_cau }}{% endif %}
+                            </td>
+                            <td>{{ yc.mo_ta_tinh_trang }}</td>
+                            <td>{{ yc.nv_ho_ten if yc.nv_ho_ten else '' }}</td>
+                            <td class="text-right">{{ format_vnd(yc.chi_phi) }}</td>
+                            <td>
+                                {% if yc.trang_thai == 'moi' %}<span style="color:#007aff;">Mới</span>
+                                {% elif yc.trang_thai == 'dang_xu_ly' %}<span style="color:#ff9500;">Đang xử lý</span>
+                                {% elif yc.trang_thai == 'da_hoan_thanh' %}<span style="color:#34c759;">Hoàn thành</span>
+                                {% elif yc.trang_thai == 'da_dong' %}<span style="color:#8e8e93;">Đóng</span>
+                                {% else %}{{ yc.trang_thai }}{% endif %}
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        {% endif %}
+
+        <!-- Notes -->
+        {% if bao_hanh and bao_hanh.ghi_chu %}
+        <div class="section">
+            <div class="section-title">V. GHI CHÚ</div>
+            <div class="section-content">
+                <p>{{ bao_hanh.ghi_chu }}</p>
+            </div>
+        </div>
+        {% endif %}
+
+        <!-- Signature area -->
+        <div class="signature-area">
+            <table class="signature-table">
+                <tr>
+                    <td>
+                        <strong>ĐẠI DIỆN BẢO HÀNH</strong>
+                        <div class="signature-line">
+                            <div class="name">{{ yeu_cau_list[0].nv_ho_ten if yeu_cau_list else 'Nhân viên kỹ thuật' }}</div>
+                        </div>
+                    </td>
+                    <td>
+                        <!-- Empty center column -->
+                    </td>
+                    <td>
+                        <strong>KHÁCH HÀNG</strong>
+                        <div class="signature-line">
+                            <div class="name">{{ khach_hang.ho_ten if khach_hang else '' }}</div>
+                        </div>
+                    </td>
+                </tr>
+            </table>
+        </div>
+
+        <!-- Footer -->
+        <div class="footer">
+            Phiếu bảo hành này được in từ hệ thống Quản lý Đại lý Xe hơi.<br>
+            Cảm ơn quý khách đã tin tưởng {{ system_settings.get('ten_dai_ly', 'chúng tôi') }}!
+        </div>
+    </div>
+</body>
+</html>
