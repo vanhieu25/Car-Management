@@ -650,17 +650,17 @@ Mỗi Sprint **PHẢI** đi qua 6 bước theo đúng thứ tự. Không nhảy 
 
 #### REQ (1 ngày)
 
-- [ ] `T-G3.5.REQ.01` (2h) — Đọc kỹ BRD §5.4 + AC-HD-01..03 + WF-02 (Mục 6 BRD).
-- [ ] `T-G3.5.REQ.02` (1h) — Hiểu BR-CALC-01 (tổng tiền HĐ = giá xe + PK − giảm KM), BR-CALC-02 (tính giảm KM 4 loại).
-- [ ] `T-G3.5.REQ.03` (1h) — Hiểu **snapshot price** BR-HD-* + BR-PK-07: lưu giá tại thời điểm tạo HĐ, không sync.
-- [ ] `T-G3.5.REQ.04` (1h) — Vẽ wizard 4 bước (B1: KH → B2: Xe+PK → B3: KM → B4: Xác nhận).
-- [ ] `T-G3.5.REQ.05` (1h) — Đặc tả PDF: header logo + đại lý, info KH, info xe, bảng giá, KM, điều khoản BH, chữ ký 2 bên.
+- [x] `T-G3.5.REQ.01` (2h) — Đọc kỹ BRD §5.4 + AC-HD-01..03 + WF-02 (Mục 6 BRD).
+- [x] `T-G3.5.REQ.02` (1h) — Hiểu BR-CALC-01 (tổng tiền HĐ = giá xe + PK − giảm KM), BR-CALC-02 (tính giảm KM 4 loại).
+- [x] `T-G3.5.REQ.03` (1h) — Hiểu **snapshot price** BR-HD-* + BR-PK-07: lưu giá tại thời điểm tạo HĐ, không sync.
+- [x] `T-G3.5.REQ.04` (1h) — Vẽ wizard 4 bước (B1: KH → B2: Xe+PK → B3: KM → B4: Xác nhận).
+- [x] `T-G3.5.REQ.05` (1h) — Đặc tả PDF: header logo + đại lý, info KH, info xe, bảng giá, KM, điều khoản BH, chữ ký 2 bên.
 
 #### DB (0.5 ngày)
 
-- [ ] `T-G3.5.DB.01` (0.5h) — Verify `hop_dong` (snapshot fields), `hop_dong_phu_kien` (snapshot `gia_ban`).
-- [ ] `T-G3.5.DB.02` (1h) — Procedure sinh `ma_hop_dong` định dạng `HD<YYYY>-<NNNN>` (sequential trong năm).
-- [ ] `T-G3.5.DB.03` (0.5h) — Index `hop_dong(ngay_tao, trang_thai, nhan_vien_id, khach_hang_id)`.
+- [x] `T-G3.5.DB.01` (0.5h) — Verify `hop_dong` (snapshot fields), `hop_dong_phu_kien` (snapshot `gia_ban`).
+- [x] `T-G3.5.DB.02` (1h) — Procedure sinh `ma_hop_dong` định dạng `HD<YYYY>-<NNNN>` (sequential trong năm).
+- [x] `T-G3.5.DB.03` (0.5h) — Index `hop_dong(ngay_tao, trang_thai, nhan_vien_id, khach_hang_id)`.
 
 #### BE (4 ngày)
 
