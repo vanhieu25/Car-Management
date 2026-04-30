@@ -156,18 +156,18 @@ Mỗi Sprint **PHẢI** đi qua 6 bước theo đúng thứ tự. Không nhảy 
 
 #### REQ — Yêu cầu (0.5 ngày)
 
-- [ ] `T-G1.1.REQ.01` (1h) — Đọc và xác nhận `PLAN.md`, `BUSINESS_REQUIREMENTS.md`, `TECH_STACK.md` toàn bộ. **Output:** biên bản họp nội bộ.
-- [ ] `T-G1.1.REQ.02` (1h) — Quyết định cấu trúc thư mục dự án (Layered Architecture: `presentation / application / domain / infrastructure`).
-- [ ] `T-G1.1.REQ.03` (1h) — Chốt convention: PEP 8, Black formatter, isort, flake8, pre-commit hooks.
-- [ ] `T-G1.1.REQ.04` (1h) — Chốt Git workflow: GitFlow (`main` / `dev` / `feature/*` / `release/*` / `hotfix/*`).
+- [x] `T-G1.1.REQ.01` (1h) — Đọc và xác nhận `PLAN.md`, `BUSINESS_REQUIREMENTS.md`, `TECH_STACK.md` toàn bộ. **Output:** biên bản họp nội bộ.
+- [x] `T-G1.1.REQ.02` (1h) — Quyết định cấu trúc thư mục dự án (Layered Architecture: `presentation / application / domain / infrastructure`).
+- [x] `T-G1.1.REQ.03` (1h) — Chốt convention: PEP 8, Black formatter, isort, flake8, pre-commit hooks.
+- [x] `T-G1.1.REQ.04` (1h) — Chốt Git workflow: GitFlow (`main` / `dev` / `feature/*` / `release/*` / `hotfix/*`).
 
 #### DB — Cơ sở dữ liệu (N/A bước này)
 
-- [ ] `T-G1.1.DB.01` (0.5h) — Tạo thư mục `data/`, `data/backup/` với `.gitkeep`. Thêm `data/*.db` vào `.gitignore`.
+- [x] `T-G1.1.DB.01` (0.5h) — Tạo thư mục `data/`, `data/backup/` với `.gitkeep`. Thêm `data/*.db` vào `.gitignore`.
 
 #### BE — Backend skeleton (1 ngày)
 
-- [ ] `T-G1.1.BE.01` (1h) — Tạo cấu trúc thư mục:
+- [x] `T-G1.1.BE.01` (1h) — Tạo cấu trúc thư mục:
 
   ```text
   car_management/
@@ -192,35 +192,35 @@ Mỗi Sprint **PHẢI** đi qua 6 bước theo đúng thứ tự. Không nhảy 
   └── README.md
   ```
 
-- [ ] `T-G1.1.BE.02` (0.5h) — `requirements.txt`: `PyQt6==6.6.*`, `bcrypt==4.*`, `Jinja2==3.*`, `WeasyPrint==60.*`, `openpyxl==3.*`.
-- [ ] `T-G1.1.BE.03` (0.5h) — `requirements-dev.txt`: `pytest`, `pytest-qt`, `pytest-cov`, `black`, `isort`, `flake8`, `mypy`, `pre-commit`.
-- [ ] `T-G1.1.BE.04` (1h) — `pyproject.toml`: cấu hình `black`, `isort`, `pytest`, `coverage`.
-- [ ] `T-G1.1.BE.05` (1h) — Cấu hình `logging` (file rotating + console) tại `app/shared/logger.py`.
-- [ ] `T-G1.1.BE.06` (0.5h) — Tạo `app/shared/constants.py`: trạng thái HĐ, vai trò, format ngày/tiền.
-- [ ] `T-G1.1.BE.07` (0.5h) — Tạo file `main.py` rỗng + entry point chạy `QApplication`.
+- [x] `T-G1.1.BE.02` (0.5h) — `requirements.txt`: `PyQt6==6.6.*`, `bcrypt==4.*`, `Jinja2==3.*`, `WeasyPrint==60.*`, `openpyxl==3.*`.
+- [x] `T-G1.1.BE.03` (0.5h) — `requirements-dev.txt`: `pytest`, `pytest-qt`, `pytest-cov`, `black`, `isort`, `flake8`, `mypy`, `pre-commit`.
+- [x] `T-G1.1.BE.04` (1h) — `pyproject.toml`: cấu hình `black`, `isort`, `pytest`, `coverage`.
+- [x] `T-G1.1.BE.05` (1h) — Cấu hình `logging` (file rotating + console) tại `app/shared/logger.py`.
+- [x] `T-G1.1.BE.06` (0.5h) — Tạo `app/shared/constants.py`: trạng thái HĐ, vai trò, format ngày/tiền.
+- [x] `T-G1.1.BE.07` (0.5h) — Tạo file `main.py` rỗng + entry point chạy `QApplication`.
 
 #### UI — Giao diện cơ bản (0.5 ngày)
 
-- [ ] `T-G1.1.UI.01` (1h) — Tạo `app/presentation/themes/apple_light.qss` (style sheet base theo `design/DESIGN-apple.md`).
-- [ ] `T-G1.1.UI.02` (0.5h) — Cấu trúc thư mục `resources/icons/`, `resources/templates/` (Jinja2), `resources/qss/`.
-- [ ] `T-G1.1.UI.03` (0.5h) — Test render được 1 cửa sổ trắng tiêu đề "Car Management" 1280×720.
+- [x] `T-G1.1.UI.01` (1h) — Tạo `app/presentation/themes/apple_light.qss` (style sheet base theo `design/DESIGN-apple.md`).
+- [x] `T-G1.1.UI.02` (0.5h) — Cấu trúc thư mục `resources/icons/`, `resources/templates/` (Jinja2), `resources/qss/`.
+- [x] `T-G1.1.UI.03` (0.5h) — Test render được 1 cửa sổ trắng tiêu đề "Car Management" 1280×720.
 
 #### TEST — Test setup (0.5 ngày)
 
-- [ ] `T-G1.1.TEST.01` (1h) — Cấu hình `pytest.ini` + `conftest.py` (fixture chung: temp DB, app QtBot).
-- [ ] `T-G1.1.TEST.02` (1h) — Viết test mẫu `test_smoke.py` (assert True) — bảo đảm pipeline hoạt động.
-- [ ] `T-G1.1.TEST.03` (0.5h) — Cấu hình `coverage` báo cáo HTML tại `htmlcov/`.
+- [x] `T-G1.1.TEST.01` (1h) — Cấu hình `pytest.ini` + `conftest.py` (fixture chung: temp DB, app QtBot).
+- [x] `T-G1.1.TEST.02` (1h) — Viết test mẫu `test_smoke.py` (assert True) — bảo đảm pipeline hoạt động.
+- [x] `T-G1.1.TEST.03` (0.5h) — Cấu hình `coverage` báo cáo HTML tại `htmlcov/`.
 
 #### GIT — Git workflow setup (1 ngày)
 
-- [ ] `T-G1.1.GIT.01` (1h) `[BLOCKER]` — Tạo repo GitHub `Car-Management`, push branch `main` initial.
-- [ ] `T-G1.1.GIT.02` (0.5h) — Tạo branch `dev` từ `main`, đặt làm default branch.
-- [ ] `T-G1.1.GIT.03` (0.5h) — Cấu hình Branch Protection: `main` & `dev` yêu cầu 1 reviewer + CI pass.
-- [ ] `T-G1.1.GIT.04` (1h) — Cài `pre-commit` hook: `black`, `isort`, `flake8`, `trailing-whitespace`, `end-of-file-fixer`.
-- [ ] `T-G1.1.GIT.05` (1.5h) — `.github/workflows/ci.yml`: chạy `pytest`, `coverage`, `flake8` trên mỗi PR (Python 3.10, 3.11).
-- [ ] `T-G1.1.GIT.06` (0.5h) — Thêm `CODEOWNERS` (TL review HĐ/SEC; mỗi DEV review module phụ trách).
-- [ ] `T-G1.1.GIT.07` (0.5h) — Templates: `PULL_REQUEST_TEMPLATE.md` (checklist DoD), `ISSUE_TEMPLATE/bug.md`, `ISSUE_TEMPLATE/feature.md`.
-- [ ] `T-G1.1.GIT.08` (0.5h) — Tag release `vG1.1`. Cập nhật `README.md`. Mở milestone `Phase G2`.
+- [x] `T-G1.1.GIT.01` (1h) `[BLOCKER]` — Tạo repo GitHub `Car-Management`, push branch `main` initial.
+- [x] `T-G1.1.GIT.02` (0.5h) — Tạo branch `dev` từ `main`, đặt làm default branch.
+- [x] `T-G1.1.GIT.03` (0.5h) — Cấu hình Branch Protection: `main` & `dev` yêu cầu 1 reviewer + CI pass.
+- [x] `T-G1.1.GIT.04` (1h) — Cài `pre-commit` hook: `black`, `isort`, `flake8`, `trailing-whitespace`, `end-of-file-fixer`.
+- [x] `T-G1.1.GIT.05` (1.5h) — `.github/workflows/ci.yml`: chạy `pytest`, `coverage`, `flake8` trên mỗi PR (Python 3.10, 3.11).
+- [x] `T-G1.1.GIT.06` (0.5h) — Thêm `CODEOWNERS` (TL review HĐ/SEC; mỗi DEV review module phụ trách).
+- [x] `T-G1.1.GIT.07` (0.5h) — Templates: `PULL_REQUEST_TEMPLATE.md` (checklist DoD), `ISSUE_TEMPLATE/bug.md`, `ISSUE_TEMPLATE/feature.md`.
+- [x] `T-G1.1.GIT.08` (0.5h) — Tag release `vG1.1`. Cập nhật `README.md`. Mở milestone `Phase G2`.
 
 **Definition of Done (Sprint G1.1):**
 
@@ -243,52 +243,52 @@ Mỗi Sprint **PHẢI** đi qua 6 bước theo đúng thứ tự. Không nhảy 
 
 #### REQ (0.5 ngày)
 
-- [ ] `T-G2.1.REQ.01` (2h) — Đọc kỹ `DATABASE_PLAN.md` mục 4.3, 4.4, 4.5, 4.6 → liệt kê 25 bảng + cột + ràng buộc.
-- [ ] `T-G2.1.REQ.02` (1h) — Đọc `BUSINESS_REQUIREMENTS.md` Mục 4.4 (BR-FLOW) — xác nhận các state transition cần trigger.
-- [ ] `T-G2.1.REQ.03` (1h) — Quyết định **đặt trigger ở DB hay Application Service** (khuyến nghị: Application Service — TRG-01..08).
+- [x] `T-G2.1.REQ.01` (2h) — Đọc kỹ `DATABASE_PLAN.md` mục 4.3, 4.4, 4.5, 4.6 → liệt kê 25 bảng + cột + ràng buộc.
+- [x] `T-G2.1.REQ.02` (1h) — Đọc `BUSINESS_REQUIREMENTS.md` Mục 4.4 (BR-FLOW) — xác nhận các state transition cần trigger.
+- [x] `T-G2.1.REQ.03` (1h) — Quyết định **đặt trigger ở DB hay Application Service** (khuyến nghị: Application Service — TRG-01..08).
 
 #### DB (3 ngày)
 
-- [ ] `T-G2.1.DB.01` (1h) — Tạo `app/infrastructure/database/connection.py`: factory connection, bật `PRAGMA foreign_keys = ON`, `PRAGMA journal_mode = WAL`.
-- [ ] `T-G2.1.DB.02` (1h) — Tạo cấu trúc migration `app/infrastructure/database/migrations/` + `migration_runner.py` (chạy file SQL theo thứ tự version).
-- [ ] `T-G2.1.DB.03` (2h) — Migration `001_create_users_roles.sql`: `vai_tro`, `nhan_vien` (BR-NV-* và BR-SEC-*).
-- [ ] `T-G2.1.DB.04` (2h) — Migration `002_create_xe_khach_hang.sql`: `xe`, `khach_hang` (BR-XE-*, BR-KH-*).
-- [ ] `T-G2.1.DB.05` (3h) — Migration `003_create_hop_dong.sql`: `hop_dong`, `hop_dong_phu_kien` (snapshot giá BR-HD-* và BR-PK-07).
-- [ ] `T-G2.1.DB.06` (2h) — Migration `004_create_phu_kien.sql`: `phu_kien`, `combo_phu_kien`, `combo_chi_tiet`.
-- [ ] `T-G2.1.DB.07` (2h) — Migration `005_create_khuyen_mai.sql`: `khuyen_mai`, `km_pham_vi`.
-- [ ] `T-G2.1.DB.08` (2h) — Migration `006_create_bao_hanh.sql`: `bao_hanh`, `bao_hanh_yeu_cau`.
-- [ ] `T-G2.1.DB.09` (1.5h) — Migration `007_create_hau_mai.sql`: `bao_duong`, `cuu_ho`.
-- [ ] `T-G2.1.DB.10` (2h) — Migration `008_create_ncc_kho.sql`: `nha_cung_cap`, `nhap_kho`, `don_dat_hang`.
-- [ ] `T-G2.1.DB.11` (2h) — Migration `009_create_tra_gop.sql`: `tra_gop`, `tra_gop_lich_su`.
-- [ ] `T-G2.1.DB.12` (1.5h) — Migration `010_create_marketing.sql`: `chien_dich_mk`, `lead`.
-- [ ] `T-G2.1.DB.13` (1h) — Migration `011_create_khieu_nai.sql`: `khieu_nai`.
-- [ ] `T-G2.1.DB.14` (1h) — Migration `012_create_audit_settings.sql`: `audit_log`, `system_settings`.
-- [ ] `T-G2.1.DB.15` (2h) — Migration `013_create_indexes.sql`: tất cả index hiệu năng (mục 4.6 DATABASE_PLAN).
-- [ ] `T-G2.1.DB.16` (3h) — Tạo seed data `app/infrastructure/database/seeds/dev_seed.py` theo Mục 4.7: 3 vai trò, 5 NV, 30 xe, 20 KH, 25 PK, 5 KM, 5 NCC, 15 HĐ.
-- [ ] `T-G2.1.DB.17` (1h) — Insert mặc định `system_settings`: `thoi_han_bh_default = 24`, `muc_toi_thieu_default = 2`, thông tin đại lý.
-- [ ] `T-G2.1.DB.18` (1h) — Script backup tự động `scripts/backup_db.py` (copy daily → `data/backup/YYYY-MM-DD.db`).
+- [x] `T-G2.1.DB.01` (1h) — Tạo `app/infrastructure/database/connection.py`: factory connection, bật `PRAGMA foreign_keys = ON`, `PRAGMA journal_mode = WAL`.
+- [x] `T-G2.1.DB.02` (1h) — Tạo cấu trúc migration `app/infrastructure/database/migrations/` + `migration_runner.py` (chạy file SQL theo thứ tự version).
+- [x] `T-G2.1.DB.03` (2h) — Migration `001_create_users_roles.sql`: `vai_tro`, `nhan_vien` (BR-NV-* và BR-SEC-*).
+- [x] `T-G2.1.DB.04` (2h) — Migration `002_create_xe_khach_hang.sql`: `xe`, `khach_hang` (BR-XE-*, BR-KH-*).
+- [x] `T-G2.1.DB.05` (3h) — Migration `003_create_hop_dong.sql`: `hop_dong`, `hop_dong_phu_kien` (snapshot giá BR-HD-* và BR-PK-07).
+- [x] `T-G2.1.DB.06` (2h) — Migration `004_create_phu_kien.sql`: `phu_kien`, `combo_phu_kien`, `combo_chi_tiet`.
+- [x] `T-G2.1.DB.07` (2h) — Migration `005_create_khuyen_mai.sql`: `khuyen_mai`, `km_pham_vi`.
+- [x] `T-G2.1.DB.08` (2h) — Migration `006_create_bao_hanh.sql`: `bao_hanh`, `bao_hanh_yeu_cau`.
+- [x] `T-G2.1.DB.09` (1.5h) — Migration `007_create_hau_mai.sql`: `bao_duong`, `cuu_ho`.
+- [x] `T-G2.1.DB.10` (2h) — Migration `008_create_ncc_kho.sql`: `nha_cung_cap`, `nhap_kho`, `don_dat_hang`.
+- [x] `T-G2.1.DB.11` (2h) — Migration `009_create_tra_gop.sql`: `tra_gop`, `tra_gop_lich_su`.
+- [x] `T-G2.1.DB.12` (1.5h) — Migration `010_create_marketing.sql`: `chien_dich_mk`, `lead`.
+- [x] `T-G2.1.DB.13` (1h) — Migration `011_create_khieu_nai.sql`: `khieu_nai`.
+- [x] `T-G2.1.DB.14` (1h) — Migration `012_create_audit_settings.sql`: `audit_log`, `system_settings`.
+- [x] `T-G2.1.DB.15` (2h) — Migration `013_create_indexes.sql`: tất cả index hiệu năng (mục 4.6 DATABASE_PLAN).
+- [x] `T-G2.1.DB.16` (3h) — Tạo seed data `app/infrastructure/database/seeds/dev_seed.py` theo Mục 4.7: 3 vai trò, 5 NV, 30 xe, 20 KH, 25 PK, 5 KM, 5 NCC, 15 HĐ.
+- [x] `T-G2.1.DB.17` (1h) — Insert mặc định `system_settings`: `thoi_han_bh_default = 24`, `muc_toi_thieu_default = 2`, thông tin đại lý.
+- [x] `T-G2.1.DB.18` (1h) — Script backup tự động `scripts/backup_db.py` (copy daily → `data/backup/YYYY-MM-DD.db`).
 
 #### BE (2 ngày)
 
-- [ ] `T-G2.1.BE.01` (3h) — Tạo `app/domain/entities/` cho 25 entity (dataclass): `NhanVien`, `Xe`, `KhachHang`, `HopDong`, ...
-- [ ] `T-G2.1.BE.02` (3h) — Base `Repository` interface tại `app/infrastructure/repositories/base_repository.py` (CRUD chuẩn).
-- [ ] `T-G2.1.BE.03` (1h) — Helper `app/shared/db_utils.py`: `row_to_entity`, `entity_to_dict`, transaction context manager.
+- [x] `T-G2.1.BE.01` (3h) — Tạo `app/domain/entities/` cho 25 entity (dataclass): `NhanVien`, `Xe`, `KhachHang`, `HopDong`, ...
+- [x] `T-G2.1.BE.02` (3h) — Base `Repository` interface tại `app/infrastructure/repositories/base_repository.py` (CRUD chuẩn).
+- [x] `T-G2.1.BE.03` (1h) — Helper `app/shared/db_utils.py`: `row_to_entity`, `entity_to_dict`, transaction context manager.
 
 #### UI (N/A — chưa có UI ở sprint này)
 
 #### TEST (1 ngày)
 
-- [ ] `T-G2.1.TEST.01` (2h) — Test migration: chạy 13 file → 25 bảng được tạo, FK & CHECK constraint hoạt động.
-- [ ] `T-G2.1.TEST.02` (2h) — Test seed: insert 100% record không lỗi.
-- [ ] `T-G2.1.TEST.03` (2h) — Test ràng buộc: insert vi phạm CHECK (vd `nam_san_xuat = 1980`) → SQLite raise `IntegrityError`.
-- [ ] `T-G2.1.TEST.04` (1h) — Test FK ON DELETE RESTRICT: xoá `xe` đang có `hop_dong` → fail.
+- [x] `T-G2.1.TEST.01` (2h) — Test migration: chạy 13 file → 25 bảng được tạo, FK & CHECK constraint hoạt động.
+- [x] `T-G2.1.TEST.02` (2h) — Test seed: insert 100% record không lỗi.
+- [x] `T-G2.1.TEST.03` (2h) — Test ràng buộc: insert vi phạm CHECK (vd `nam_san_xuat = 1980`) → SQLite raise `IntegrityError`.
+- [x] `T-G2.1.TEST.04` (1h) — Test FK ON DELETE RESTRICT: xoá `xe` đang có `hop_dong` → fail.
 
 #### GIT (0.5 ngày)
 
-- [ ] `T-G2.1.GIT.01` (0.5h) — Branch `feature/G2.1-database-schema`.
-- [ ] `T-G2.1.GIT.02` (0.5h) — Commit chuẩn Conventional Commits: `feat(db): create migration 001 users and roles`.
-- [ ] `T-G2.1.GIT.03` (1h) — PR vào `dev` + reviewer TL + DEV-2 (test) → merge.
-- [ ] `T-G2.1.GIT.04` (0.5h) — Tag `vG2.1`.
+- [x] `T-G2.1.GIT.01` (0.5h) — Branch `feature/G2.1-database-schema`.
+- [x] `T-G2.1.GIT.02` (0.5h) — Commit chuẩn Conventional Commits: `feat(db): create migration 001 users and roles`.
+- [x] `T-G2.1.GIT.03` (1h) — PR vào `dev` + reviewer TL + DEV-2 (test) → merge.
+- [x] `T-G2.1.GIT.04` (0.5h) — Tag `vG2.1`.
 
 ---
 
@@ -337,9 +337,9 @@ Mỗi Sprint **PHẢI** đi qua 6 bước theo đúng thứ tự. Không nhảy 
 
 #### GIT (0.5 ngày)
 
-- [ ] `T-G2.2.GIT.01` (0.5h) — Branch `feature/G2.2-authentication`.
-- [ ] `T-G2.2.GIT.02` (0.5h) — PR + review (TL bắt buộc — module SEC).
-- [ ] `T-G2.2.GIT.03` (0.5h) — Merge → tag `vG2.2`.
+- [x] `T-G2.2.GIT.01` (0.5h) — Branch `feature/G2.2-authentication`.
+- [x] `T-G2.2.GIT.02` (0.5h) — PR + review (TL bắt buộc — module SEC).
+- [x] `T-G2.2.GIT.03` (0.5h) — Merge → tag `vG2.2`.
 
 ---
 
@@ -385,9 +385,9 @@ Mỗi Sprint **PHẢI** đi qua 6 bước theo đúng thứ tự. Không nhảy 
 
 #### GIT (0.5 ngày)
 
-- [ ] `T-G2.3.GIT.01` (0.5h) — Branch `feature/G2.3-main-layout`.
-- [ ] `T-G2.3.GIT.02` (1h) — PR + screenshot UI → review TL + DEV-2.
-- [ ] `T-G2.3.GIT.03` (0.5h) — Merge → tag `vG2.3`.
+- [x] `T-G2.3.GIT.01` (0.5h) — Branch `feature/G2.3-main-layout`.
+- [x] `T-G2.3.GIT.02` (1h) — PR + screenshot UI → review TL + DEV-2.
+- [x] `T-G2.3.GIT.03` (0.5h) — Merge → tag `vG2.3`.
 
 ---
 
@@ -534,11 +534,11 @@ Mỗi Sprint **PHẢI** đi qua 6 bước theo đúng thứ tự. Không nhảy 
 
 #### TEST (1 ngày)
 
-- [ ] `T-G3.2.TEST.01` (2h) — Unit test validate email/SĐT (BR-DATA-04, 05).
-- [ ] `T-G3.2.TEST.02` (1h) — Unit test SĐT trùng → raise `DuplicatePhoneError`.
-- [ ] `T-G3.2.TEST.03` (2h) — Unit test `update_classification`: 4 case (499/500tr/1.5 tỷ/2 tỷ).
-- [ ] `T-G3.2.TEST.04` (1h) — Integration: thêm KH qua UI → list & detail đúng.
-- [ ] `T-G3.2.TEST.05` (1h) — UAT theo AC-KH-01, 02.
+- [x] `T-G3.2.TEST.01` (2h) — Unit test validate email/SĐT (BR-DATA-04, 05).
+- [x] `T-G3.2.TEST.02` (1h) — Unit test SĐT trùng → raise `DuplicatePhoneError`.
+- [x] `T-G3.2.TEST.03` (2h) — Unit test `update_classification`: 4 case (499/500tr/1.5 tỷ/2 tỷ).
+- [x] `T-G3.2.TEST.04` (1h) — Integration: thêm KH qua UI → list & detail đúng.
+- [x] `T-G3.2.TEST.05` (1h) — UAT theo AC-KH-01, 02.
 
 #### GIT (0.5 ngày)
 
