@@ -566,20 +566,20 @@ Mỗi Sprint **PHẢI** đi qua 6 bước theo đúng thứ tự. Không nhảy 
 
 #### BE (1.5 ngày)
 
-- [ ] `T-G3.3.BE.01` (2h) — `NhanVienService.create(data)` — validate, sinh password random 12 ký tự, hash bcrypt, set `must_change_password=True`.
-- [ ] `T-G3.3.BE.02` (1h) — `NhanVienService.lock(id)` — không cho khoá admin gốc (`username == 'admin'`) — BR-NV-07.
-- [ ] `T-G3.3.BE.03` (1h) — `NhanVienService.unlock(id)`.
-- [ ] `T-G3.3.BE.04` (3h) — `NhanVienService.calc_kpi(nv_id, from_date, to_date)` — BR-CALC-05.
-- [ ] `T-G3.3.BE.05` (1h) — `NhanVienService.update_self(data)` — A-02/A-03 chỉ sửa được hồ sơ cá nhân (UC-NV-03).
-- [ ] `T-G3.3.BE.06` (1h) — Audit decorator + permission check.
+- [x] `T-G3.3.BE.01` (2h) — `NhanVienService.create(data)` — validate, sinh password random 12 ký tự, hash bcrypt, set `must_change_password=True`.
+- [x] `T-G3.3.BE.02` (1h) — `NhanVienService.lock(id)` — không cho khoá admin gốc (`username == 'admin'`) — BR-NV-07.
+- [x] `T-G3.3.BE.03` (1h) — `NhanVienService.unlock(id)`.
+- [x] `T-G3.3.BE.04` (3h) — `NhanVienService.calc_kpi(nv_id, from_date, to_date)` — BR-CALC-05.
+- [x] `T-G3.3.BE.05` (1h) — `NhanVienService.update_self(data)` — A-02/A-03 chỉ sửa được hồ sơ cá nhân (UC-NV-03).
+- [x] `T-G3.3.BE.06` (1h) — Audit decorator + permission check.
 
 #### UI (2 ngày)
 
-- [ ] `T-G3.3.UI.01` (3h) — `S-NV-01` Employee List (chỉ A-01): bảng đầy đủ + nút Thêm/Khoá/Mở khoá.
-- [ ] `T-G3.3.UI.02` (3h) — `S-NV-02` Employee Form: hiển thị mật khẩu sinh ngẫu nhiên 1 lần (copy to clipboard), cảnh báo "Hãy lưu lại mật khẩu này".
-- [ ] `T-G3.3.UI.03` (3h) — `S-NV-03` My Profile (A-02/A-03): hiển thị thông tin cá nhân + KPI tháng + đổi mật khẩu.
-- [ ] `T-G3.3.UI.04` (1h) — Confirm dialog khoá NV + ghi lý do.
-- [ ] `T-G3.3.UI.05` (1h) — Hiển thị KPI dạng KpiCard: số xe bán / doanh thu / tỷ lệ chốt.
+- [x] `T-G3.3.UI.01` (3h) — `S-NV-01` Employee List (chỉ A-01): bảng đầy đủ + nút Thêm/Khoá/Mở khoá.
+- [x] `T-G3.3.UI.02` (3h) — `S-NV-02` Employee Form: hiển thị mật khẩu sinh ngẫu nhiên 1 lần (copy to clipboard), cảnh báo "Hãy lưu lại mật khẩu này".
+- [x] `T-G3.3.UI.03` (3h) — `S-NV-03` My Profile (A-02/A-03): hiển thị thông tin cá nhân + KPI tháng + đổi mật khẩu.
+- [x] `T-G3.3.UI.04` (1h) — Confirm dialog khoá NV + ghi lý do.
+- [x] `T-G3.3.UI.05` (1h) — Hiển thị KPI dạng KpiCard: số xe bán / doanh thu / tỷ lệ chốt.
 
 #### TEST (1 ngày)
 
