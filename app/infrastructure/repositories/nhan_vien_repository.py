@@ -190,3 +190,44 @@ class NhanVienRepository(BaseRepository[NhanVien]):
             (1 if value else 0, datetime.now().isoformat(), nhan_vien_id)
         )
         self.conn.commit()
+
+    def get_kpi_by_month(self, nhan_vien_id: int, year: int, month: int) -> dict:
+        """Get employee KPI for a specific month.
+        
+        BR-CALC-05: Số HĐ giao thành công, doanh thu, tỷ lệ chốt
+        - so_hop_dong: count of contracts with trang_thai='da_giao_xe'
+        - doanh_thu: sum of tong_tien for those contracts
+        - ti_le_chot: not available (no lead tracking in current schema)
+        
+        Args:
+            nhan_vien_id: ID of the employee.
+            year: Year to query.
+            month: Month to query (1-12).
+            
+        Returns:
+            Dict with keys: so_hop_dong, doanh_thu, ti_le_chot (None).
+        """
+        # Build date range for the month
+        start_date = f"{year:04d}-{month:02d}-01"
+        if month == 12:
+            end_date = f"{year + 1:04d}-01-01"
+        else:
+            end_date = f"{year:04d}-{month + 1:02d}-01"
+
+        cursor = self.conn.execute(
+            """SELECT 
+                   COUNT(*) as so_hop_dong,
+                   COALESCE(SUM(tong_tien), 0) as doanh_thu
+               FROM hop_dong 
+               WHERE nhan_vien_id = ? 
+                 AND trang_thai = 'da_giao_xe'
+                 AND ngay_giao_xe >= ? 
+                 AND ngay_giao_xe < ?""",
+            (nhan_vien_id, start_date, end_date)
+        )
+        row = cursor.fetchone()
+        return {
+            'so_hop_dong': row[0] if row else 0,
+            'doanh_thu': row[1] if row else 0,
+            'ti_le_chot': None  # No lead tracking in current schema
+        }

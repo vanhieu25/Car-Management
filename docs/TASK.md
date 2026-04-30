@@ -555,14 +555,14 @@ Mỗi Sprint **PHẢI** đi qua 6 bước theo đúng thứ tự. Không nhảy 
 
 #### REQ (0.25 ngày)
 
-- [ ] `T-G3.3.REQ.01` (1h) — Đọc BRD §5.3 + AC-NV-*.
-- [ ] `T-G3.3.REQ.02` (0.5h) — Hiểu BR-NV-07 (không khoá admin gốc) + BR-NV-08 (mật khẩu random 12 ký tự, force change).
-- [ ] `T-G3.3.REQ.03` (0.5h) — KPI cá nhân (BR-CALC-05): số HĐ giao thành công, doanh thu, tỷ lệ chốt.
+- [x] `T-G3.3.REQ.01` (1h) — Đọc BRD §5.3 + AC-NV-*.
+- [x] `T-G3.3.REQ.02` (0.5h) — Hiểu BR-NV-07 (không khoá admin gốc) + BR-NV-08 (mật khẩu random 12 ký tự, force change).
+- [x] `T-G3.3.REQ.03` (0.5h) — KPI cá nhân (BR-CALC-05): số HĐ giao thành công, doanh thu, tỷ lệ chốt.
 
 #### DB (0.25 ngày)
 
-- [ ] `T-G3.3.DB.01` (0.5h) — Verify cột `must_change_password` trong `nhan_vien`.
-- [ ] `T-G3.3.DB.02` (0.5h) — Bổ sung view/query KPI nhân viên theo tháng.
+- [x] `T-G3.3.DB.01` (0.5h) — Verify cột `must_change_password` trong `nhan_vien`.
+- [x] `T-G3.3.DB.02` (0.5h) — Bổ sung view/query KPI nhân viên theo tháng.
 
 #### BE (1.5 ngày)
 
