@@ -311,29 +311,29 @@ Mỗi Sprint **PHẢI** đi qua 6 bước theo đúng thứ tự. Không nhảy 
 
 #### BE (3 ngày)
 
-- [ ] `T-G2.2.BE.01` (2h) — `app/infrastructure/security/password_hasher.py`: bcrypt cost ≥ 12 (BR-SEC-04).
-- [ ] `T-G2.2.BE.02` (2h) — `app/infrastructure/repositories/nhan_vien_repository.py`: tìm theo username, cập nhật `lan_dang_nhap_sai`/`khoa_den`.
-- [ ] `T-G2.2.BE.03` (3h) `[BLOCKER]` — `app/application/services/auth_service.py`: `login(username, password)` → check khoá → so sánh hash → reset hoặc tăng counter (BR-SEC-05).
-- [ ] `T-G2.2.BE.04` (2h) — `change_password(user_id, old, new)` — kiểm tra old, validate độ mạnh ≥ 8 ký tự (BR-SEC-02), hash + lưu.
-- [ ] `T-G2.2.BE.05` (2h) — `app/application/services/permission_service.py`: load ma trận quyền theo role (BRD §3.4) → `has_permission(role, module, action)`.
-- [ ] `T-G2.2.BE.06` (2h) — `app/application/services/session.py`: lưu user hiện tại (singleton), idle timeout 30 phút (BR-TIME-07).
-- [ ] `T-G2.2.BE.07` (1h) — Decorator `@require_permission('module', 'action')` cho service methods.
+- [x] `T-G2.2.BE.01` (2h) — `app/infrastructure/security/password_hasher.py`: bcrypt cost ≥ 12 (BR-SEC-04).
+- [x] `T-G2.2.BE.02` (2h) — `app/infrastructure/repositories/nhan_vien_repository.py`: tìm theo username, cập nhật `lan_dang_nhap_sai`/`khoa_den`.
+- [x] `T-G2.2.BE.03` (3h) `[BLOCKER]` — `app/application/services/auth_service.py`: `login(username, password)` → check khoá → so sánh hash → reset hoặc tăng counter (BR-SEC-05).
+- [x] `T-G2.2.BE.04` (2h) — `change_password(user_id, old, new)` — kiểm tra old, validate độ mạnh ≥ 8 ký tự (BR-SEC-02), hash + lưu.
+- [x] `T-G2.2.BE.05` (2h) — `app/application/services/permission_service.py`: load ma trận quyền theo role (BRD §3.4) → `has_permission(role, module, action)`.
+- [x] `T-G2.2.BE.06` (2h) — `app/application/services/session.py`: lưu user hiện tại (singleton), idle timeout 30 phút (BR-TIME-07).
+- [x] `T-G2.2.BE.07` (1h) — Decorator `@require_permission('module', 'action')` cho service methods.
 
 #### UI (2 ngày)
 
-- [ ] `T-G2.2.UI.01` (3h) — `S-AUTH-01` Login window: logo + username + password + nút "Đăng nhập" (PrimaryButton pill); thông báo lỗi inline.
-- [ ] `T-G2.2.UI.02` (2h) — Hiển thị thông báo khoá: "Tài khoản bị khoá đến HH:mm" khi `khoa_den > now()`.
-- [ ] `T-G2.2.UI.03` (3h) — `S-AUTH-02` Change password dialog: 3 ô (cũ/mới/xác nhận) + indicator độ mạnh.
-- [ ] `T-G2.2.UI.04` (2h) — Force change password lần đầu khi flag `must_change_password = True` (BR-NV-08).
+- [x] `T-G2.2.UI.01` (3h) — `S-AUTH-01` Login window: logo + username + password + nút "Đăng nhập" (PrimaryButton pill); thông báo lỗi inline.
+- [x] `T-G2.2.UI.02` (2h) — Hiển thị thông báo khoá: "Tài khoản bị khoá đến HH:mm" khi `khoa_den > now()`.
+- [x] `T-G2.2.UI.03` (3h) — `S-AUTH-02` Change password dialog: 3 ô (cũ/mới/xác nhận) + indicator độ mạnh.
+- [x] `T-G2.2.UI.04` (2h) — Force change password lần đầu khi flag `must_change_password = True` (BR-NV-08).
 
 #### TEST (1.5 ngày)
 
-- [ ] `T-G2.2.TEST.01` (2h) — Unit test `auth_service.login`: success / sai password / bị khoá / hết khoá → AC-SEC-01.
-- [ ] `T-G2.2.TEST.02` (1h) — Unit test khoá sau 5 lần sai (AC-SEC-02).
-- [ ] `T-G2.2.TEST.03` (1h) — Unit test `change_password`: validate độ dài ≥ 8 (AC-SEC-03).
-- [ ] `T-G2.2.TEST.04` (2h) — Unit test `permission_service.has_permission` với ma trận quyền.
-- [ ] `T-G2.2.TEST.05` (2h) — Integration test `pytest-qt`: gõ login UI → service → DB → đóng dialog.
-- [ ] `T-G2.2.TEST.06` (1h) — Manual UAT: login admin, sales, kỹ thuật → đúng quyền.
+- [x] `T-G2.2.TEST.01` (2h) — Unit test `auth_service.login`: success / sai password / bị khoá / hết khoá → AC-SEC-01.
+- [x] `T-G2.2.TEST.02` (1h) — Unit test khoá sau 5 lần sai (AC-SEC-02).
+- [x] `T-G2.2.TEST.03` (1h) — Unit test `change_password`: validate độ dài ≥ 8 (AC-SEC-03).
+- [x] `T-G2.2.TEST.04` (2h) — Unit test `permission_service.has_permission` với ma trận quyền.
+- [x] `T-G2.2.TEST.05` (2h) — Integration test `pytest-qt`: gõ login UI → service → DB → đóng dialog.
+- [x] `T-G2.2.TEST.06` (1h) — Manual UAT: login admin, sales, kỹ thuật → đúng quyền.
 
 #### GIT (0.5 ngày)
 
