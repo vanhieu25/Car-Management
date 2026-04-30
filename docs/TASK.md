@@ -731,13 +731,13 @@ Mỗi Sprint **PHẢI** đi qua 6 bước theo đúng thứ tự. Không nhảy 
 
 #### REQ (0.25 ngày)
 
-- [ ] `T-G4.1.REQ.01` (1h) — Đọc BRD §5.6 + AC-PK-*.
-- [ ] `T-G4.1.REQ.02` (0.5h) — Hiểu BR-CALC-07 (giá combo = `sum(gia_pk) × he_so_giam`).
+- [x] `T-G4.1.REQ.01` (1h) — Đọc BRD §5.6 + AC-PK-*.
+- [x] `T-G4.1.REQ.02` (0.5h) — Hiểu BR-CALC-07 (giá combo = `sum(gia_pk) × he_so_giam`).
 
 #### DB (0.25 ngày)
 
-- [ ] `T-G4.1.DB.01` (0.5h) — Verify `phu_kien`, `combo_phu_kien`, `combo_chi_tiet`.
-- [ ] `T-G4.1.DB.02` (0.5h) — Seed 25 PK đa dạng + 5 combo mẫu.
+- [x] `T-G4.1.DB.01` (0.5h) — Verify `phu_kien`, `combo_phu_kien`, `combo_chi_tiet`.
+- [x] `T-G4.1.DB.02` (0.5h) — Seed 25 PK đa dạng + 5 combo mẫu.
 
 #### BE (1.5 ngày)
 

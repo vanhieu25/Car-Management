@@ -59,6 +59,9 @@ def seed_all(db_path: str = "data/car_management.db"):
     print("Seeding phu_kien...")
     seed_phu_kien(cursor)
 
+    print("Seeding combo_phu_kien...")
+    seed_combo_sample(conn)
+
     print("Seeding khuyen_mai...")
     seed_khuyen_mai(cursor)
 
@@ -393,6 +396,103 @@ def seed_hop_dong(cursor):
                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)""",
             (ma_hd, kh_id, xe_id, nv_id, km_id, gia_xe, tong_gia_pk, tien_giam, tong_tien, status, ngay_tao, ngay_thanh_toan, ngay_giao, now_ts),
         )
+
+
+def seed_combo_sample(conn):
+    """Seed combo_phu_kien and combo_chi_tiet tables (5 combos).
+
+    Each combo has 2-4 PK with varied he_so_giam.
+    Per BR-PK-04: Combo must have >= 2 PK.
+    Per BR-CALC-07: gia_combo = SUM(gia_pk * so_luong) × he_so_giam.
+    """
+    cursor = conn.cursor()
+
+    # Get all PK IDs by category for building combos
+    cursor.execute("SELECT id, ma_pk, gia_ban, phan_loai FROM phu_kien ORDER BY phan_loai, id")
+    all_pk = cursor.fetchall()
+
+    if len(all_pk) < 5:
+        print("  [seed_combo_sample] WARNING: not enough PK records, skipping")
+        return
+
+    # Group PK by category
+    pk_by_cat = {}
+    for pk in all_pk:
+        cat = pk[3]
+        if cat not in pk_by_cat:
+            pk_by_cat[cat] = []
+        pk_by_cat[cat].append(pk)
+
+    now = _now()
+
+    # Define 5 combos with varied he_so_giam
+    combos = [
+        {
+            "ten_combo": "Combo Tiết Kiệm",
+            "he_so_giam": 0.90,
+            "mo_ta": "Combo cơ bản cho người mới — giảm 10%",
+            "pk_count_range": (2, 3),
+        },
+        {
+            "ten_combo": "Combo Tiêu Chuẩn",
+            "he_so_giam": 0.85,
+            "mo_ta": "Combo phổ biến — giảm 15%",
+            "pk_count_range": (2, 3),
+        },
+        {
+            "ten_combo": "Combo Cao Cấp",
+            "he_so_giam": 0.80,
+            "mo_ta": "Combo đầy đủ tiện nghi — giảm 20%",
+            "pk_count_range": (3, 4),
+        },
+        {
+            "ten_combo": "Combo Đặc Biệt",
+            "he_so_giam": 0.75,
+            "mo_ta": "Combo ưu đãi lớn — giảm 25%",
+            "pk_count_range": (3, 4),
+        },
+        {
+            "ten_combo": "Combo VIP",
+            "he_so_giam": 0.70,
+            "mo_ta": "Combo tối ưu nhất — giảm 30%",
+            "pk_count_range": (4, 4),
+        },
+    ]
+
+
+    # Flatten all PKs into a list for combo building (prioritize different categories)
+    all_pk_ids = [pk[0] for pk in all_pk]
+
+    for combo in combos:
+        min_pk, max_pk = combo["pk_count_range"]
+        num_items = random.randint(min_pk, max_pk)
+
+        # Pick random PKs (ensure we don't pick more than available)
+        if num_items > len(all_pk_ids):
+            num_items = len(all_pk_ids)
+
+        selected_ids = random.sample(all_pk_ids, num_items)
+
+        # Insert combo
+        cursor.execute(
+            """"INSERT OR IGNORE INTO combo_phu_kien
+               (ten_combo, he_so_giam, mo_ta, created_at)
+               VALUES (?, ?, ?, ?)""",
+            (combo["ten_combo"], combo["he_so_giam"], combo["mo_ta"], now),
+        )
+        combo_id = cursor.lastrowid
+
+        # Insert combo items (each combo_chi_tiet with so_luong=1)
+        for pk_id in selected_ids:
+            so_luong = random.randint(1, 2)
+            cursor.execute(
+                """INSERT OR IGNORE INTO combo_chi_tiet
+                   (combo_id, phu_kien_id, so_luong)
+                   VALUES (?, ?, ?)""",
+                (combo_id, pk_id, so_luong),
+            )
+
+    print(f"  Seeded {len(combos)} combo records (2-4 PK each)")
 
 
 if __name__ == "__main__":
