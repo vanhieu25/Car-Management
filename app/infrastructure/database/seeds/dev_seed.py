@@ -65,6 +65,9 @@ def seed_all(db_path: str = "data/car_management.db"):
     print("Seeding nha_cung_cap...")
     seed_nha_cung_cap(cursor)
 
+    print("Seeding nhap_kho (sample)...")
+    seed_nhap_kho_sample(conn, ncc_count=3, items_per_import=2)
+
     print("Seeding hop_dong...")
     seed_hop_dong(cursor)
 
@@ -276,6 +279,86 @@ def seed_nha_cung_cap(cursor):
            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)""",
         records,
     )
+
+
+def seed_nhap_kho_sample(conn, ncc_count=3, items_per_import=2):
+    """Seed nhap_kho and chi_tiet_nhap_kho tables with sample data.
+
+    Creates 10 nhap_kho records with varied dates over the past 60 days.
+    Each record has 1-3 chi_tiet_nhap_kho items (mix of xe and phu_kien).
+    Uses existing nha_cung_cap records (or creates minimal ones if none exist).
+    Uses nhan_vien_id=1 (admin) as creator.
+    """
+    cursor = conn.cursor()
+
+    # Ensure we have at least ncc_count nha_cung_cap records
+    cursor.execute("SELECT id FROM nha_cung_cap LIMIT ?", (ncc_count,))
+    existing_ncc = [row[0] for row in cursor.fetchall()]
+
+    if len(existing_ncc) < ncc_count:
+        # Create minimal additional nha_cung_cap records
+        needed = ncc_count - len(existing_ncc)
+        now = _now()
+        for i in range(needed):
+            ma_ncc = f"NCCSEED{i+1:03d}"
+            cursor.execute(
+                """INSERT OR IGNORE INTO nha_cung_cap
+                   (ma_ncc, ten_ncc, dia_chi, so_dien_thoai, email, nguoi_lien_he, created_at)
+                   VALUES (?, ?, ?, ?, ?, ?, ?)""",
+                (ma_ncc, f"NCC Seed {i+1}", "TP. HCM", f"090000000{i}", f"seed{i}@ncc.com", "NCC Seed", now),
+            )
+        cursor.execute("SELECT id FROM nha_cung_cap LIMIT ?", (ncc_count,))
+        existing_ncc = [row[0] for row in cursor.fetchall()]
+
+    # Get existing xe and phu_kien IDs for reference
+    cursor.execute("SELECT id FROM xe LIMIT 30")
+    xe_ids = [row[0] for row in cursor.fetchall()]
+    cursor.execute("SELECT id FROM phu_kien LIMIT 25")
+    pk_ids = [row[0] for row in cursor.fetchall()]
+
+    if not xe_ids or not pk_ids:
+        print("  [seed_nhap_kho_sample] WARNING: xe or phu_kien table empty, skipping seed")
+        return
+
+    # Create 10 nhap_kho records with dates spread over past 60 days
+    for i in range(10):
+        ncc_id = random.choice(existing_ncc)
+        # Spread dates: first record ~60 days ago, last ~1 day ago
+        days_ago = random.randint(1, 60)
+        ngay_nhap = _date_str(-days_ago)
+        ghi_chu = f"Nhập kho mẫu lần {i+1}"
+
+        cursor.execute(
+            """INSERT INTO nhap_kho
+               (nha_cung_cap_id, nhan_vien_id, ngay_nhap, ghi_chu, created_at, created_by)
+               VALUES (?, ?, ?, ?, ?, ?)""",
+            (ncc_id, 1, ngay_nhap, ghi_chu, _now(), 1),
+        )
+        nhap_kho_id = cursor.lastrowid
+
+        # Add 1-3 chi_tiet_nhap_kho items per import
+        num_items = random.randint(1, 3)
+        for _ in range(num_items):
+            # Mix of xe and phu_kien
+            if random.random() < 0.6 and xe_ids:  # 60% xe
+                item_id = random.choice(xe_ids)
+                loai_item = "xe"
+                gia_nhap = random.randint(400_000_000, 1_500_000_000)
+                so_luong = random.randint(1, 5)
+            else:  # 40% phu_kien
+                item_id = random.choice(pk_ids)
+                loai_item = "phu_kien"
+                gia_nhap = random.randint(200_000, 5_000_000)
+                so_luong = random.randint(5, 30)
+
+            cursor.execute(
+                """INSERT INTO chi_tiet_nhap_kho
+                   (nhap_kho_id, loai_item, item_id, so_luong, gia_nhap, created_at)
+                   VALUES (?, ?, ?, ?, ?, ?)""",
+                (nhap_kho_id, loai_item, item_id, so_luong, gia_nhap, _now()),
+            )
+
+    print(f"  Seeded 10 nhap_kho records (~{ncc_count} NCCs, {items_per_import} items avg)")
 
 
 def seed_hop_dong(cursor):

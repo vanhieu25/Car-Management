@@ -604,13 +604,13 @@ Mỗi Sprint **PHẢI** đi qua 6 bước theo đúng thứ tự. Không nhảy 
 
 #### REQ (0.25 ngày)
 
-- [ ] `T-G3.4.REQ.01` (1h) — Đọc BRD §5.5 + AC-KHO-01.
-- [ ] `T-G3.4.REQ.02` (0.5h) — Hiểu BR-KHO-02 (cảnh báo `≤ muc_toi_thieu`), BR-KHO-03 (auto giảm khi HĐ thanh toán), BR-KHO-06 (giá trị tồn).
+- [x] `T-G3.4.REQ.01` (1h) — Đọc BRD §5.5 + AC-KHO-01.
+- [x] `T-G3.4.REQ.02` (0.5h) — Hiểu BR-KHO-02 (cảnh báo `≤ muc_toi_thieu`), BR-KHO-03 (auto giảm khi HĐ thanh toán), BR-KHO-06 (giá trị tồn).
 
 #### DB (0.25 ngày)
 
-- [ ] `T-G3.4.DB.01` (0.5h) — Verify `nhap_kho` schema; thêm index `xe_id`, `ngay_nhap`.
-- [ ] `T-G3.4.DB.02` (0.5h) — Seed 10 record `nhap_kho` mẫu.
+- [x] `T-G3.4.DB.01` (0.5h) — Verify `nhap_kho` schema; thêm index `xe_id`, `ngay_nhap`.
+- [x] `T-G3.4.DB.02` (0.5h) — Seed 10 record `nhap_kho` mẫu.
 
 #### BE (1.5 ngày)
 
