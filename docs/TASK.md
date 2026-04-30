@@ -824,14 +824,14 @@ Mỗi Sprint **PHẢI** đi qua 6 bước theo đúng thứ tự. Không nhảy 
 
 #### REQ (0.5 ngày)
 
-- [ ] `T-G4.3.REQ.01` (1h) — Đọc BRD §5.8 + AC-BH-01, 02 + WF-04.
-- [ ] `T-G4.3.REQ.02` (1h) — Hiểu BR-BH-01 (mỗi HĐ → 1 BH), BR-BH-02 (`ngay_ket_thuc = ngay_giao_xe + thoi_han_bh`).
-- [ ] `T-G4.3.REQ.03` (0.5h) — Hiểu BR-BH-04 (miễn phí lỗi NSX, tính phí lỗi do KH).
+- [x] `T-G4.3.REQ.01` (1h) — Đọc BRD §5.8 + AC-BH-01, 02 + WF-04.
+- [x] `T-G4.3.REQ.02` (1h) — Hiểu BR-BH-01 (mỗi HĐ → 1 BH), BR-BH-02 (`ngay_ket_thuc = ngay_giao_xe + thoi_han_bh`).
+- [x] `T-G4.3.REQ.03` (0.5h) — Hiểu BR-BH-04 (miễn phí lỗi NSX, tính phí lỗi do KH).
 
 #### DB (0.25 ngày)
 
-- [ ] `T-G4.3.DB.01` (0.5h) — Verify `bao_hanh` (UNIQUE `hop_dong_id`), `bao_hanh_yeu_cau`.
-- [ ] `T-G4.3.DB.02` (0.5h) — Index `bao_hanh.ngay_ket_thuc` (cảnh báo BR-BH-03 30 ngày).
+- [x] `T-G4.3.DB.01` (0.5h) — Verify `bao_hanh` (UNIQUE `hop_dong_id`), `bao_hanh_yeu_cau`.
+- [x] `T-G4.3.DB.02` (0.5h) — Index `bao_hanh.ngay_ket_thuc` (cảnh báo BR-BH-03 30 ngày).
 
 #### BE (2 ngày)
 
