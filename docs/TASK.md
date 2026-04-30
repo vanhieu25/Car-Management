@@ -776,14 +776,14 @@ Mỗi Sprint **PHẢI** đi qua 6 bước theo đúng thứ tự. Không nhảy 
 
 #### REQ (0.5 ngày)
 
-- [ ] `T-G4.2.REQ.01` (1h) — Đọc BRD §5.7 + AC-KM-*.
-- [ ] `T-G4.2.REQ.02` (1h) — Hiểu 4 loại KM (BR-KM-03): `giam_tien_mat`, `tang_phu_kien`, `giam_lai_suat`, `combo`.
-- [ ] `T-G4.2.REQ.03` (1h) — Hiểu BR-KM-04 (phạm vi áp dụng: hãng/dòng/xe cụ thể/xe tồn lâu) + BR-KM-08 (auto end khi `den_ngay < today`).
+- [x] `T-G4.2.REQ.01` (1h) — Đọc BRD §5.7 + AC-KM-*. ✅ Đã đọc: BR-KM-01..10, UC-KM-01..05, AC-KM-01..02. Key rules: KM valid when `tu_ngay ≤ today ≤ den_ngay` + `trang_thai=dang_chay`; max 1 KM/HĐ; auto-suggest best KM; auto-expire when `den_ngay < today` → `ket_thuc`; paused KM hidden from dropdown but kept for applied HDs.
+- [x] `T-G4.2.REQ.02` (1h) — Hiểu 4 loại KM (BR-KM-03): `giam_tien_mat`, `tang_phu_kien`, `giam_lai_suat`, `combo`. ✅ Note: `kieu_gia_tri` là 'tien' hoặc 'phan_tram'. `giam_tien_mat` dùng `kieu_gia_tri='tien'`, `giam_phan_tram` dùng `kieu_gia_tri='phan_tram'`. Combo reference existing combo PK.
+- [x] `T-G4.2.REQ.03` (1h) — Hiểu BR-KM-04 (phạm vi áp dụng: hãng/dòng/xe cụ thể/xe tồn lâu) + BR-KM-08 (auto end khi `den_ngay < today`). ✅ Phạm vi via `km_pham_vi` table: `loai_ap_dung` = 'all'|'hang'|'dong_xe'|'xe'; `gia_tri_ap_dung` = JSON/value.
 
 #### DB (0.5 ngày)
 
-- [ ] `T-G4.2.DB.01` (0.5h) — Verify `khuyen_mai`, `km_pham_vi`.
-- [ ] `T-G4.2.DB.02` (1h) — Seed 5 KM mỗi loại 1 chương trình.
+- [x] `T-G4.2.DB.01` (0.5h) — Verify `khuyen_mai`, `km_pham_vi`. ✅ Schema verified: `khuyen_mai` has id, ten_km, mo_ta, loai_km, gia_tri, kieu_gia_tri, tu_ngay, den_ngay, trang_thai, so_luong_cho_phep, so_luong_da_su_dung, created_at, updated_at, created_by. `km_pham_vi` has id, khuyen_mai_id, loai_ap_dung, gia_tri_ap_dung, created_at. Note: migration uses `loai_ap_dung` and `gia_tri_ap_dung` (not `kieu_pham_vi`/`gia_tri` as described in task). Schema aligns with BR-KM-04.
+- [x] `T-G4.2.DB.02` (1h) — Seed 5 KM mỗi loại 1 chương trình. ✅ Added `seed_khuyen_mai_sample()` function with 5 KMs: (1) `giam_tien_mat` Giảm 10 triệu cho Toyota (hang), (2) `giam_phan_tram` Giảm 8% cho dòng Honda (dong_xe), (3) `tang_phu_kien` Tặng GPS cho xe tồn lâu > 90 ngày, (4) `giam_lai_suat` Giảm 1.5% lãi suất Honda (dong_xe), (5) `combo` Combo phụ kiện cao cấp. Plus 1 paused KM for testing BR-KM-07. All with realistic date ranges.
 
 #### BE (2 ngày)
 

@@ -63,7 +63,7 @@ def seed_all(db_path: str = "data/car_management.db"):
     seed_combo_sample(conn)
 
     print("Seeding khuyen_mai...")
-    seed_khuyen_mai(cursor)
+    seed_khuyen_mai_sample(conn)
 
     print("Seeding nha_cung_cap...")
     seed_nha_cung_cap(cursor)
@@ -240,23 +240,149 @@ def seed_phu_kien(cursor):
 
 
 def seed_khuyen_mai(cursor):
-    """Seed khuyen_mai table (5 promotions - one of each type)."""
+    """Seed khuyen_mai table (5 promotions - one of each type).
+    
+    Includes all 4 types from BR-KM-03 plus 1 combo.
+    Uses kieu_gia_tri: 'tien' for giam_tien_mat/tang_phu_kien, 
+    'phan_tram' for giam_phan_tram/giam_lai_suat/combo.
+    """
     now = _date_str()
     promotions = [
-        ("Khuyến mãi giảm giá tiền mặt", "Giảm 5 triệu cho tất cả xe", "giam_tien_mat", 5000000, "tien", _date_str(-10), _date_str(20), "dang_chay"),
-        ("Giảm 10% cho xe Toyota", "Áp dụng giảm 10% giá xe Toyota", "giam_phan_tram", 10, "phan_tram", _date_str(-5), _date_str(30), "dang_chay"),
-        ("Tặng phụ kiện khi mua xe", "Tặng camera hành trình trị giá 2 triệu", "tang_phu_kien", 1, "tien", _date_str(-3), _date_str(15), "dang_chay"),
-        ("Giảm lãi suất trả góp", "Giảm 2% lãi suất khi trả góp 60 tháng", "giam_lai_suat", 2, "phan_tram", _date_str(-7), _date_str(25), "dang_chay"),
-        ("Combo bảo dưỡng", "Gói bảo dưỡng 5 lần giảm 30%", "combo", 30, "phan_tram", _date_str(-2), _date_str(60), "dang_chay"),
+        # (ten_km, mo_ta, loai_km, gia_tri, kieu_gia_tri, tu_ngay, den_ngay, trang_thai, so_luong_cho_phep, so_luong_da_su_dung)
+        ("Giảm 10 triệu cho xe Toyota", "Áp dụng giảm 10 triệu cho tất cả xe Toyota", "giam_tien_mat", 10000000, "tien", _date_str(-10), _date_str(20), "dang_chay", 50, 0),
+        ("Giảm 8% cho dòng Honda Civic", "Giảm 8% giá xe Honda Civic các phiên bản", "giam_phan_tram", 8, "phan_tram", _date_str(-5), _date_str(30), "dang_chay", 30, 0),
+        ("Tặng GPS cho xe tồn lâu", "Tặng thiết bị GPS trị giá 3 triệu cho xe tồn kho > 90 ngày", "tang_phu_kien", 3000000, "tien", _date_str(-3), _date_str(15), "dang_chay", 20, 0),
+        ("Giảm 1.5% lãi suất Honda", "Hỗ trợ trả góp xe Honda - giảm 1.5% lãi suất", "giam_lai_suat", 1.5, "phan_tram", _date_str(-7), _date_str(25), "dang_chay", 40, 0),
+        ("Combo phụ kiện cao cấp", "Combo gồm camera 360 + thảm lót sàn + bệ tỳ tay - giảm 25%", "combo", 25, "phan_tram", _date_str(-2), _date_str(60), "dang_chay", 15, 0),
     ]
     now_ts = _now()
-    records = [(p[0], p[1], p[2], p[3], p[4], p[5], p[6], p[7], 100, 0, now_ts) for p in promotions]
+    records = [(p[0], p[1], p[2], p[3], p[4], p[5], p[6], p[7], p[8], p[9], now_ts) for p in promotions]
     cursor.executemany(
         """INSERT OR IGNORE INTO khuyen_mai 
            (ten_km, mo_ta, loai_km, gia_tri, kieu_gia_tri, tu_ngay, den_ngay, trang_thai, so_luong_cho_phep, so_luong_da_su_dung, created_at) 
            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)""",
         records,
     )
+
+
+def seed_khuyen_mai_sample(conn):
+    """Seed additional khuyen_mai samples for KM module testing.
+    
+    Creates 6 promotions (one of each type + 1 paused for BR-KM-07 testing):
+    1. giam_tien_mat: Giảm 10 triệu cho xe Toyota (hang)
+    2. giam_phan_tram: Giảm 8% cho dòng Honda Civic (dong_xe)
+    3. tang_phu_kien: Tặng GPS cho xe tồn lâu > 90 ngày (ton_lau)
+    4. giam_lai_suat: Giảm 1.5% lãi suất Honda (dong_xe)
+    5. combo: Combo phụ kiện cao cấp (all)
+    6. tam_dung: KM tạm dừng để test pause/resume (BR-KM-07)
+    
+    Also seeds km_pham_vi records for each KM.
+    """
+    cursor = conn.cursor()
+    now = _now()
+
+    km_data = [
+        {
+            "ten_km": "Giảm 10 triệu cho xe Toyota",
+            "mo_ta": "Chương trình giảm giá trực tiếp 10 triệu cho tất cả dòng xe Toyota",
+            "loai_km": "giam_tien_mat",
+            "gia_tri": 10000000,
+            "kieu_gia_tri": "tien",
+            "tu_ngay": _date_str(-10),
+            "den_ngay": _date_str(20),
+            "trang_thai": "dang_chay",
+            "so_luong_cho_phep": 50,
+            "so_luong_da_su_dung": 0,
+            "pham_vi": [("hang", "Toyota")],
+        },
+        {
+            "ten_km": "Giảm 8% cho dòng Honda Civic",
+            "mo_ta": "Giảm 8% giá xe Honda Civic các phiên bản",
+            "loai_km": "giam_phan_tram",
+            "gia_tri": 8,
+            "kieu_gia_tri": "phan_tram",
+            "tu_ngay": _date_str(-5),
+            "den_ngay": _date_str(30),
+            "trang_thai": "dang_chay",
+            "so_luong_cho_phep": 30,
+            "so_luong_da_su_dung": 0,
+            "pham_vi": [("dong_xe", "Civic")],
+        },
+        {
+            "ten_km": "Tặng GPS cho xe tồn lâu",
+            "mo_ta": "Tặng thiết bị GPS trị giá 3 triệu cho xe tồn kho > 90 ngày",
+            "loai_km": "tang_phu_kien",
+            "gia_tri": 3000000,
+            "kieu_gia_tri": "tien",
+            "tu_ngay": _date_str(-3),
+            "den_ngay": _date_str(15),
+            "trang_thai": "dang_chay",
+            "so_luong_cho_phep": 20,
+            "so_luong_da_su_dung": 0,
+            "pham_vi": [("ton_lau", "90")],
+        },
+        {
+            "ten_km": "Giảm 1.5% lãi suất Honda",
+            "mo_ta": "Hỗ trợ trả góp xe Honda - giảm 1.5% lãi suất vay",
+            "loai_km": "giam_lai_suat",
+            "gia_tri": 1.5,
+            "kieu_gia_tri": "phan_tram",
+            "tu_ngay": _date_str(-7),
+            "den_ngay": _date_str(25),
+            "trang_thai": "dang_chay",
+            "so_luong_cho_phep": 40,
+            "so_luong_da_su_dung": 0,
+            "pham_vi": [("hang", "Honda")],
+        },
+        {
+            "ten_km": "Combo phụ kiện cao cấp",
+            "mo_ta": "Combo gồm camera 360, thảm lót sàn, bệ tỳ tay - giảm 25%",
+            "loai_km": "combo",
+            "gia_tri": 25,
+            "kieu_gia_tri": "phan_tram",
+            "tu_ngay": _date_str(-2),
+            "den_ngay": _date_str(60),
+            "trang_thai": "dang_chay",
+            "so_luong_cho_phep": 15,
+            "so_luong_da_su_dung": 0,
+            "pham_vi": [("all", None)],
+        },
+        {
+            "ten_km": "Khuyến mãi tạm dừng - Test Pause",
+            "mo_ta": "Chương trình tạm dừng để kiểm tra chức năng pause/resume (BR-KM-07)",
+            "loai_km": "giam_tien_mat",
+            "gia_tri": 5000000,
+            "kieu_gia_tri": "tien",
+            "tu_ngay": _date_str(-20),
+            "den_ngay": _date_str(10),
+            "trang_thai": "tam_dung",
+            "so_luong_cho_phep": 20,
+            "so_luong_da_su_dung": 0,
+            "pham_vi": [("all", None)],
+        },
+    ]
+
+    for km in km_data:
+        cursor.execute(
+            """INSERT OR IGNORE INTO khuyen_mai
+               (ten_km, mo_ta, loai_km, gia_tri, kieu_gia_tri, tu_ngay, den_ngay, trang_thai, so_luong_cho_phep, so_luong_da_su_dung, created_at)
+               VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)""",
+            (km["ten_km"], km["mo_ta"], km["loai_km"], km["gia_tri"], km["kieu_gia_tri"],
+             km["tu_ngay"], km["den_ngay"], km["trang_thai"], km["so_luong_cho_phep"],
+             km["so_luong_da_su_dung"], now),
+        )
+        km_id = cursor.lastrowid
+
+        for pv in km["pham_vi"]:
+            loai_ap_dung, gia_tri_ap_dung = pv[0], pv[1]
+            cursor.execute(
+                """INSERT OR IGNORE INTO km_pham_vi
+                   (khuyen_mai_id, loai_ap_dung, gia_tri_ap_dung, created_at)
+                   VALUES (?, ?, ?, ?)""",
+                (km_id, loai_ap_dung, gia_tri_ap_dung, now),
+            )
+
+    print(f"  Seeded {len(km_data)} khuyen_mai records (all types + 1 paused)")
 
 
 def seed_nha_cung_cap(cursor):
