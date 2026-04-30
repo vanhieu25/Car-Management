@@ -851,11 +851,11 @@ Mỗi Sprint **PHẢI** đi qua 6 bước theo đúng thứ tự. Không nhảy 
 
 #### TEST (1 ngày)
 
-- [ ] `T-G4.3.TEST.01` (2h) — Unit test `auto_create_from_hop_dong` → `ngay_ket_thuc` đúng công thức (BR-BH-02).
-- [ ] `T-G4.3.TEST.02` (2h) — Unit test `create_request` reject nếu ngày > `ngay_ket_thuc`.
-- [ ] `T-G4.3.TEST.03` (1h) — Test `find_expiring_in_30_days` với data 5 BH (3 trong window).
-- [ ] `T-G4.3.TEST.04` (2h) — Integration WF-04: HĐ giao xe → BH tự sinh → tạo request → in phiếu.
-- [ ] `T-G4.3.TEST.05` (1h) — UAT theo AC-BH-01, 02.
+- [x] `T-G4.3.TEST.01` (2h) — Unit test `auto_create_from_hop_dong` → `ngay_ket_thuc` đúng công thức (BR-BH-02).
+- [x] `T-G4.3.TEST.02` (2h) — Unit test `create_request` reject nếu ngày > `ngay_ket_thuc`.
+- [x] `T-G4.3.TEST.03` (1h) — Test `find_expiring_in_30_days` với data 5 BH (3 trong window).
+- [x] `T-G4.3.TEST.04` (2h) — Integration WF-04: HĐ giao xe → BH tự sinh → tạo request → in phiếu.
+- [x] `T-G4.3.TEST.05` (1h) — UAT theo AC-BH-01, 02.
 
 #### GIT (0.25 ngày)
 
