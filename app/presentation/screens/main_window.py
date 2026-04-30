@@ -32,6 +32,9 @@ from app.application.services.sidebar_service import get_sidebar_items_flat, get
 from app.application.services.audit_log_service import AuditLogService
 from app.presentation.screens.audit_log_screen import AuditLogScreen
 from app.presentation.screens.system_settings_screen import SystemSettingsScreen
+from app.presentation.screens.vehicle_list_screen import VehicleListScreen
+from app.presentation.screens.vehicle_form_dialog import VehicleFormDialog
+from app.presentation.screens.vehicle_detail_screen import VehicleDetailScreen
 
 
 class MainWindow(QMainWindow):
@@ -222,9 +225,60 @@ class MainWindow(QMainWindow):
             # S-CFG-01: System settings
             if self._db_conn and self._session:
                 return SystemSettingsScreen(self._db_conn, self._session)
+        elif module_id == "xe":
+            # S-XE-01: Vehicle list
+            if self._db_conn and self._session:
+                screen = VehicleListScreen(self._db_conn, self._session)
+                # Connect signals
+                screen.add_vehicle_clicked.connect(lambda: self._show_vehicle_form(None))
+                screen.edit_vehicle_clicked.connect(self._show_vehicle_form)
+                screen.view_vehicle_clicked.connect(self._show_vehicle_detail)
+                return screen
         
         # Default: placeholder
         return EmptyScreen(module_name=module_id.replace("_", " ").title())
+    
+    def _show_vehicle_form(self, xe_id: int = None):
+        """Show vehicle add/edit form dialog.
+        
+        Args:
+            xe_id: Vehicle ID to edit, or None for add new.
+        """
+        from app.presentation.screens.vehicle_form_dialog import VehicleFormDialog
+        from app.domain.entities import Xe
+        
+        xe = None
+        if xe_id:
+            xe = Xe()
+            xe.id = xe_id
+        
+        dialog = VehicleFormDialog(self._db_conn, self._session, xe, self)
+        dialog.saved.connect(self._on_vehicle_saved)
+        dialog.exec()
+    
+    def _show_vehicle_detail(self, xe_id: int):
+        """Show vehicle detail screen.
+        
+        Args:
+            xe_id: Vehicle ID to display.
+        """
+        from app.presentation.screens.vehicle_detail_screen import VehicleDetailScreen
+        
+        screen = VehicleDetailScreen(self._db_conn, self._session, xe_id, self)
+        screen.edit_clicked.connect(self._show_vehicle_form)
+        screen.close_clicked.connect(lambda: self.navigate_to("xe"))
+        
+        # Replace current screen with detail
+        self.content_area.register_screen("xe_detail", screen)
+        self.content_area.show_screen("xe_detail")
+    
+    def _on_vehicle_saved(self):
+        """Handle vehicle saved signal - refresh list."""
+        # Refresh vehicle list if visible
+        if self.content_area.has_screen("xe"):
+            screen = self.content_area.get_screen("xe")
+            if hasattr(screen, 'refresh'):
+                screen.refresh()
     
     def _on_logout_requested(self):
         """Handle logout request."""
