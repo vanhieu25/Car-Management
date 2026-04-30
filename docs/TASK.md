@@ -399,20 +399,20 @@ Mỗi Sprint **PHẢI** đi qua 6 bước theo đúng thứ tự. Không nhảy 
 
 #### REQ (0.25 ngày)
 
-- [ ] `T-G2.4.REQ.01` (1h) — Liệt kê các action cần log: `LOGIN`, `LOGOUT`, `CREATE_*`, `UPDATE_*`, `DELETE_*`, `CANCEL_HD`, `CHANGE_PASSWORD`.
-- [ ] `T-G2.4.REQ.02` (1h) — Format `noi_dung` JSON: `{ "before": {...}, "after": {...} }`.
+- [x] `T-G2.4.REQ.01` (1h) — Liệt kê các action cần log: `LOGIN`, `LOGOUT`, `CREATE_*`, `UPDATE_*`, `DELETE_*`, `CANCEL_HD`, `CHANGE_PASSWORD`.
+- [x] `T-G2.4.REQ.02` (1h) — Format `noi_dung` JSON: `{ "before": {...}, "after": {...} }`.
 
 #### DB (0.25 ngày)
 
-- [ ] `T-G2.4.DB.01` (0.5h) — Verify schema `audit_log` từ Sprint G2.1 đủ cột.
-- [ ] `T-G2.4.DB.02` (0.5h) — Index `audit_log(thoi_gian, nhan_vien_id, hanh_dong)`.
+- [x] `T-G2.4.DB.01` (0.5h) — Verify schema `audit_log` từ Sprint G2.1 đủ cột (id, nhan_vien_id, hanh_dong, bang_anh_huong, ban_ghi_id, noi_dung, thoi_gian).
+- [x] `T-G2.4.DB.02` (0.5h) — Index `audit_log(thoi_gian, nhan_vien_id, hanh_dong)` đã có từ migration_012.
 
 #### BE (1.5 ngày)
 
-- [ ] `T-G2.4.BE.01` (2h) — `audit_log_service.log(action, table, record_id, before, after)` — auto user từ session.
-- [ ] `T-G2.4.BE.02` (2h) — Decorator `@audit('CREATE_HD')` cho service methods → tự gọi log.
-- [ ] `T-G2.4.BE.03` (2h) — Tích hợp `audit_log_service` vào `auth_service` (LOGIN / LOGOUT) — chuẩn TRG-08.
-- [ ] `T-G2.4.BE.04` (1h) — Service `system_settings_service.update(key, value)` (chỉ A-01).
+- [x] `T-G2.4.BE.01` (2h) — `audit_log_service.log(action, table, record_id, before, after)` — auto user từ session.
+- [x] `T-G2.4.BE.02` (2h) — Decorator `@audit('CREATE_HD')` cho service methods → tự gọi log.
+- [x] `T-G2.4.BE.03` (2h) — Tích hợp `audit_log_service` vào `auth_service` (LOGIN / LOGOUT) — chuẩn TRG-08.
+- [x] `T-G2.4.BE.04` (1h) — Service `system_settings_service.update(key, value)` (chỉ A-01) — đã có trong system_settings_service.py.
 
 #### UI (1 ngày)
 

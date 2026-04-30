@@ -19,6 +19,14 @@ from app.application.services.sidebar_service import (
     get_sidebar_items,
     get_sidebar_items_flat,
 )
+from app.application.services.audit_log_service import (
+    AuditLogService,
+    AuditLogEntry,
+    AuditAction,
+    get_audit_service,
+    reset_audit_service,
+)
+from app.application.services.audit_decorator import audit, audit_login, audit_logout
 
 __all__ = [
     "AuthService",
@@ -43,4 +51,12 @@ __all__ = [
     "setup_navigation_registry",
     "get_sidebar_items",
     "get_sidebar_items_flat",
+    "AuditLogService",
+    "AuditLogEntry",
+    "AuditAction",
+    "get_audit_service",
+    "reset_audit_service",
+    "audit",
+    "audit_login",
+    "audit_logout",
 ]

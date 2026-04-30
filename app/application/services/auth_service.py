@@ -1,4 +1,7 @@
-"""Authentication service - login, logout, password change."""
+"""Authentication service - login, logout, password change.
+
+Implements BR-SEC-01..09, BR-SEC-09 (audit logging), TRG-08.
+"""
 
 from dataclasses import dataclass
 from datetime import datetime
@@ -15,6 +18,7 @@ from app.infrastructure.security.password_hasher import (
     password_hasher,
     password_validator,
 )
+from app.application.services.audit_log_service import AuditLogService, AuditAction
 
 
 class LoginError(Enum):
@@ -53,6 +57,11 @@ class AuthService:
     - BR-SEC-05: 5 failed logins -> 15 minute lockout
     - BR-SEC-06: Session timeout after 30 minutes
     - BR-SEC-07: Password change requires old password verification
+    
+    Audit (BR-SEC-09, TRG-08):
+    - LOGIN action logged on successful login
+    - LOGOUT action logged on logout
+    - CHANGE_PASSWORD action logged on password change
     """
 
     def __init__(
@@ -60,6 +69,7 @@ class AuthService:
         conn: sqlite3.Connection,
         hasher: PasswordHasher = password_hasher,
         validator: PasswordValidator = password_validator,
+        audit_service: AuditLogService = None,
     ):
         """Initialize with database connection.
         
@@ -67,11 +77,19 @@ class AuthService:
             conn: SQLite database connection.
             hasher: Password hasher instance (default: bcrypt cost 12).
             validator: Password validator instance (default: BR-SEC-02 rules).
+            audit_service: Optional AuditLogService instance for logging.
         """
         self.conn = conn
         self.hasher = hasher
         self.validator = validator
         self.repo = NhanVienRepository(conn)
+        self._audit_service = audit_service
+
+    def _get_audit_service(self) -> AuditLogService:
+        """Get or create audit service."""
+        if self._audit_service is None:
+            self._audit_service = AuditLogService(self.conn)
+        return self._audit_service
 
     def login(self, username: str, password: str) -> LoginResult:
         """Attempt to log in a user.
@@ -133,21 +151,33 @@ class AuthService:
         # Step 6: Check if must change password (first login or forced)
         must_change = bool(user.must_change_password)
 
+        # Log successful login (BR-SEC-09, TRG-08)
+        try:
+            audit = self._get_audit_service()
+            audit.log_login(user.id, user.username)
+        except Exception:
+            pass  # Don't fail login if audit fails
+
         return LoginResult(
             success=True,
             user=user,
             must_change_password=must_change
         )
 
-    def logout(self, username: str) -> None:
+    def logout(self, username: str, nhan_vien_id: int = None) -> None:
         """Record a logout.
         
         Args:
             username: Username that is logging out.
+            nhan_vien_id: User ID for audit log (optional).
         """
-        # In a full implementation, this would also invalidate the session
-        # For now, the session manager handles this
-        pass
+        # Log logout (BR-SEC-09, TRG-08)
+        if nhan_vien_id:
+            try:
+                audit = self._get_audit_service()
+                audit.log_logout(nhan_vien_id)
+            except Exception:
+                pass  # Don't fail logout if audit fails
 
     def change_password(
         self,
@@ -204,6 +234,13 @@ class AuthService:
         new_hash = self.hasher.hash_password(new_password)
         self.repo.update_password(user_id, new_hash)
 
+        # Log password change (BR-SEC-09)
+        try:
+            audit = self._get_audit_service()
+            audit.log_password_change(user_id)
+        except Exception:
+            pass
+
         return ChangePasswordResult(success=True)
 
     def force_change_password(
@@ -247,6 +284,13 @@ class AuthService:
         # Hash and store new password
         new_hash = self.hasher.hash_password(new_password)
         self.repo.update_password(user_id, new_hash)
+
+        # Log password change (BR-SEC-09)
+        try:
+            audit = self._get_audit_service()
+            audit.log_password_change(user_id)
+        except Exception:
+            pass
 
         return ChangePasswordResult(success=True)
 
