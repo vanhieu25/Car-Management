@@ -741,18 +741,18 @@ Mỗi Sprint **PHẢI** đi qua 6 bước theo đúng thứ tự. Không nhảy 
 
 #### BE (1.5 ngày)
 
-- [ ] `T-G4.1.BE.01` (2h) — `PhuKienService` CRUD + validate (tên ≥ 3, giá ≥ 0, tồn ≥ 0 — BR-PK-05).
-- [ ] `T-G4.1.BE.02` (2h) — `ComboService.create(name, items, he_so_giam)` — items ≥ 2 PK (BR-PK-04).
-- [ ] `T-G4.1.BE.03` (2h) — `ComboService.calculate_price(combo_id)` — BR-CALC-07.
-- [ ] `T-G4.1.BE.04` (1h) — `PhuKienService.adjust_inventory(pk_id, delta)` — dùng cho HĐ.
-- [ ] `T-G4.1.BE.05` (1h) — Audit + permission decorator.
+- [x] `T-G4.1.BE.01` (2h) — `PhuKienService` CRUD + validate (tên ≥ 3, giá ≥ 0, tồn ≥ 0 — BR-PK-05).
+- [x] `T-G4.1.BE.02` (2h) — `ComboService.create(name, items, he_so_giam)` — items ≥ 2 PK (BR-PK-04).
+- [x] `T-G4.1.BE.03` (2h) — `ComboService.calculate_price(combo_id)` — BR-CALC-07.
+- [x] `T-G4.1.BE.04` (1h) — `PhuKienService.adjust_inventory(pk_id, delta)` — dùng cho HĐ.
+- [x] `T-G4.1.BE.05` (1h) — Audit + permission decorator.
 
 #### UI (2 ngày)
 
-- [ ] `T-G4.1.UI.01` (3h) — `S-PK-01` Phụ kiện List: filter `phan_loai` (5 nhóm BR-PK-01) + cột tồn kho (highlight đỏ tồn ≤ 0 — BR-PK-05).
-- [ ] `T-G4.1.UI.02` (2h) — `S-PK-02` Phụ kiện Form: tên, mô tả, phân loại, giá bán, tồn kho.
-- [ ] `T-G4.1.UI.03` (4h) — `S-PK-03` Combo Manager: tạo combo dạng wizard (chọn PK + số lượng → set hệ số giảm → preview giá ưu đãi tự tính).
-- [ ] `T-G4.1.UI.04` (1h) — Hiển thị "Giá thường: X — Giá combo: Y — Tiết kiệm: Z" trong card combo.
+- [x] `T-G4.1.UI.01` (3h) — `S-PK-01` Phụ kiện List: filter `phan_loai` (5 nhóm BR-PK-01) + cột tồn kho (highlight đỏ tồn ≤ 0 — BR-PK-05).
+- [x] `T-G4.1.UI.02` (2h) — `S-PK-02` Phụ kiện Form: tên, mô tả, phân loại, giá bán, tồn kho.
+- [x] `T-G4.1.UI.03` (4h) — `S-PK-03` Combo Manager: tạo combo dạng wizard (chọn PK + số lượng → set hệ số giảm → preview giá ưu đãi tự tính).
+- [x] `T-G4.1.UI.04` (1h) — Hiển thị "Giá thường: X — Giá combo: Y — Tiết kiệm: Z" trong card combo.
 
 #### TEST (1 ngày)
 
