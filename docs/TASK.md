@@ -787,12 +787,12 @@ Mỗi Sprint **PHẢI** đi qua 6 bước theo đúng thứ tự. Không nhảy 
 
 #### BE (2 ngày)
 
-- [ ] `T-G4.2.BE.01` (2h) — `KhuyenMaiService.create(data)` — validate `den_ngay > tu_ngay`, gia_tri > 0.
-- [ ] `T-G4.2.BE.02` (2h) — `KhuyenMaiService.find_applicable(xe_id)` — BR-KM-04: lọc KM còn hiệu lực, trùng phạm vi (hãng/dòng/xe/tồn-lâu).
-- [ ] `T-G4.2.BE.03` (2h) — `KhuyenMaiService.calculate_discount(km, gia_xe, ...)` — BR-CALC-02 cho 4 loại.
-- [ ] `T-G4.2.BE.04` (1h) — `KhuyenMaiService.pause(id)` / `resume(id)` (BR-KM-07).
-- [ ] `T-G4.2.BE.05` (2h) — Job daily TRG-06: chuyển KM `den_ngay < today` sang `ket_thuc`.
-- [ ] `T-G4.2.BE.06` (3h) — `KhuyenMaiService.report_effectiveness(km_id)` — số HĐ áp dụng + doanh thu phát sinh + tổng giảm (BR-KM-09 — phục vụ RP-06).
+- [x] `T-G4.2.BE.01` (2h) — `KhuyenMaiService.create(data)` — validate `den_ngay > tu_ngay`, gia_tri > 0. ✅ BE done
+- [x] `T-G4.2.BE.02` (2h) — `KhuyenMaiService.find_applicable(xe_id)` — BR-KM-04: lọc KM còn hiệu lực, trùng phạm vi (hãng/dòng/xe/tồn-lâu). ✅ BE done
+- [x] `T-G4.2.BE.03` (2h) — `KhuyenMaiService.calculate_discount(km, gia_xe, ...)` — BR-CALC-02 cho 4 loại. ✅ BE done
+- [x] `T-G4.2.BE.04` (1h) — `KhuyenMaiService.pause(id)` / `resume(id)` (BR-KM-07). ✅ BE done
+- [x] `T-G4.2.BE.05` (2h) — Job daily TRG-06: chuyển KM `den_ngay < today` sang `ket_thuc`. ✅ BE done
+- [x] `T-G4.2.BE.06` (3h) — `KhuyenMaiService.report_effectiveness(km_id)` — số HĐ áp dụng + doanh thu phát sinh + tổng giảm (BR-KM-09 — phục vụ RP-06). ✅ BE done
 
 #### UI (2 ngày)
 
