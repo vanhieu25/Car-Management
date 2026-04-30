@@ -378,10 +378,10 @@ Mỗi Sprint **PHẢI** đi qua 6 bước theo đúng thứ tự. Không nhảy 
 
 #### TEST (1 ngày)
 
-- [ ] `T-G2.3.TEST.01` (2h) — `pytest-qt` test: click sidebar → đúng screen được hiển thị.
-- [ ] `T-G2.3.TEST.02` (1h) — Test sidebar filter theo role (sales không thấy "Quản lý NV").
-- [ ] `T-G2.3.TEST.03` (1h) — Test top-bar dropdown user → mở `S-AUTH-02`.
-- [ ] `T-G2.3.TEST.04` (1h) — Manual UAT: 3 role login → sidebar tương ứng.
+- [x] `T-G2.3.TEST.01` (2h) — `pytest-qt` test: click sidebar → đúng screen được hiển thị.
+- [x] `T-G2.3.TEST.02` (1h) — Test sidebar filter theo role (sales không thấy "Quản lý NV").
+- [x] `T-G2.3.TEST.03` (1h) — Test top-bar dropdown user → mở `S-AUTH-02`.
+- [x] `T-G2.3.TEST.04` (1h) — Manual UAT: 3 role login → sidebar tương ứng.
 
 #### GIT (0.5 ngày)
 
