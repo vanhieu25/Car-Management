@@ -629,10 +629,10 @@ Mỗi Sprint **PHẢI** đi qua 6 bước theo đúng thứ tự. Không nhảy 
 
 #### TEST (1 ngày)
 
-- [ ] `T-G3.4.TEST.01` (2h) — Unit test `NhapKhoService.create` → tồn tăng đúng số lượng.
-- [ ] `T-G3.4.TEST.02` (1h) — Test `get_low_stock_items` với data 5 xe, 2 dưới ngưỡng.
-- [ ] `T-G3.4.TEST.03` (1h) — Test TRG-04: nhập 0 xe đã `da_ban` không đổi trạng thái; nhập 1 xe đã bán → `con_hang`.
-- [ ] `T-G3.4.TEST.04` (1h) — UAT theo AC-KHO-01.
+- [x] `T-G3.4.TEST.01` (2h) — Unit test `NhapKhoService.create` → tồn tăng đúng số lượng.
+- [x] `T-G3.4.TEST.02` (1h) — Test `get_low_stock_items` với data 5 xe, 2 dưới ngưỡng.
+- [x] `T-G3.4.TEST.03` (1h) — Test TRG-04: nhập 0 xe đã `da_ban` không đổi trạng thái; nhập 1 xe đã bán → `con_hang`.
+- [x] `T-G3.4.TEST.04` (1h) — UAT theo AC-KHO-01.
 
 #### GIT (0.25 ngày)
 
