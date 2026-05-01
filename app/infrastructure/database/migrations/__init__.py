@@ -19,6 +19,8 @@ from app.infrastructure.database.migrations.migration_016_pk_categories import r
 from app.infrastructure.database.migrations.migration_017_bh_ngay_ket_thuc_index import run as run_017
 from app.infrastructure.database.migrations.migration_018_tg_indexes import run as run_018
 from app.infrastructure.database.migrations.migration_019_kn_improvements import run as run_019
+from app.infrastructure.database.migrations.migration_020_report_views import run as run_020
+from app.infrastructure.database.migrations.migration_021_dashboard_indexes import run as run_021
 
 
 MIGRATIONS = [
@@ -36,8 +38,11 @@ MIGRATIONS = [
     (12, "012_audit_settings", run_012),
     (13, "013_indexes", run_013),
     (14, "014_password_change_flag", run_014),
+    (15, "015_hop_dong_indexes", run_015),
     (16, "016_pk_categories", run_016),
     (17, "017_bh_ngay_ket_thuc_index", run_017),
     (18, "018_tg_indexes", run_018),
     (19, "019_kn_improvements", run_019),
+    (20, "020_report_views", run_020),
+    (21, "021_dashboard_indexes", run_021),
 ]
