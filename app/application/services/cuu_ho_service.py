@@ -62,7 +62,7 @@ class CuuHoService:
 
     VALID_TRANG_THAI = ['tiep_nhan', 'dang_xu_ly', 'hoan_thanh']
     VALID_TRANG_THAI_TRANSITIONS = {
-        'tiep_nhan': ['dang_xu_ly', 'hoan_thanh'],
+        'tiep_nhan': ['dang_xu_ly'],
         'dang_xu_ly': ['hoan_thanh'],
         'hoan_thanh': [],
     }

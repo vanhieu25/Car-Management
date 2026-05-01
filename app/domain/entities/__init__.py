@@ -284,6 +284,7 @@ class CuuHo(BaseEntity):
     nhan_vien_id: Optional[int] = None
     vi_tri: str = ""
     mo_ta: str = ""
+    thoi_gian_yeu_cau: Optional[str] = None
     thoi_gian_xu_ly: Optional[str] = None
     trang_thai: str = "tiep_nhan"
     chi_phi: int = 0

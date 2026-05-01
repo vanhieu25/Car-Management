@@ -103,7 +103,7 @@ class BaoDuongRepository(BaseRepository[BaoDuong]):
         """
         cursor = self.conn.execute(
             """SELECT 1 FROM bao_duong 
-               WHERE id = ? AND trang_thai NOT IN ('hoan_thanh', 'huy')
+               WHERE id != ? AND trang_thai NOT IN ('hoan_thanh', 'huy')
                LIMIT 1""",
             (id,)
         )

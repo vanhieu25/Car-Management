@@ -271,11 +271,5 @@ class BaoDuongService:
         if not bd:
             raise BaoDuongNotFoundError(f"Không tìm thấy bảo dưỡng với ID {id}")
 
-        # Check if has active records (not hoan_thanh or huy)
-        if self._repo.has_active_records(id):
-            raise DeleteNotAllowedError(
-                "Không thể xóa bản ghi đang có trạng thái hoạt động"
-            )
-
         # Soft delete by setting trang_thai to 'huy'
         return self._repo.soft_delete(id)

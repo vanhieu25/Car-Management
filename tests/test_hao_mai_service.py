@@ -212,6 +212,7 @@ class TestFindUpcoming:
         """find_upcoming(7) returns BD within 7 days — returns list with customer and vehicle info"""
         conn = sqlite3.connect(haumai_db)
         conn.execute("PRAGMA foreign_keys = ON")
+        conn.row_factory = sqlite3.Row
         service = BaoDuongService(conn)
 
         result = service.find_upcoming(days=7)
@@ -242,6 +243,7 @@ class TestFindUpcoming:
         """find_upcoming(0) returns BD for today only"""
         conn = sqlite3.connect(haumai_db)
         conn.execute("PRAGMA foreign_keys = ON")
+        conn.row_factory = sqlite3.Row
         service = BaoDuongService(conn)
 
         result = service.find_upcoming(days=0)
@@ -260,6 +262,7 @@ class TestFindUpcoming:
         # Insert BD records with dates far in the future (outside 7 days)
         conn = sqlite3.connect(haumai_db)
         conn.execute("PRAGMA foreign_keys = ON")
+        conn.row_factory = sqlite3.Row
         cursor = conn.cursor()
 
         far_future = (datetime.now() + timedelta(days=30)).strftime("%Y-%m-%d")
@@ -274,6 +277,7 @@ class TestFindUpcoming:
 
         conn = sqlite3.connect(haumai_db)
         conn.execute("PRAGMA foreign_keys = ON")
+        conn.row_factory = sqlite3.Row
         service = BaoDuongService(conn)
 
         result = service.find_upcoming(days=7)
@@ -300,6 +304,7 @@ class TestFindBirthdayWindow:
         """Customer birthday within ±7 days → found in birthday window"""
         conn = sqlite3.connect(haumai_db)
         conn.execute("PRAGMA foreign_keys = ON")
+        conn.row_factory = sqlite3.Row
         service = KhachHangService(conn)
 
         result = service.get_upcoming_birthdays(days=7)
@@ -324,6 +329,7 @@ class TestFindBirthdayWindow:
         """Customer birthday outside ±7 days → NOT found"""
         conn = sqlite3.connect(haumai_db)
         conn.execute("PRAGMA foreign_keys = ON")
+        conn.row_factory = sqlite3.Row
         service = KhachHangService(conn)
 
         result = service.get_upcoming_birthdays(days=7)
@@ -342,6 +348,7 @@ class TestFindBirthdayWindow:
         """Customer born in 1990 but month-day matches window → still found"""
         conn = sqlite3.connect(haumai_db)
         conn.execute("PRAGMA foreign_keys = ON")
+        conn.row_factory = sqlite3.Row
         service = KhachHangService(conn)
 
         result = service.get_upcoming_birthdays(days=7)
@@ -380,6 +387,7 @@ class TestWF05Integration:
         """Dashboard warning → open S-HM-01 → create BD → check created"""
         conn = sqlite3.connect(haumai_db)
         conn.execute("PRAGMA foreign_keys = ON")
+        conn.row_factory = sqlite3.Row
 
         # Step 1: Dashboard warning — find_upcoming shows warnings
         service = BaoDuongService(conn)
@@ -422,6 +430,7 @@ class TestWF05Integration:
         """Create BD with all fields → verify correct values in DB"""
         conn = sqlite3.connect(haumai_db)
         conn.execute("PRAGMA foreign_keys = ON")
+        conn.row_factory = sqlite3.Row
         service = BaoDuongService(conn)
 
         # Create BD with all fields populated
@@ -477,6 +486,7 @@ class TestUAT_ACHM:
         """AC-HM-01: Maintenance list shows all BD records"""
         conn = sqlite3.connect(haumai_db)
         conn.execute("PRAGMA foreign_keys = ON")
+        conn.row_factory = sqlite3.Row
         service = BaoDuongService(conn)
 
         # get_all returns all BD records with pagination
@@ -506,6 +516,7 @@ class TestUAT_ACHM:
         """AC-HM-02: Rescue request list shows all CuuHo records"""
         conn = sqlite3.connect(haumai_db)
         conn.execute("PRAGMA foreign_keys = ON")
+        conn.row_factory = sqlite3.Row
         service = CuuHoService(conn)
 
         # get_all returns all CuuHo records
@@ -549,6 +560,7 @@ class TestCuuHoService:
         """Create a new CuuHo record with all required fields"""
         conn = sqlite3.connect(haumai_db)
         conn.execute("PRAGMA foreign_keys = ON")
+        conn.row_factory = sqlite3.Row
         service = CuuHoService(conn)
 
         data = CuuHoCreateData(
@@ -575,6 +587,7 @@ class TestCuuHoService:
         """Valid status transitions: tiep_nhan → dang_xu_ly → hoan_thanh"""
         conn = sqlite3.connect(haumai_db)
         conn.execute("PRAGMA foreign_keys = ON")
+        conn.row_factory = sqlite3.Row
         service = CuuHoService(conn)
 
         # Create a new CuuHo
@@ -603,6 +616,7 @@ class TestCuuHoService:
         """Invalid: tiep_nhan cannot go directly to hoan_thanh"""
         conn = sqlite3.connect(haumai_db)
         conn.execute("PRAGMA foreign_keys = ON")
+        conn.row_factory = sqlite3.Row
         service = CuuHoService(conn)
 
         from app.application.services.cuu_ho_service import CuuHoUpdateData, ValidationError
@@ -626,6 +640,7 @@ class TestCuuHoService:
         """find_pending returns only tiep_nhan and dang_xu_ly records"""
         conn = sqlite3.connect(haumai_db)
         conn.execute("PRAGMA foreign_keys = ON")
+        conn.row_factory = sqlite3.Row
         service = CuuHoService(conn)
 
         pending = service.find_pending()
@@ -648,6 +663,7 @@ class TestBaoDuongService:
         """Update BaoDuong fields and verify in DB"""
         conn = sqlite3.connect(haumai_db)
         conn.execute("PRAGMA foreign_keys = ON")
+        conn.row_factory = sqlite3.Row
         service = BaoDuongService(conn)
 
         # Get an existing BD record
@@ -677,6 +693,7 @@ class TestBaoDuongService:
         """find_by_khach_hang returns all BD records for a customer"""
         conn = sqlite3.connect(haumai_db)
         conn.execute("PRAGMA foreign_keys = ON")
+        conn.row_factory = sqlite3.Row
         service = BaoDuongService(conn)
 
         # KH1 has multiple BD records in our seed data
@@ -692,6 +709,7 @@ class TestBaoDuongService:
         """Soft delete sets trang_thai='huy' but record remains"""
         conn = sqlite3.connect(haumai_db)
         conn.execute("PRAGMA foreign_keys = ON")
+        conn.row_factory = sqlite3.Row
         service = BaoDuongService(conn)
 
         # Create a new BD to delete
@@ -721,6 +739,7 @@ class TestBaoDuongService:
         """Create BD with invalid data raises ValidationError"""
         conn = sqlite3.connect(haumai_db)
         conn.execute("PRAGMA foreign_keys = ON")
+        conn.row_factory = sqlite3.Row
         service = BaoDuongService(conn)
 
         from app.application.services.bao_duong_service import ValidationError
