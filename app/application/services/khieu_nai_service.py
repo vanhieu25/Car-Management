@@ -122,8 +122,13 @@ class KhieuNaiService:
 
         return self._repo.find_by_id(kn_id)
 
-    def update(self, kn_id: int, data: KhieuNaiUpdateData) -> Dict[str, Any]:
-        """Update a complaint."""
+    def update(self, kn_id: int, data: KhieuNaiUpdateData, nv_id: int = None) -> Dict[str, Any]:
+        """Update a complaint.
+        
+        Args:
+            kn_id: Complaint ID.
+            data: KhieuNaiUpdateData with fields to update.
+            nv_id: ID of staff making the update (for audit)."""
         existing = self._repo.find_by_id(kn_id)
         if not existing:
             raise KhieuNaiNotFoundError(f"Khiếu nại {kn_id} không tồn tại")
