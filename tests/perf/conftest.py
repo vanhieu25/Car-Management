@@ -228,7 +228,7 @@ def _bulk_insert_kh(cursor, count: int):
     from datetime import datetime, timedelta
 
     now = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-    phan_loai_options = ["Thuong", "VIP", "Vip"]
+    phan_loai_options = ["Thuong", "VIP", "Than_thiet"]
     first_names = ["Nguyen", "Tran", "Le", "Pham", "Hoang", "Nguyen", "Dao", "Dinh"]
     last_names = ["Van A", "Van B", "Thi C", "Thi D", "Van E", "Van F"]
 
