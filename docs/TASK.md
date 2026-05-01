@@ -898,10 +898,10 @@ Mỗi Sprint **PHẢI** đi qua 6 bước theo đúng thứ tự. Không nhảy 
 
 #### TEST (1 ngày)
 
-- [ ] `T-G4.4.TEST.01` (2h) — Unit test `add_rating` + `calculate_avg_rating`.
-- [ ] `T-G4.4.TEST.02` (2h) — Unit test `set_received` → tồn kho tăng đúng số lượng.
-- [ ] `T-G4.4.TEST.03` (2h) — Integration WF-01: tạo NCC → đặt đơn → đánh dấu nhận → kiểm tra `nhap_kho` + tồn xe.
-- [ ] `T-G4.4.TEST.04` (1h) — UAT theo AC-NCC-*.
+- [x] `T-G4.4.TEST.01` (2h) — Unit test `add_rating` + `calculate_avg_rating`.
+- [x] `T-G4.4.TEST.02` (2h) — Unit test `set_received` → tồn kho tăng đúng số lượng.
+- [x] `T-G4.4.TEST.03` (2h) — Integration WF-01: tạo NCC → đặt đơn → đánh dấu nhận → kiểm tra `nhap_kho` + tồn xe.
+- [x] `T-G4.4.TEST.04` (1h) — UAT theo AC-NCC-*.
 
 #### GIT (0.25 ngày)
 
