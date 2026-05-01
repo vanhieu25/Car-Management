@@ -104,8 +104,13 @@ class ChienDichMkService:
         
         return self._repo.find_by_id(campaign_id)
 
-    def update(self, campaign_id: int, data: ChienDichMkUpdateData) -> Dict[str, Any]:
-        """Update a campaign."""
+    def update(self, campaign_id: int, data: ChienDichMkUpdateData, nv_id: int = None) -> Dict[str, Any]:
+        """Update a campaign.
+        
+        Args:
+            campaign_id: Campaign ID.
+            data: ChienDichMkUpdateData with fields to update.
+            nv_id: ID of staff making the update (for audit)."""
         existing = self._repo.find_by_id(campaign_id)
         if not existing:
             raise ChienDichMkNotFoundError(f"Chiến dịch {campaign_id} không tồn tại")

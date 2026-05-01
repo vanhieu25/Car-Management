@@ -67,7 +67,7 @@ class BaoDuongService:
     """Service for maintenance/bao_duong operations."""
 
     VALID_TRANG_THAI = ['cho_xac_nhan', 'da_xac_nhan', 'dang_thuc_hien', 'hoan_thanh', 'huy']
-    VALID_TRANG_THAI_UPDATE = ['da_xac_nhan', 'dang_thuc_hien', 'hoan_thanh', 'huy']
+    VALID_TRANG_THAI_UPDATE = ['da_xac_nhan', 'dang_thuc_hien', 'da_hoan_thanh', 'huy']
 
     def __init__(self, conn: sqlite3.Connection):
         """Initialize with database connection.

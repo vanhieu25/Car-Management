@@ -164,7 +164,14 @@ class PermissionService:
         role_permissions = self._cache.get(role_name, {})
         allowed_actions = role_permissions.get(module, [])
         
-        return action in allowed_actions
+        # Handle both string action and Action enum input
+        # PERMISSION_MATRIX stores Action enum values, not strings
+        try:
+            action_enum = Action(action) if isinstance(action, str) else action
+        except ValueError:
+            return False
+        
+        return action_enum in allowed_actions
 
     def check_permission(
         self,
@@ -204,10 +211,17 @@ class PermissionService:
             return []
 
         role_permissions = self._cache.get(role_name, {})
+        
+        # Convert string action to Action enum for comparison with PERMISSION_MATRIX values
+        try:
+            action_enum = Action(action) if isinstance(action, str) else action
+        except ValueError:
+            return []
+        
         return [
             module
             for module, actions in role_permissions.items()
-            if action in actions
+            if action_enum in actions
         ]
 
     def get_role_permissions(self, vai_tro_id: int) -> dict[str, list[str]]:

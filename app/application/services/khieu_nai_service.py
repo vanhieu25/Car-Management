@@ -122,8 +122,13 @@ class KhieuNaiService:
 
         return self._repo.find_by_id(kn_id)
 
-    def update(self, kn_id: int, data: KhieuNaiUpdateData) -> Dict[str, Any]:
-        """Update a complaint."""
+    def update(self, kn_id: int, data: KhieuNaiUpdateData, nv_id: int = None) -> Dict[str, Any]:
+        """Update a complaint.
+        
+        Args:
+            kn_id: Complaint ID.
+            data: KhieuNaiUpdateData with fields to update.
+            nv_id: ID of staff making the update (for audit)."""
         existing = self._repo.find_by_id(kn_id)
         if not existing:
             raise KhieuNaiNotFoundError(f"Khiếu nại {kn_id} không tồn tại")
@@ -143,6 +148,17 @@ class KhieuNaiService:
             update_dict['nguon_goc'] = data.nguon_goc
         if data.nhan_vien_xu_ly_id is not None:
             update_dict['nhan_vien_xu_ly_id'] = data.nhan_vien_xu_ly_id
+        if data.trang_thai is not None:
+            if data.trang_thai not in self.VALID_TRANG_THAI:
+                raise ValidationError(f"Trạng thái '{data.trang_thai}' không hợp lệ")
+            current_status = existing['trang_thai']
+            allowed = self.STATUS_TRANSITIONS.get(current_status, [])
+            if data.trang_thai not in allowed:
+                raise ValidationError(
+                    f"Không thể chuyển từ '{current_status}' sang '{data.trang_thai}'. "
+                    f"Các chuyển đổi được phép: {allowed}"
+                )
+            update_dict['trang_thai'] = data.trang_thai
         if data.danh_gia_hai_long is not None:
             if not (1 <= data.danh_gia_hai_long <= 5):
                 raise ValidationError("Đánh giá hài lòng phải từ 1-5")

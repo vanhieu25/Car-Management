@@ -21,6 +21,7 @@ class BaoHanhYeuCau:
     loai_yeu_cau: str = "sua_chua"
     chi_phi: int = 0
     trang_thai: str = "dang_xu_ly"
+    phan_loai: str = "mien_phi"
     ngay_hoan_thanh: Optional[str] = None
     ghi_chu: str = ""
     created_at: Optional[str] = None

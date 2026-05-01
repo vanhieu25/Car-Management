@@ -186,6 +186,7 @@ class TraGop(BaseEntity):
     lai_suat_nam: float = 0.0
     so_ky: int = 0
     so_tien_tra_thang: int = 0
+    trang_thai: str = "dang_tra"
 
 
 @dataclass
