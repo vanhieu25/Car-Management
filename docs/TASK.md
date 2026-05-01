@@ -996,10 +996,10 @@ Mỗi Sprint **PHẢI** đi qua 6 bước theo đúng thứ tự. Không nhảy 
 
 #### UI (2 ngày)
 
-- [ ] `T-G5.1.UI.01` (4h) — `S-HM-01` Maintenance Schedule: Calendar view (`QCalendarWidget`) + List view, click ngày → xem lịch.
-- [ ] `T-G5.1.UI.02` (3h) — `S-HM-02` Create Maintenance Form: chọn KH (search) → xe (auto load xe của KH) → ngày → KM xe → nội dung → chi phí.
-- [ ] `T-G5.1.UI.03` (3h) — `S-HM-03` Rescue Request Form: thông tin KH/xe + ô nhập vị trí + mô tả + chi phí + trạng thái.
-- [ ] `T-G5.1.UI.04` (3h) — `S-HM-04` Customer Care: list KH có sinh nhật ±7 ngày + nút "Gửi thiệp" (mock — chỉ ghi log).
+- [x] `T-G5.1.UI.01` (4h) — `S-HM-01` Maintenance Schedule: Calendar view (`QCalendarWidget`) + List view, click ngày → xem lịch.
+- [x] `T-G5.1.UI.02` (3h) — `S-HM-02` Create Maintenance Form: chọn KH (search) → xe (auto load xe của KH) → ngày → KM xe → nội dung → chi phí.
+- [x] `T-G5.1.UI.03` (3h) — `S-HM-03` Rescue Request Form: thông tin KH/xe + ô nhập vị trí + mô tả + chi phí + trạng thái.
+- [x] `T-G5.1.UI.04` (3h) — `S-HM-04` Customer Care: list KH có sinh nhật ±7 ngày + nút "Gửi thiệp" (mock — chỉ ghi log).
 
 #### TEST (0.5 ngày)
 
