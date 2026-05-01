@@ -929,19 +929,19 @@ Mỗi Sprint **PHẢI** đi qua 6 bước theo đúng thứ tự. Không nhảy 
 
 #### BE (2 ngày)
 
-- [ ] `T-G4.5.BE.01` (1h) — `TraGopRepository` đầy đủ.
-- [ ] `T-G4.5.BE.02` (3h) `[BLOCKER]` — `TraGopService.calculate_monthly_payment(P, r_year, n)` — BR-CALC-04.
-- [ ] `T-G4.5.BE.03` (3h) — `TraGopService.create(hop_dong_id, ngan_hang, P, r_year, n)` — sinh hồ sơ + auto sinh `n` row `tra_gop_lich_su` với `ngay_den_han` mỗi tháng.
-- [ ] `T-G4.5.BE.04` (2h) — `TraGopService.record_payment(ky_id)` — chuyển kỳ → `da_tra`.
-- [ ] `T-G4.5.BE.05` (2h) — Job daily TRG-07: kỳ `chua_tra` & `ngay_den_han + 5d < today` → `qua_han` (BR-TG-09).
-- [ ] `T-G4.5.BE.06` (1h) — `TraGopService.find_overdue()` cho dashboard.
+- [x] `T-G4.5.BE.01` (1h) — `TraGopRepository` đầy đủ.
+- [x] `T-G4.5.BE.02` (3h) `[BLOCKER]` — `TraGopService.calculate_monthly_payment(P, r_year, n)` — BR-CALC-04.
+- [x] `T-G4.5.BE.03` (3h) — `TraGopService.create(hop_dong_id, ngan_hang, P, r_year, n)` — sinh hồ sơ + auto sinh `n` row `tra_gop_lich_su` với `ngay_den_han` mỗi tháng.
+- [x] `T-G4.5.BE.04` (2h) — `TraGopService.record_payment(ky_id)` — chuyển kỳ → `da_tra`.
+- [x] `T-G4.5.BE.05` (2h) — Job daily TRG-07: kỳ `chua_tra` & `ngay_den_han + 5d < today` → `qua_han` (BR-TG-09).
+- [x] `T-G4.5.BE.06` (1h) — `TraGopService.find_overdue()` cho dashboard.
 
 #### UI (2 ngày)
 
-- [ ] `T-G4.5.UI.01` (3h) — `S-TG-01` Installment List: filter ngân hàng + trạng thái; highlight đỏ hồ sơ có kỳ `qua_han`.
-- [ ] `T-G4.5.UI.02` (4h) — `S-TG-02` Create Installment Form: chọn HĐ + nhập NH + P + lãi suất + số kỳ → preview `M` (auto tính BR-CALC-04) + lịch trả full.
-- [ ] `T-G4.5.UI.03` (3h) — `S-TG-03` Track Progress: bảng kỳ trả + nút "Ghi nhận thanh toán" cho kỳ chưa trả.
-- [ ] `T-G4.5.UI.04` (1h) — Cảnh báo "X kỳ quá hạn" tại header màn hình.
+- [x] `T-G4.5.UI.01` (3h) — `S-TG-01` Installment List: filter ngân hàng + trạng thái; highlight đỏ hồ sơ có kỳ `qua_han`.
+- [x] `T-G4.5.UI.02` (4h) — `S-TG-02` Create Installment Form: chọn HĐ + nhập NH + P + lãi suất + số kỳ → preview `M` (auto tính BR-CALC-04) + lịch trả full.
+- [x] `T-G4.5.UI.03` (3h) — `S-TG-03` Track Progress: bảng kỳ trả + nút "Ghi nhận thanh toán" cho kỳ chưa trả.
+- [x] `T-G4.5.UI.04` (1h) — Cảnh báo "X kỳ quá hạn" tại header màn hình.
 
 #### TEST (1 ngày)
 
