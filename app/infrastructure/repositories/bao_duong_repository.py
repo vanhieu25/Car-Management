@@ -71,7 +71,8 @@ class BaoDuongRepository(BaseRepository[BaoDuong]):
                ORDER BY bd.ngay_du_kien ASC""",
             (days,)
         )
-        return [dict(row) for row in cursor.fetchall()]
+        cols = [d[0] for d in cursor.description]
+        return [dict(zip(cols, row)) for row in cursor.fetchall()]
 
     def soft_delete(self, id: int) -> bool:
         """Soft delete bao_duong by setting trang_thai to 'huy'.

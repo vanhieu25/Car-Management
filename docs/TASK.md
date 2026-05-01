@@ -1023,12 +1023,12 @@ Mỗi Sprint **PHẢI** đi qua 6 bước theo đúng thứ tự. Không nhảy 
 
 #### REQ (0.5 ngày)
 
-- [ ] `T-G5.2.REQ.01` (1h) — Đọc BRD §5.12 + AC-MK-*.
-- [ ] `T-G5.2.REQ.02` (1h) — Hiểu BR-CALC-06 (tỷ lệ chuyển đổi = `lead_chuyen_doi / tong_lead × 100%`), BR-MK-02 (4 trạng thái lead), BR-MK-03 (chuyển lead → KH).
+- [x] `T-G5.2.REQ.01` (1h) — Đọc BRD §5.12 + AC-MK-*.
+- [x] `T-G5.2.REQ.02` (1h) — Hiểu BR-CALC-06 (tỷ lệ chuyển đổi = `lead_chuyen_doi / tong_lead × 100%`), BR-MK-02 (4 trạng thái lead), BR-MK-03 (chuyển lead → KH).
 
 #### DB (0.25 ngày)
 
-- [ ] `T-G5.2.DB.01` (0.5h) — Verify `chien_dich_mk`, `lead`.
+- [x] `T-G5.2.DB.01` (0.5h) — Verify `chien_dich_mk`, `lead`.
 
 #### BE (1.5 ngày)
 

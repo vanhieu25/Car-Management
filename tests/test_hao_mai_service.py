@@ -151,7 +151,7 @@ def haumai_db():
         (4, 4, 4, None, bd_date_str(15), 80000, "cho_xac_nhan", "Bảo dưỡng 15 ngày tới"),
         (5, 5, 1, None, bd_date_str(-10), 90000, "cho_xac_nhan", "Bảo dưỡng quá hạn 10 ngày"),
         # Completed — should NOT appear (excluded by find_upcoming)
-        (6, 1, 2, None, bd_date_str(3), 100000, "hoan_thanh", "Bảo dưỡng đã hoàn thành"),
+        (6, 1, 2, None, bd_date_str(3), 100000, "da_hoan_thanh", "Bảo dưỡng đã hoàn thành"),
         # Cancelled — should NOT appear
         (7, 2, 3, None, bd_date_str(4), 110000, "huy", "Bảo dưỡng đã hủy"),
         # Within 7 days (today itself)
