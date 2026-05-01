@@ -14,7 +14,6 @@ from app.application.services.navigation_registry import (
     get_navigation_registry,
 )
 from app.application.services.sidebar_service import (
-    sidebar_service,
     setup_navigation_registry,
     get_sidebar_items,
     get_sidebar_items_flat,
@@ -47,7 +46,6 @@ __all__ = [
     "navigation_registry",
     "register_module",
     "get_navigation_registry",
-    "sidebar_service",
     "setup_navigation_registry",
     "get_sidebar_items",
     "get_sidebar_items_flat",

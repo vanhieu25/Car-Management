@@ -1003,10 +1003,10 @@ Mỗi Sprint **PHẢI** đi qua 6 bước theo đúng thứ tự. Không nhảy 
 
 #### TEST (0.5 ngày)
 
-- [ ] `T-G5.1.TEST.01` (1h) — Unit test `find_upcoming(7)` — BR-TIME-02.
-- [ ] `T-G5.1.TEST.02` (1h) — Unit test `find_birthday_window(7)` — BR-TIME-05.
-- [ ] `T-G5.1.TEST.03` (1h) — Integration WF-05: Dashboard cảnh báo → mở S-HM-01 → tạo phiếu BD.
-- [ ] `T-G5.1.TEST.04` (0.5h) — UAT theo AC-HM-*.
+- [x] `T-G5.1.TEST.01` (1h) — Unit test `find_upcoming(7)` — BR-TIME-02.
+- [x] `T-G5.1.TEST.02` (1h) — Unit test `find_birthday_window(7)` — BR-TIME-05.
+- [x] `T-G5.1.TEST.03` (1h) — Integration WF-05: Dashboard cảnh báo → mở S-HM-01 → tạo phiếu BD.
+- [x] `T-G5.1.TEST.04` (0.5h) — UAT theo AC-HM-*.
 
 #### GIT (0.25 ngày)
 

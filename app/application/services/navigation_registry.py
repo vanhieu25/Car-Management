@@ -36,8 +36,8 @@ class NavigationItem:
     module_id: str
     label: str
     icon: str  # Emoji or icon name
-    screen_class: Optional[Type] = None  # QWidget class for this screen
     permission_module: str  # Maps to permission_service module
+    screen_class: Optional[Type] = None  # QWidget class for this screen
     parent: Optional[str] = None  # Parent module_id for nested items
     order: int = 0  # Display order
     shortcut: Optional[str] = None  # Keyboard shortcut e.g. "Ctrl+1"
