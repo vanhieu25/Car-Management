@@ -26,6 +26,23 @@ from app.application.services.audit_log_service import (
     reset_audit_service,
 )
 from app.application.services.audit_decorator import audit, audit_login, audit_logout
+from app.application.services.chien_dich_mk_service import (
+    ChienDichMkService,
+    ChienDichMkServiceError,
+    ValidationError,
+    ChienDichMkNotFoundError,
+    ChienDichMkCreateData,
+    ChienDichMkUpdateData,
+)
+from app.application.services.lead_service import (
+    LeadService,
+    LeadServiceError,
+    ValidationError as LeadValidationError,
+    LeadNotFoundError,
+    LeadConvertError,
+    LeadCreateData,
+    LeadUpdateData,
+)
 
 __all__ = [
     "AuthService",
@@ -57,4 +74,15 @@ __all__ = [
     "audit",
     "audit_login",
     "audit_logout",
+    "ChienDichMkService",
+    "ChienDichMkServiceError",
+    "ChienDichMkNotFoundError",
+    "ChienDichMkCreateData",
+    "ChienDichMkUpdateData",
+    "LeadService",
+    "LeadServiceError",
+    "LeadNotFoundError",
+    "LeadConvertError",
+    "LeadCreateData",
+    "LeadUpdateData",
 ]

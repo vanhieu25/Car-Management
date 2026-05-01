@@ -6,6 +6,8 @@ from app.infrastructure.repositories.xe_repository import XeRepository, XeSearch
 from app.infrastructure.repositories.khach_hang_repository import KhachHangRepository, KhachHangSearchFilter
 from app.infrastructure.repositories.nhap_kho_repository import NhapKhoRepository
 from app.infrastructure.repositories.hop_dong_repository import HopDongRepository, HopDongSearchFilter
+from app.infrastructure.repositories.chien_dich_mk_repository import ChienDichMkRepository
+from app.infrastructure.repositories.lead_repository import LeadRepository
 
 __all__ = [
     "BaseRepository",
@@ -17,4 +19,6 @@ __all__ = [
     "NhapKhoRepository",
     "HopDongRepository",
     "HopDongSearchFilter",
+    "ChienDichMkRepository",
+    "LeadRepository",
 ]

@@ -256,6 +256,17 @@ class MainWindow(QMainWindow):
                 screen.create_installment_clicked.connect(self._show_installment_create_dialog)
                 screen.view_installment_clicked.connect(self._show_installment_progress)
                 return screen
+        elif module_id == "marketing":
+            # S-MK-01: Campaign list + Lead manager (tabbed)
+            if self._db_conn and self._session:
+                from app.presentation.screens.campaign_list_screen import CampaignListScreen
+                from app.presentation.screens.campaign_form_dialog import CampaignFormDialog
+                from app.presentation.screens.lead_manager_screen import LeadManagerScreen
+                from app.presentation.screens.lead_form_dialog import LeadFormDialog
+                screen = CampaignListScreen(self._db_conn, self._session)
+                screen.add_campaign_clicked.connect(self._show_campaign_form)
+                screen.edit_campaign_clicked.connect(self._show_campaign_form)
+                return screen
 
         # Default: placeholder
         return EmptyScreen(module_name=module_id.replace("_", " ").title())
@@ -374,6 +385,56 @@ class MainWindow(QMainWindow):
         # Replace current screen with detail
         self.content_area.register_screen("tra_gop_detail", screen)
         self.content_area.show_screen("tra_gop_detail")
+
+    def _show_campaign_form(self, campaign_id: int = None):
+        """Show campaign add/edit form dialog.
+
+        Args:
+            campaign_id: Campaign ID to edit, or None for add new.
+        """
+        from app.presentation.screens.campaign_form_dialog import CampaignFormDialog
+
+        campaign = None
+        if campaign_id:
+            from app.application.services.chien_dich_mk_service import ChienDichMkService
+            service = ChienDichMkService(self._db_conn)
+            campaign = service.get_by_id(campaign_id)
+
+        dialog = CampaignFormDialog(self._db_conn, self._session, campaign, self)
+        dialog.saved.connect(self._on_campaign_saved)
+        dialog.exec()
+
+    def _on_campaign_saved(self):
+        """Handle campaign saved signal - refresh list."""
+        if self.content_area.has_screen("marketing"):
+            screen = self.content_area.get_screen("marketing")
+            if hasattr(screen, 'refresh'):
+                screen.refresh()
+
+    def _show_lead_form(self, lead_id: int = None):
+        """Show lead add/edit form dialog.
+
+        Args:
+            lead_id: Lead ID to edit, or None for add new.
+        """
+        from app.presentation.screens.lead_form_dialog import LeadFormDialog
+
+        lead = None
+        if lead_id:
+            from app.application.services.lead_service import LeadService
+            service = LeadService(self._db_conn)
+            lead = service.get_by_id(lead_id)
+
+        dialog = LeadFormDialog(self._db_conn, self._session, lead, self)
+        dialog.saved.connect(self._on_lead_saved)
+        dialog.exec()
+
+    def _on_lead_saved(self):
+        """Handle lead saved signal - refresh list."""
+        if self.content_area.has_screen("marketing"):
+            screen = self.content_area.get_screen("marketing")
+            if hasattr(screen, 'refresh'):
+                screen.refresh()
 
     def _on_logout_requested(self):
         """Handle logout request."""
