@@ -267,6 +267,14 @@ class MainWindow(QMainWindow):
                 screen.add_campaign_clicked.connect(self._show_campaign_form)
                 screen.edit_campaign_clicked.connect(self._show_campaign_form)
                 return screen
+        elif module_id == "khieu_nai":
+            # S-KN-01: Complaint list
+            if self._db_conn and self._session:
+                from app.presentation.screens.complaint_list_screen import ComplaintListScreen
+                screen = ComplaintListScreen(self._db_conn, self._session)
+                screen.add_complaint_clicked.connect(self._show_complaint_form)
+                screen.view_complaint_clicked.connect(self._show_complaint_detail)
+                return screen
 
         # Default: placeholder
         return EmptyScreen(module_name=module_id.replace("_", " ").title())
@@ -433,6 +441,37 @@ class MainWindow(QMainWindow):
         """Handle lead saved signal - refresh list."""
         if self.content_area.has_screen("marketing"):
             screen = self.content_area.get_screen("marketing")
+            if hasattr(screen, 'refresh'):
+                screen.refresh()
+
+    def _show_complaint_form(self):
+        """Show complaint add form dialog."""
+        from app.presentation.screens.complaint_form_dialog import ComplaintFormDialog
+
+        dialog = ComplaintFormDialog(self._db_conn, self._session, self)
+        dialog.saved.connect(self._on_complaint_saved)
+        dialog.exec()
+
+    def _show_complaint_detail(self, kn_id: int):
+        """Show complaint detail screen.
+
+        Args:
+            kn_id: Complaint ID to display.
+        """
+        from app.presentation.screens.complaint_detail_screen import ComplaintDetailScreen
+
+        screen = ComplaintDetailScreen(self._db_conn, self._session, kn_id, self)
+        screen.back_clicked.connect(lambda: self.navigate_to("khieu_nai"))
+        screen.closed.connect(self._on_complaint_saved)
+
+        # Replace current screen with detail
+        self.content_area.register_screen("khieu_nai_detail", screen)
+        self.content_area.show_screen("khieu_nai_detail")
+
+    def _on_complaint_saved(self):
+        """Handle complaint saved signal - refresh list."""
+        if self.content_area.has_screen("khieu_nai"):
+            screen = self.content_area.get_screen("khieu_nai")
             if hasattr(screen, 'refresh'):
                 screen.refresh()
 
