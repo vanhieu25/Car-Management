@@ -882,19 +882,19 @@ Mỗi Sprint **PHẢI** đi qua 6 bước theo đúng thứ tự. Không nhảy 
 
 #### BE (2 ngày)
 
-- [ ] `T-G4.4.BE.01` (1h) — `NhaCungCapService` CRUD + validate.
-- [ ] `T-G4.4.BE.02` (2h) — `NhaCungCapService.add_rating(ncc_id, ratings)` — lưu điểm 3 tiêu chí.
-- [ ] `T-G4.4.BE.03` (1h) — `NhaCungCapService.calculate_avg_rating(ncc_id)` — BR-NCC-03.
-- [ ] `T-G4.4.BE.04` (3h) — `DonDatHangService.create(ncc_id, items)` — tạo đơn `cho_xu_ly`.
-- [ ] `T-G4.4.BE.05` (3h) — `DonDatHangService.set_received(don_id)` — BR-NCC-05: chuyển trạng thái + auto gọi `NhapKhoService.create()` cho mỗi item.
-- [ ] `T-G4.4.BE.06` (1h) — Audit + permission.
+- [x] `T-G4.4.BE.01` (1h) — `NhaCungCapService` CRUD + validate.
+- [x] `T-G4.4.BE.02` (2h) — `NhaCungCapService.add_rating(ncc_id, ratings)` — lưu điểm 3 tiêu chí.
+- [x] `T-G4.4.BE.03` (1h) — `NhaCungCapService.calculate_avg_rating(ncc_id)` — BR-NCC-03.
+- [x] `T-G4.4.BE.04` (3h) — `DonDatHangService.create(ncc_id, items)` — tạo đơn `cho_xu_ly`.
+- [x] `T-G4.4.BE.05` (3h) — `DonDatHangService.set_received(don_id)` — BR-NCC-05: chuyển trạng thái + auto gọi `NhapKhoService.create()` cho mỗi item.
+- [x] `T-G4.4.BE.06` (1h) — Audit + permission.
 
 #### UI (2 ngày)
 
-- [ ] `T-G4.4.UI.01` (3h) — `S-NCC-01` Supplier List: bảng + cột điểm trung bình + nút "Đánh giá nhanh".
-- [ ] `T-G4.4.UI.02` (3h) — `S-NCC-02` Supplier Detail: tab Thông tin · Lịch sử nhập · Đánh giá (form 3 sao).
-- [ ] `T-G4.4.UI.03` (4h) — `S-NCC-03` Order Form: chọn NCC + thêm xe/PK + số lượng + giá nhập; bảng đơn hàng theo trạng thái.
-- [ ] `T-G4.4.UI.04` (1h) — Nút "Đánh dấu đã nhận" → confirm → auto tạo nhập kho.
+- [x] `T-G4.4.UI.01` (3h) — `S-NCC-01` Supplier List: bảng + cột điểm trung bình + nút "Đánh giá nhanh".
+- [x] `T-G4.4.UI.02` (3h) — `S-NCC-02` Supplier Detail: tab Thông tin · Lịch sử nhập · Đánh giá (form 3 sao).
+- [x] `T-G4.4.UI.03` (4h) — `S-NCC-03` Order Form: chọn NCC + thêm xe/PK + số lượng + giá nhập; bảng đơn hàng theo trạng thái.
+- [x] `T-G4.4.UI.04` (1h) — Nút "Đánh dấu đã nhận" → confirm → auto tạo nhập kho.
 
 #### TEST (1 ngày)
 
