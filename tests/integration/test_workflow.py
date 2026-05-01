@@ -80,6 +80,7 @@ from app.application.services.chien_dich_mk_service import (
 from app.application.services.lead_service import (
     LeadService,
     LeadCreateData,
+    LeadUpdateData,
 )
 from app.application.services.khach_hang_service import (
     KhachHangService,
@@ -759,11 +760,11 @@ def test_wf05_bao_duong(sit_conn, admin_nv_id, sample_kh_id, sample_xe_id, sampl
     # Step 5: Complete
     bd_service.update(
         created_bd.id,
-        BaoDuongUpdateData(trang_thai="hoan_thanh")
+        BaoDuongUpdateData(trang_thai="da_hoan_thanh")
     )
 
     cursor.execute("SELECT trang_thai FROM bao_duong WHERE id = ?", (created_bd.id,))
-    assert cursor.fetchone()[0] == "hoan_thanh"
+    assert cursor.fetchone()[0] == "da_hoan_thanh"
 
     # Cleanup
     sit_conn.execute("DELETE FROM bao_duong WHERE id = ?", (created_bd.id,))
@@ -919,8 +920,7 @@ def test_wf07_marketing_lead_kh(sit_conn, admin_nv_id, sample_nv_id):
     # Step 3: Update lead status
     lead_service.update(
         created_lead["id"],
-        {"trang_thai": "dang_cham_soc"},
-        sample_nv_id,
+        LeadUpdateData(trang_thai="dang_cham_soc"),
     )
 
     cursor.execute(
@@ -929,16 +929,11 @@ def test_wf07_marketing_lead_kh(sit_conn, admin_nv_id, sample_nv_id):
     assert cursor.fetchone()[0] == "dang_cham_soc"
 
     # Step 4: Convert lead to customer
-    kh_data = KhachHangCreateData(
-        ho_ten=created_lead["ho_ten"],
-        so_dien_thoai=created_lead["so_dien_thoai"],
-        email=created_lead["email"],
-        dia_chi="",
-    )
-    converted_kh = lead_service.convert_to_customer(created_lead["id"], kh_data)
+    converted_kh = lead_service.convert_to_customer(created_lead["id"])
 
     assert converted_kh is not None
-    assert converted_kh["id"] is not None
+    # convert_to_customer returns the updated lead record with khach_hang_id set
+    assert converted_kh["khach_hang_id"] is not None
 
     # Step 5: Assert Lead.khach_hang_id is set
     cursor.execute(
@@ -946,7 +941,7 @@ def test_wf07_marketing_lead_kh(sit_conn, admin_nv_id, sample_nv_id):
         (created_lead["id"],)
     )
     lead_row = dict(cursor.fetchone())
-    assert lead_row["khach_hang_id"] == converted_kh["id"], (
+    assert lead_row["khach_hang_id"] == converted_kh["khach_hang_id"], (
         "Lead khach_hang_id should match converted KH id"
     )
     assert lead_row["trang_thai"] == "chuyen_doi", (
@@ -956,14 +951,13 @@ def test_wf07_marketing_lead_kh(sit_conn, admin_nv_id, sample_nv_id):
     # Step 6: Assert KhachHang exists
     cursor.execute(
         "SELECT ho_ten, so_dien_thoai FROM khach_hang WHERE id = ?",
-        (converted_kh.id,)
+        (converted_kh["khach_hang_id"],)
     )
     kh_row = dict(cursor.fetchone())
     assert kh_row["ho_ten"] == created_lead["ho_ten"]
     assert kh_row["so_dien_thoai"] == created_lead["so_dien_thoai"]
 
     # Cleanup
-    sit_conn.execute("DELETE FROM khach_hang WHERE id = ?", (converted_kh["id"],))
     sit_conn.execute("DELETE FROM lead WHERE id = ?", (created_lead["id"],))
     sit_conn.execute("DELETE FROM chien_dich_mk WHERE id = ?", (created_cd["id"],))
     sit_conn.commit()

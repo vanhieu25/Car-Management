@@ -228,9 +228,9 @@ class LeadService:
             # Create khach_hang record
             cursor.execute("""
                 INSERT INTO khach_hang (
-                    ho_ten, so_dien_thoai, email, nguon, created_at
-                ) VALUES (?, ?, ?, ?, CURRENT_TIMESTAMP)
-            """, (lead['ho_ten'], lead['so_dien_thoai'], lead['email'], lead.get('nguon', '')))
+                    ho_ten, so_dien_thoai, email, created_at
+                ) VALUES (?, ?, ?, CURRENT_TIMESTAMP)
+            """, (lead['ho_ten'], lead['so_dien_thoai'], lead['email']))
             
             khach_hang_id = cursor.lastrowid
             
