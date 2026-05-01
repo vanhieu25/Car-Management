@@ -918,14 +918,14 @@ Mỗi Sprint **PHẢI** đi qua 6 bước theo đúng thứ tự. Không nhảy 
 
 #### REQ (0.5 ngày)
 
-- [ ] `T-G4.5.REQ.01` (1h) — Đọc BRD §5.11 + AC-TG-* + WF-03.
-- [ ] `T-G4.5.REQ.02` (1h) — Hiểu BR-CALC-04 (công thức niên kim): `M = P × r × (1+r)^n / ((1+r)^n − 1)` với `r = lai_suat_nam/12/100`, `n = so_ky`.
-- [ ] `T-G4.5.REQ.03` (0.5h) — Hiểu BR-DATA-09 (lãi suất [0, 30]%), BR-TG-09 (chậm 5 ngày → `qua_han`).
+- [x] `T-G4.5.REQ.01` (1h) — Đọc BRD §5.11 + AC-TG-* + WF-03.
+- [x] `T-G4.5.REQ.02` (1h) — Hiểu BR-CALC-04 (công thức niên kim): `M = P × r × (1+r)^n / ((1+r)^n − 1)` với `r = lai_suat_nam/12/100`, `n = so_ky`.
+- [x] `T-G4.5.REQ.03` (0.5h) — Hiểu BR-DATA-09 (lãi suất [0, 30]%), BR-TG-09 (chậm 5 ngày → `qua_han`).
 
 #### DB (0.25 ngày)
 
-- [ ] `T-G4.5.DB.01` (0.5h) — Verify `tra_gop`, `tra_gop_lich_su`.
-- [ ] `T-G4.5.DB.02` (0.5h) — Index `tra_gop_lich_su.ngay_den_han`, `trang_thai`.
+- [x] `T-G4.5.DB.01` (0.5h) — Verify `tra_gop`, `tra_gop_lich_su`.
+- [x] `T-G4.5.DB.02` (0.5h) — Index `tra_gop_lich_su.ngay_den_han`, `trang_thai`.
 
 #### BE (2 ngày)
 
