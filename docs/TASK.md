@@ -872,13 +872,13 @@ Mỗi Sprint **PHẢI** đi qua 6 bước theo đúng thứ tự. Không nhảy 
 
 #### REQ (0.5 ngày)
 
-- [ ] `T-G4.4.REQ.01` (1h) — Đọc BRD §5.9 + AC-NCC-*.
-- [ ] `T-G4.4.REQ.02` (1h) — Hiểu BR-NCC-02 (đánh giá 3 tiêu chí 1-5: chất lượng, giao hàng, giá), BR-NCC-03 (điểm TB), BR-NCC-05 (auto sinh `nhap_kho` khi đơn `da_nhan`).
+- [x] `T-G4.4.REQ.01` (1h) — Đọc BRD §5.9 + AC-NCC-*.
+- [x] `T-G4.4.REQ.02` (1h) — Hiểu BR-NCC-02 (đánh giá 3 tiêu chí 1-5: chất lượng, giao hàng, giá), BR-NCC-03 (điểm TB), BR-NCC-05 (auto sinh `nhap_kho` khi đơn `da_nhan`).
 
 #### DB (0.25 ngày)
 
-- [ ] `T-G4.4.DB.01` (0.5h) — Verify `nha_cung_cap`, `don_dat_hang`, `nhap_kho`.
-- [ ] `T-G4.4.DB.02` (0.5h) — Seed 5 NCC + 10 đơn mẫu.
+- [x] `T-G4.4.DB.01` (0.5h) — Verify `nha_cung_cap`, `don_dat_hang`, `nhap_kho`.
+- [x] `T-G4.4.DB.02` (0.5h) — Seed 5 NCC + 10 đơn mẫu.
 
 #### BE (2 ngày)
 

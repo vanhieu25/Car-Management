@@ -71,6 +71,10 @@ def seed_all(db_path: str = "data/car_management.db"):
     print("Seeding nhap_kho (sample)...")
     seed_nhap_kho_sample(conn, ncc_count=3, items_per_import=2)
 
+    print("Seeding don_dat_hang (sample for G4.4)...")
+    seed_nha_cung_cap_sample(conn)
+    seed_don_dat_hang_sample(conn)
+
     print("Seeding hop_dong...")
     seed_hop_dong(cursor)
 
@@ -386,7 +390,11 @@ def seed_khuyen_mai_sample(conn):
 
 
 def seed_nha_cung_cap(cursor):
-    """Seed nha_cung_cap table (5 suppliers)."""
+    """Seed nha_cung_cap table (5 suppliers) with varied ratings.
+    
+    Each NCC has 3 rating scores (1-5): chat_luong, giao_hang, gia.
+    diem_tong = sum of 3 scores; diem_trung_binh = diem_tong / 3.
+    """
     now = _now()
     records = []
     for i in range(5):
@@ -626,3 +634,168 @@ if __name__ == "__main__":
     db = sys.argv[1] if len(sys.argv) > 1 else "data/car_management.db"
     Path(db).parent.mkdir(parents=True, exist_ok=True)
     seed_all(db)
+
+
+# ─── Additional seed functions for Sprint G4.4 (NCC & Don Dat Hang) ──────────
+
+
+def seed_nha_cung_cap_sample(conn):
+    """Seed 5 NCC with varied avg_rating (2.5 to 4.8) for G4.4 testing.
+    
+    Per BR-NCC-02: 3 criteria rated 1-5 each (chat_luong, giao_hang, gia).
+    Per BR-NCC-03: avg_rating = (chat_luong + giao_hang + gia) / 3.
+    The schema stores diem_tong (sum), not avg directly, but we include avg
+    in comments for reference.
+    
+    Creates 5 NCCs with diem_tong values that yield avg ratings from 2.5 to 4.8.
+    """
+    cursor = conn.cursor()
+    now = _now()
+    
+    # (ma_ncc, ten_ncc, diem_cl, diem_tg, diem_gc, diem_tong)
+    # avg = diem_tong / 3
+    ncc_data = [
+        ("NCC001", "Công ty TNHH Ô tô Sài Gòn", 2, 3, 3, 8),    # avg 2.67
+        ("NCC002", "Toyota Việt Nam",         5, 4, 4, 13),   # avg 4.33
+        ("NCC003", "Honda Việt Nam",           4, 5, 3, 12),   # avg 4.00
+        ("NCC004", "Ford Việt Nam",            3, 3, 5, 11),   # avg 3.67
+        ("NCC005", "BMW Việt Nam",             5, 5, 5, 15),   # avg 5.00
+    ]
+    
+    for ma_ncc, ten_ncc, cl, tg, gc, dt in ncc_data:
+        cursor.execute(
+            """INSERT OR IGNORE INTO nha_cung_cap
+               (ma_ncc, ten_ncc, dia_chi, so_dien_thoai, email, nguoi_lien_he,
+                diem_chat_luong, diem_thoi_gian_giao, diem_gia_ca, diem_tong, created_at)
+               VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)""",
+            (
+                ma_ncc, ten_ncc,
+                f"{random.randint(1, 999)} Đường {random.choice(['Võ Văn Kiệt', 'Nguyễn Văn Linh'])}, TP. HCM",
+                f"02{random.randint(800000000, 899999999)}",
+                f"contact@{ma_ncc.lower()}.com",
+                random.choice(["Ông A", "Bà B", "Ông C"]),
+                cl, tg, gc, dt, now,
+            ),
+        )
+    print(f"  Seeded {len(ncc_data)} nha_cung_cap with varied ratings (avg 2.67 - 5.00)")
+
+
+def seed_don_dat_hang_sample(conn):
+    """Seed 10 don_dat_hang + chi_tiet_don_dat for G4.4 WF-01 testing.
+    
+    Per BR-NCC-04: trang_thai in (nhap, da_gui, da_nhan, huy).
+    Per BR-NCC-05: when trang_thai = da_nhan, auto-create nhap_kho for each item.
+    
+    Distribution:
+      - 4 nhap (cho_xu_ly)
+      - 3 da_gui (da_xac_nhan)
+      - 2 da_nhan (with nhap_kho auto-created)
+      - 1 huy
+    """
+    cursor = conn.cursor()
+    now = _now()
+    
+    # Ensure at least 5 NCCs exist
+    cursor.execute("SELECT id, ma_ncc FROM nha_cung_cap LIMIT 5")
+    ncc_rows = cursor.fetchall()
+    if len(ncc_rows) < 5:
+        print("  [seed_don_dat_hang_sample] WARNING: need at least 5 NCC, skipping")
+        return
+    ncc_ids = [r[0] for r in ncc_rows]
+    
+    # Get some xe and phu_kien IDs for order items
+    cursor.execute("SELECT id FROM xe LIMIT 10")
+    xe_ids = [r[0] for r in cursor.fetchall()]
+    cursor.execute("SELECT id FROM phu_kien LIMIT 10")
+    pk_ids = [r[0] for r in cursor.fetchall()]
+    
+    if not xe_ids or not pk_ids:
+        print("  [seed_don_dat_hang_sample] WARNING: need xe and phu_kien, skipping")
+        return
+    
+    # 10 orders: (trang_thai, num_items, create_nhap_kho)
+    order_specs = [
+        ("nhap",     2, False),   # cho_xu_ly #1
+        ("nhap",     1, False),   # cho_xu_ly #2
+        ("nhap",     3, False),   # cho_xu_ly #3
+        ("nhap",     2, False),   # cho_xu_ly #4
+        ("da_gui",   2, False),   # da_xac_nhan #1
+        ("da_gui",   1, False),   # da_xac_nhan #2
+        ("da_gui",   3, False),   # da_xac_nhan #3
+        ("da_nhan",  2, True),    # da_nhan #1 → nhap_kho
+        ("da_nhan",  1, True),    # da_nhan #2 → nhap_kho
+        ("huy",      1, False),   # huy
+    ]
+    
+    don_ids = []  # track da_nhan order IDs
+    
+    for idx, (trang_thai, num_items, create_nk) in enumerate(order_specs, 1):
+        ma_don = f"DDH{idx:04d}"
+        ncc_id = random.choice(ncc_ids)
+        
+        # Dates: older for earlier orders, newer for recent
+        days_ago = random.randint(1, 30)
+        ngay_dat = _date_str(-days_ago)
+        ngay_giao = _date_str(-days_ago + 3) if trang_thai in ("da_gui", "da_nhan") else None
+        ghi_chu = f"Đơn mẫu {idx} - {trang_thai}"
+        
+        cursor.execute(
+            """INSERT INTO don_dat_hang
+               (nha_cung_cap_id, nhan_vien_id, ma_don, ngay_dat, trang_thai,
+                ngay_giao, ghi_chu, created_at, created_by)
+               VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)""",
+            (ncc_id, 1, ma_don, ngay_dat, trang_thai, ngay_giao, ghi_chu, now, 1),
+        )
+        don_id = cursor.lastrowid
+        
+        if create_nk:
+            don_ids.append((don_id, ncc_id))
+        
+        # Add order items
+        for _ in range(num_items):
+            if random.random() < 0.6 and xe_ids:  # 60% xe
+                item_id = random.choice(xe_ids)
+                loai_item = "xe"
+                gia_don = random.randint(400_000_000, 1_500_000_000)
+                so_luong = random.randint(1, 3)
+            else:  # 40% phu_kien
+                item_id = random.choice(pk_ids)
+                loai_item = "phu_kien"
+                gia_don = random.randint(200_000, 5_000_000)
+                so_luong = random.randint(5, 20)
+            
+            cursor.execute(
+                """INSERT INTO chi_tiet_don_dat
+                   (don_dat_hang_id, loai_item, item_id, so_luong, gia_don, created_at)
+                   VALUES (?, ?, ?, ?, ?, ?)""",
+                (don_id, loai_item, item_id, so_luong, gia_don, now),
+            )
+        
+        print(f"  Created don_dat_hang {ma_don} (trang_thai={trang_thai}, {num_items} items)")
+    
+    # For da_nhan orders: auto-create nhap_kho for each item (BR-NCC-05)
+    for don_id, ncc_id in don_ids:
+        cursor.execute(
+            """INSERT INTO nhap_kho
+               (nha_cung_cap_id, nhan_vien_id, ngay_nhap, ghi_chu, created_at, created_by)
+               VALUES (?, ?, ?, ?, ?, ?)""",
+            (ncc_id, 1, _date_str(-1), f"Auto from don_dat_hang id={don_id}", now, 1),
+        )
+        nhap_kho_id = cursor.lastrowid
+        
+        # Link chi_tiet_don_dat items to nhap_kho
+        cursor.execute(
+            """SELECT loai_item, item_id, so_luong, gia_don
+               FROM chi_tiet_don_dat WHERE don_dat_hang_id = ?""",
+            (don_id,),
+        )
+        for loai_item, item_id, so_luong, gia_don in cursor.fetchall():
+            cursor.execute(
+                """INSERT INTO chi_tiet_nhap_kho
+                   (nhap_kho_id, loai_item, item_id, so_luong, gia_nhap, created_at)
+                   VALUES (?, ?, ?, ?, ?, ?)""",
+                (nhap_kho_id, loai_item, item_id, so_luong, gia_don, now),
+            )
+        print(f"  Auto-created nhap_kho id={nhap_kho_id} from da_nhan order id={don_id}")
+    
+    print(f"  Seeded {len(order_specs)} don_dat_hang (4 nhap, 3 da_gui, 2 da_nhan, 1 huy)")
