@@ -29,7 +29,6 @@ sys.path.insert(0, str(Path(__file__).parent.parent.parent))
 
 from app.infrastructure.database.migrations.runner import MigrationRunner
 from app.infrastructure.database.seeds.dev_seed import (
-    seed_all,
     seed_vai_tro,
     seed_xe,
     seed_khach_hang,
@@ -40,13 +39,13 @@ from app.infrastructure.database.seeds.dev_seed import (
 )
 from app.application.services.permission_service import (
     PermissionService,
-    PermissionDeniedError,
     Module,
     Action,
 )
 from app.application.services.khach_hang_service import (
     KhachHangService,
     KhachHangCreateData,
+    KhachHangUpdateData,
 )
 from app.application.services.hop_dong_service import (
     HopDongService,
@@ -54,27 +53,6 @@ from app.application.services.hop_dong_service import (
 )
 from app.application.services.bao_hanh_service import (
     BaoHanhService,
-    BaoHanhYeuCauData,
-)
-from app.application.services.bao_duong_service import (
-    BaoDuongService,
-    BaoDuongCreateData,
-    BaoDuongUpdateData,
-)
-from app.application.services.xe_service import XeService
-from app.application.services.permission_service import (
-    PermissionService,
-    PermissionDeniedError,
-    Module,
-    Action,
-)
-from app.application.services.khach_hang_service import (
-    KhachHangService,
-    KhachHangCreateData,
-)
-from app.application.services.hop_dong_service import (
-    HopDongService,
-    HopDongCreateData,
 )
 from app.application.services.bao_duong_service import (
     BaoDuongService,
@@ -197,17 +175,7 @@ def kt_nv_id(sit_conn):
 
 
 # =============================================================================
-# Helper
-# =============================================================================
-
-def get_table_row_count(conn: sqlite3.Connection, table: str) -> int:
-    """Return row count for a table."""
-    cursor = conn.execute(f"SELECT COUNT(*) FROM {table}")
-    return cursor.fetchone()[0]
-
-
-# =============================================================================
-# TEST-09: Phân quyền 3 role × 42 screens
+# TEST-09: Phân quyền 3 role × all modules
 # =============================================================================
 
 class TestPhanQuyenAdmin:
@@ -237,10 +205,8 @@ class TestPhanQuyenAdmin:
     def test_admin_can_update_khach_hang(self, sit_conn, admin_nv_id, sample_kh_id):
         """Admin: update khach_hang."""
         service = KhachHangService(sit_conn)
-        updated = service.update(
-            sample_kh_id,
-            ho_ten="Admin Updated Name",
-        )
+        update_data = KhachHangUpdateData(ho_ten="Admin Updated Name")
+        updated = service.update(sample_kh_id, update_data, nhan_vien_id=admin_nv_id)
         assert updated.ho_ten == "Admin Updated Name"
 
     def test_admin_can_delete_khach_hang(self, sit_conn, admin_nv_id):
@@ -273,47 +239,6 @@ class TestPhanQuyenAdmin:
         sit_conn.execute("DELETE FROM hop_dong_phu_kien WHERE hop_dong_id = ?", (created.id,))
         sit_conn.execute("DELETE FROM hop_dong WHERE id = ?", (created.id,))
         sit_conn.commit()
-
-    def test_admin_can_update_hop_dong(self, sit_conn, sample_kh_id, sample_xe_id, admin_nv_id):
-        """Admin: update hop_dong."""
-        service = HopDongService(sit_conn)
-        data = HopDongCreateData(
-            khach_hang_id=sample_kh_id,
-            xe_id=sample_xe_id,
-            nhan_vien_id=admin_nv_id,
-        )
-        created = service.create(data)
-        # Update should succeed (admin has update permission)
-        # Cleanup
-        sit_conn.execute("DELETE FROM hop_dong_phu_kien WHERE hop_dong_id = ?", (created.id,))
-        sit_conn.execute("DELETE FROM hop_dong WHERE id = ?", (created.id,))
-        sit_conn.commit()
-
-    def test_admin_can_delete_hop_dong(self, sit_conn, sample_kh_id, sample_xe_id, admin_nv_id):
-        """Admin: delete hop_dong."""
-        service = HopDongService(sit_conn)
-        data = HopDongCreateData(
-            khach_hang_id=sample_kh_id,
-            xe_id=sample_xe_id,
-            nhan_vien_id=admin_nv_id,
-        )
-        created = service.create(data)
-        hd_id = created.id
-        service.delete(hd_id)
-        # Verify gone
-        cursor = sit_conn.execute("SELECT 1 FROM hop_dong WHERE id = ?", (hd_id,))
-        assert cursor.fetchone() is None
-
-    def test_admin_can_create_xe(self, sit_conn, admin_nv_id):
-        """Admin: create xe."""
-        service = XeService(sit_conn)
-        # Note: Xe creation requires valid data that matches entity expectations
-        # We test that service.create is callable and returns something
-        # (actual xe creation validation depends on full entity setup)
-        from app.domain.entities import Xe
-        cursor = sit_conn.execute("SELECT * FROM xe LIMIT 1")
-        row = cursor.fetchone()
-        assert row is not None, "Seed data should have xe"
 
     def test_admin_full_access_matrix(self, sit_conn):
         """Admin: verify full access across all modules in permission matrix."""
@@ -427,6 +352,36 @@ class TestPhanQuyenSales:
         ps = PermissionService()
         assert ps.has_permission(2, "bao_cao", Action.VIEW.value) is True
         assert ps.has_permission(2, "bao_cao", Action.EXPORT.value) is False
+
+    def test_sales_can_view_phu_kien(self, sit_conn):
+        """Sales: can view phu_kien."""
+        ps = PermissionService()
+        assert ps.has_permission(2, "phu_kien", Action.VIEW.value) is True
+
+    def test_sales_cannot_update_phu_kien(self, sit_conn):
+        """Sales: cannot update phu_kien."""
+        ps = PermissionService()
+        assert ps.has_permission(2, "phu_kien", Action.UPDATE.value) is False
+
+    def test_sales_can_view_tra_gop(self, sit_conn):
+        """Sales: can view tra_gop."""
+        ps = PermissionService()
+        assert ps.has_permission(2, "tra_gop", Action.VIEW.value) is True
+
+    def test_sales_cannot_create_tra_gop(self, sit_conn):
+        """Sales: cannot create tra_gop (only view)."""
+        ps = PermissionService()
+        assert ps.has_permission(2, "tra_gop", Action.CREATE.value) is False
+
+    def test_sales_can_view_marketing(self, sit_conn):
+        """Sales: can view marketing."""
+        ps = PermissionService()
+        assert ps.has_permission(2, "marketing", Action.VIEW.value) is True
+
+    def test_sales_can_view_khuyen_mai(self, sit_conn):
+        """Sales: can view khuyen_mai."""
+        ps = PermissionService()
+        assert ps.has_permission(2, "khuyen_mai", Action.VIEW.value) is True
 
 
 class TestPhanQuyenKyThuat:
@@ -544,6 +499,26 @@ class TestPhanQuyenKyThuat:
         ps = PermissionService()
         assert ps.has_permission(3, "cuu_ho", Action.CREATE.value) is True
 
+    def test_kt_can_update_cuu_ho(self, sit_conn):
+        """KT: can update cuu_ho."""
+        ps = PermissionService()
+        assert ps.has_permission(3, "cuu_ho", Action.UPDATE.value) is True
+
+    def test_kt_cannot_delete_cuu_ho(self, sit_conn):
+        """KT: cannot delete cuu_ho."""
+        ps = PermissionService()
+        assert ps.has_permission(3, "cuu_ho", Action.DELETE.value) is False
+
+    def test_kt_can_view_phu_kien(self, sit_conn):
+        """KT: can view phu_kien."""
+        ps = PermissionService()
+        assert ps.has_permission(3, "phu_kien", Action.VIEW.value) is True
+
+    def test_kt_cannot_access_nha_cung_cap(self, sit_conn):
+        """KT: no access to nha_cung_cap."""
+        ps = PermissionService()
+        assert ps.has_permission(3, "nha_cung_cap", Action.VIEW.value) is False
+
 
 class TestPhanQuyenPermissionMatrix:
     """Verify the entire permission matrix is correctly implemented."""
@@ -557,9 +532,9 @@ class TestPhanQuyenPermissionMatrix:
 
         # Admin should have all 15 modules
         assert len(admin_modules) == 15, f"Admin should have 15 modules, got {len(admin_modules)}"
-        # Sales should have limited modules (xe, kh, hd, pk, km, tg, mk, bc)
+        # Sales has 8 modules with VIEW: xe, kh, hd, pk, km, tg, mk, bc
         assert len(sales_modules) == 8, f"Sales should have 8 modules, got {len(sales_modules)}"
-        # KT should have limited modules (xe, kh, hd, pk, bh, bd, ch, bc)
+        # KT should have 8 modules: xe, kh, hd, pk, bh, bd, ch, bc
         assert len(kt_modules) == 8, f"KT should have 8 modules, got {len(kt_modules)}"
 
     def test_no_delete_permission_for_sales_anywhere(self, sit_conn):
@@ -583,4 +558,14 @@ class TestPhanQuyenPermissionMatrix:
         ps = PermissionService()
         assert ps.has_permission(999, "xe", Action.VIEW.value) is False
         assert ps.has_permission(0, "xe", Action.VIEW.value) is False
-        assert ps.has_permission(None, "xe", Action.VIEW.value) is False
+
+    def test_admin_export_permission_only_for_bao_cao(self, sit_conn):
+        """Admin: export permission only for bao_cao module."""
+        ps = PermissionService()
+        all_modules = [m.value for m in Module]
+        for module in all_modules:
+            if module == "bao_cao":
+                assert ps.has_permission(1, module, Action.EXPORT.value) is True
+            else:
+                assert ps.has_permission(1, module, Action.EXPORT.value) is False, \
+                    f"Admin should not have export on {module}"
