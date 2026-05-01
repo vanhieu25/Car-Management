@@ -989,10 +989,10 @@ Mỗi Sprint **PHẢI** đi qua 6 bước theo đúng thứ tự. Không nhảy 
 
 #### BE (1.5 ngày)
 
-- [ ] `T-G5.1.BE.01` (2h) — `BaoDuongService.create/update/delete` — chọn KH+xe, ngày, KM xe, nội dung, chi phí (BR-HM-06).
-- [ ] `T-G5.1.BE.02` (2h) — `BaoDuongService.find_upcoming(days)` — BR-TIME-02: lịch BD trong N ngày tới.
-- [ ] `T-G5.1.BE.03` (2h) — `CuuHoService.create/update` — KH, xe, vị trí, mô tả, chi phí, trạng thái (BR-HM-04, 05).
-- [ ] `T-G5.1.BE.04` (2h) — `KhachHangService.find_birthday_window(days=7)` — phục vụ S-HM-04 (BR-TIME-05).
+- [x] `T-G5.1.BE.01` (2h) — `BaoDuongService.create/update/delete` — chọn KH+xe, ngày, KM xe, nội dung, chi phí (BR-HM-06).
+- [x] `T-G5.1.BE.02` (2h) — `BaoDuongService.find_upcoming(days)` — BR-TIME-02: lịch BD trong N ngày tới.
+- [x] `T-G5.1.BE.03` (2h) — `CuuHoService.create/update` — KH, xe, vị trí, mô tả, chi phí, trạng thái (BR-HM-04, 05).
+- [x] `T-G5.1.BE.04` (2h) — `KhachHangService.find_birthday_window(days=7)` — phục vụ S-HM-04 (BR-TIME-05).
 
 #### UI (2 ngày)
 
