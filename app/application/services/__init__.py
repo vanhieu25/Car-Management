@@ -43,6 +43,15 @@ from app.application.services.lead_service import (
     LeadCreateData,
     LeadUpdateData,
 )
+from app.application.services.khieu_nai_service import (
+    KhieuNaiService,
+    KhieuNaiServiceError,
+    ValidationError as KNValidationError,
+    KhieuNaiNotFoundError,
+    PermissionDeniedError,
+    KhieuNaiCreateData,
+    KhieuNaiUpdateData,
+)
 
 __all__ = [
     "AuthService",
@@ -85,4 +94,10 @@ __all__ = [
     "LeadConvertError",
     "LeadCreateData",
     "LeadUpdateData",
+    "KhieuNaiService",
+    "KhieuNaiServiceError",
+    "KhieuNaiNotFoundError",
+    "PermissionDeniedError",
+    "KhieuNaiCreateData",
+    "KhieuNaiUpdateData",
 ]

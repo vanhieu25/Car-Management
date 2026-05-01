@@ -18,6 +18,7 @@ from app.infrastructure.database.migrations.migration_015_hop_dong_indexes impor
 from app.infrastructure.database.migrations.migration_016_pk_categories import run as run_016
 from app.infrastructure.database.migrations.migration_017_bh_ngay_ket_thuc_index import run as run_017
 from app.infrastructure.database.migrations.migration_018_tg_indexes import run as run_018
+from app.infrastructure.database.migrations.migration_019_kn_improvements import run as run_019
 
 
 MIGRATIONS = [
@@ -38,4 +39,5 @@ MIGRATIONS = [
     (16, "016_pk_categories", run_016),
     (17, "017_bh_ngay_ket_thuc_index", run_017),
     (18, "018_tg_indexes", run_018),
+    (19, "019_kn_improvements", run_019),
 ]

@@ -8,6 +8,7 @@ from app.infrastructure.repositories.nhap_kho_repository import NhapKhoRepositor
 from app.infrastructure.repositories.hop_dong_repository import HopDongRepository, HopDongSearchFilter
 from app.infrastructure.repositories.chien_dich_mk_repository import ChienDichMkRepository
 from app.infrastructure.repositories.lead_repository import LeadRepository
+from app.infrastructure.repositories.khieu_nai_repository import KhieuNaiRepository
 
 __all__ = [
     "BaseRepository",
@@ -21,4 +22,5 @@ __all__ = [
     "HopDongSearchFilter",
     "ChienDichMkRepository",
     "LeadRepository",
+    "KhieuNaiRepository",
 ]
