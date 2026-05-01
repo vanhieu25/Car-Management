@@ -21,6 +21,8 @@ from app.infrastructure.database.migrations.migration_018_tg_indexes import run 
 from app.infrastructure.database.migrations.migration_019_kn_improvements import run as run_019
 from app.infrastructure.database.migrations.migration_020_report_views import run as run_020
 from app.infrastructure.database.migrations.migration_021_dashboard_indexes import run as run_021
+from app.infrastructure.database.migrations.migration_022_nv_kpi_columns import run as run_022
+from app.infrastructure.database.migrations.migration_023_sit_missing_columns import run as run_023
 
 
 MIGRATIONS = [
@@ -45,4 +47,6 @@ MIGRATIONS = [
     (19, "019_kn_improvements", run_019),
     (20, "020_report_views", run_020),
     (21, "021_dashboard_indexes", run_021),
+    (22, "022_nv_kpi_columns", run_022),
+    (23, "023_sit_missing_columns", run_023),
 ]

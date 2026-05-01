@@ -301,6 +301,7 @@ class BaoHanhService:
             ngay_yeu_cau=data.ngay_yeu_cau or now,
             mo_ta_tinh_trang=data.mo_ta_tinh_trang,
             loai_yeu_cau=data.loai_yeu_cau,
+            phan_loai=phan_loai,
             chi_phi=chi_phi,
             trang_thai="dang_xu_ly",
             ghi_chu=data.ghi_chu,

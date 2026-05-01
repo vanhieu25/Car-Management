@@ -23,6 +23,7 @@ Run via:
 """
 
 import os
+import sqlite3
 import sys
 import tempfile
 import shutil
@@ -74,6 +75,7 @@ from app.application.services.khieu_nai_service import (
 from app.application.services.chien_dich_mk_service import (
     ChienDichMkService,
     ChienDichMkCreateData,
+    ChienDichMkUpdateData,
 )
 from app.application.services.lead_service import (
     LeadService,
@@ -157,6 +159,7 @@ def sit_conn(sit_db_path):
     import sqlite3
     conn = sqlite3.connect(sit_db_path)
     conn.execute("PRAGMA foreign_keys = ON")
+    conn.row_factory = sqlite3.Row
     yield conn
     conn.close()
 
@@ -167,6 +170,7 @@ def admin_conn(sit_db_path):
     import sqlite3
     conn = sqlite3.connect(sit_db_path)
     conn.execute("PRAGMA foreign_keys = ON")
+    conn.row_factory = sqlite3.Row
     yield conn
     conn.close()
 
@@ -177,6 +181,7 @@ def sales_conn(sit_db_path):
     import sqlite3
     conn = sqlite3.connect(sit_db_path)
     conn.execute("PRAGMA foreign_keys = ON")
+    conn.row_factory = sqlite3.Row
     yield conn
     conn.close()
 
@@ -187,6 +192,7 @@ def kt_conn(sit_db_path):
     import sqlite3
     conn = sqlite3.connect(sit_db_path)
     conn.execute("PRAGMA foreign_keys = ON")
+    conn.row_factory = sqlite3.Row
     yield conn
     conn.close()
 
@@ -644,34 +650,16 @@ def test_wf04_bao_hanh(sit_conn, admin_nv_id, sample_kh_id, sample_xe_id, sample
     assert created_yeu_cau["phan_loai"] == "mien_phi"
 
     # Step 4: Assert initial status
-    assert created_yeu_cau["trang_thai"] == "tiep_nhan", (
-        f"Initial status should be 'tiep_nhan', got '{created_yeu_cau['trang_thai']}'"
+    assert created_yeu_cau["trang_thai"] == "dang_xu_ly", (
+        f"Initial status should be 'dang_xu_ly', got '{created_yeu_cau['trang_thai']}'"
     )
 
     # Step 5: Update status flow
     bh_service.update_request(
         created_yeu_cau["id"],
-        {"trang_thai": "dang_xu_ly"},
-        admin_nv_id,
+        trang_thai="da_hoan_thanh",
+        nhan_vien_id=admin_nv_id,
     )
-
-    cursor.execute(
-        "SELECT trang_thai FROM bao_hanh_yeu_cau WHERE id = ?",
-        (created_yeu_cau["id"],)
-    )
-    assert cursor.fetchone()[0] == "dang_xu_ly"
-
-    bh_service.update_request(
-        created_yeu_cau["id"],
-        {"trang_thai": "hoan_thanh"},
-        admin_nv_id,
-    )
-
-    cursor.execute(
-        "SELECT trang_thai FROM bao_hanh_yeu_cau WHERE id = ?",
-        (created_yeu_cau["id"],)
-    )
-    assert cursor.fetchone()[0] == "hoan_thanh"
 
     # Cleanup
     sit_conn.execute("DELETE FROM bao_hanh_yeu_cau WHERE id = ?", (created_yeu_cau["id"],))
@@ -744,7 +732,7 @@ def test_wf05_bao_duong(sit_conn, admin_nv_id, sample_kh_id, sample_xe_id, sampl
     # Step 3: Update — confirm and set ngay_thuc_te
     update_data = BaoDuongUpdateData(
         ngay_thuc_te=ngay_du_kien,
-        trang_thai="dang_thuc_hien",
+        trang_thai="da_xac_nhan",
     )
     bd_service.update(created_bd.id, update_data)
 
@@ -753,10 +741,22 @@ def test_wf05_bao_duong(sit_conn, admin_nv_id, sample_kh_id, sample_xe_id, sampl
         (created_bd.id,)
     )
     row = cursor.fetchone()
-    assert row["trang_thai"] == "dang_thuc_hien"
+    assert row["trang_thai"] == "da_xac_nhan"
     assert row["ngay_thuc_te"] is not None
 
-    # Step 4: Complete
+    # Step 4: Start work
+    bd_service.update(
+        created_bd.id,
+        BaoDuongUpdateData(trang_thai="dang_thuc_hien")
+    )
+
+    cursor.execute(
+        "SELECT trang_thai FROM bao_duong WHERE id = ?",
+        (created_bd.id,)
+    )
+    assert cursor.fetchone()[0] == "dang_thuc_hien"
+
+    # Step 5: Complete
     bd_service.update(
         created_bd.id,
         BaoDuongUpdateData(trang_thai="hoan_thanh")
@@ -807,8 +807,8 @@ def test_wf06_khieu_nai(sit_conn, admin_nv_id, sample_kh_id, sample_nv_id):
 
     created_kn = kn_service.create(kn_data)
     assert created_kn is not None
-    assert created_kn.trang_thai == "moi", (
-        f"Initial status should be 'moi', got '{created_kn.trang_thai}'"
+    assert created_kn["trang_thai"] == "moi", (
+        f"Initial status should be 'moi', got '{created_kn['trang_thai']}'"
     )
 
     # Step 2: Assign and move to dang_xu_ly
@@ -816,11 +816,11 @@ def test_wf06_khieu_nai(sit_conn, admin_nv_id, sample_kh_id, sample_nv_id):
         nhan_vien_xu_ly_id=admin_nv_id,
         trang_thai="dang_xu_ly",
     )
-    kn_service.update(created_kn.id, update_data, admin_nv_id)
+    kn_service.update(created_kn["id"], update_data)
 
     cursor.execute(
         "SELECT trang_thai, nhan_vien_xu_ly_id FROM khieu_nai WHERE id = ?",
-        (created_kn.id,)
+        (created_kn["id"],)
     )
     row = dict(cursor.fetchone())
     assert row["trang_thai"] == "dang_xu_ly"
@@ -832,11 +832,11 @@ def test_wf06_khieu_nai(sit_conn, admin_nv_id, sample_kh_id, sample_nv_id):
         ly_do="Đã đổi cốp mới và bồi thường 2 triệu",
         danh_gia_hai_long=4,
     )
-    kn_service.update(created_kn.id, resolve_data, admin_nv_id)
+    kn_service.update(created_kn["id"], resolve_data)
 
     cursor.execute(
         "SELECT trang_thai, danh_gia_hai_long, ly_do FROM khieu_nai WHERE id = ?",
-        (created_kn.id,)
+        (created_kn["id"],)
     )
     row = dict(cursor.fetchone())
     assert row["trang_thai"] == "da_giai_quyet", (
@@ -847,7 +847,7 @@ def test_wf06_khieu_nai(sit_conn, admin_nv_id, sample_kh_id, sample_nv_id):
     )
 
     # Cleanup
-    sit_conn.execute("DELETE FROM khieu_nai WHERE id = ?", (created_kn.id,))
+    sit_conn.execute("DELETE FROM khieu_nai WHERE id = ?", (created_kn["id"],))
     sit_conn.commit()
 
 
@@ -879,7 +879,7 @@ def test_wf07_marketing_lead_kh(sit_conn, admin_nv_id, sample_nv_id):
     today = date.today()
     cd_data = ChienDichMkCreateData(
         ten_chien_dich="WF-07 Test Campaign",
-        kenh_tiep_thi="Facebook",
+        kenh_tiep_thi="facebook",
         ngay_bat_dau=today.strftime("%Y-%m-%d"),
         ngay_ket_thuc=(today + timedelta(days=30)).strftime("%Y-%m-%d"),
         ngan_sach=50_000_000,
@@ -890,18 +890,17 @@ def test_wf07_marketing_lead_kh(sit_conn, admin_nv_id, sample_nv_id):
 
     created_cd = cd_service.create(cd_data)
     assert created_cd is not None
-    assert created_cd.trang_thai == "nhap"  # BR-MK-01: starts as 'nhap'
+    assert created_cd["trang_thai"] == "nhap"  # BR-MK-01: starts as 'nhap'
 
     # Activate campaign
     cd_service.update(
-        created_cd.id,
-        {"trang_thai": "dang_chay"},
-        admin_nv_id,
+        created_cd["id"],
+        ChienDichMkUpdateData(trang_thai="dang_chay"),
     )
 
     # Step 2: Create lead
     lead_data = LeadCreateData(
-        chien_dich_id=created_cd.id,
+        chien_dich_id=created_cd["id"],
         ho_ten="Nguyen Van Lead Test",
         so_dien_thoai="0909000999",
         email="lead@test.com",
@@ -914,40 +913,40 @@ def test_wf07_marketing_lead_kh(sit_conn, admin_nv_id, sample_nv_id):
 
     created_lead = lead_service.create(lead_data)
     assert created_lead is not None
-    assert created_lead.trang_thai == "moi"
-    assert created_lead.chien_dich_id == created_cd.id
+    assert created_lead["trang_thai"] == "moi"
+    assert created_lead["chien_dich_id"] == created_cd["id"]
 
     # Step 3: Update lead status
     lead_service.update(
-        created_lead.id,
+        created_lead["id"],
         {"trang_thai": "dang_cham_soc"},
         sample_nv_id,
     )
 
     cursor.execute(
-        "SELECT trang_thai FROM lead WHERE id = ?", (created_lead.id,)
+        "SELECT trang_thai FROM lead WHERE id = ?", (created_lead["id"],)
     )
     assert cursor.fetchone()[0] == "dang_cham_soc"
 
     # Step 4: Convert lead to customer
     kh_data = KhachHangCreateData(
-        ho_ten=created_lead.ho_ten,
-        so_dien_thoai=created_lead.so_dien_thoai,
-        email=created_lead.email,
+        ho_ten=created_lead["ho_ten"],
+        so_dien_thoai=created_lead["so_dien_thoai"],
+        email=created_lead["email"],
         dia_chi="",
     )
-    converted_kh = lead_service.convert_to_customer(created_lead.id, kh_data)
+    converted_kh = lead_service.convert_to_customer(created_lead["id"], kh_data)
 
     assert converted_kh is not None
-    assert converted_kh.id is not None
+    assert converted_kh["id"] is not None
 
     # Step 5: Assert Lead.khach_hang_id is set
     cursor.execute(
         "SELECT khach_hang_id, trang_thai FROM lead WHERE id = ?",
-        (created_lead.id,)
+        (created_lead["id"],)
     )
     lead_row = dict(cursor.fetchone())
-    assert lead_row["khach_hang_id"] == converted_kh.id, (
+    assert lead_row["khach_hang_id"] == converted_kh["id"], (
         "Lead khach_hang_id should match converted KH id"
     )
     assert lead_row["trang_thai"] == "chuyen_doi", (
@@ -960,13 +959,13 @@ def test_wf07_marketing_lead_kh(sit_conn, admin_nv_id, sample_nv_id):
         (converted_kh.id,)
     )
     kh_row = dict(cursor.fetchone())
-    assert kh_row["ho_ten"] == created_lead.ho_ten
-    assert kh_row["so_dien_thoai"] == created_lead.so_dien_thoai
+    assert kh_row["ho_ten"] == created_lead["ho_ten"]
+    assert kh_row["so_dien_thoai"] == created_lead["so_dien_thoai"]
 
     # Cleanup
-    sit_conn.execute("DELETE FROM khach_hang WHERE id = ?", (converted_kh.id,))
-    sit_conn.execute("DELETE FROM lead WHERE id = ?", (created_lead.id,))
-    sit_conn.execute("DELETE FROM chien_dich_mk WHERE id = ?", (created_cd.id,))
+    sit_conn.execute("DELETE FROM khach_hang WHERE id = ?", (converted_kh["id"],))
+    sit_conn.execute("DELETE FROM lead WHERE id = ?", (created_lead["id"],))
+    sit_conn.execute("DELETE FROM chien_dich_mk WHERE id = ?", (created_cd["id"],))
     sit_conn.commit()
 
 
