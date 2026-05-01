@@ -945,11 +945,11 @@ Mỗi Sprint **PHẢI** đi qua 6 bước theo đúng thứ tự. Không nhảy 
 
 #### TEST (1 ngày)
 
-- [ ] `T-G4.5.TEST.01` (3h) `[BLOCKER]` — Unit test `calculate_monthly_payment` với 5 case: P=500tr/r=10%/n=24, P=1tỷ/r=8%/n=36, edge case r=0, r=30, n=6, n=84.
-- [ ] `T-G4.5.TEST.02` (2h) — Unit test `create` → `n` kỳ `tra_gop_lich_su` đúng số tiền + ngày.
-- [ ] `T-G4.5.TEST.03` (1h) — Test job TRG-07: kỳ chậm 6 ngày → `qua_han`.
-- [ ] `T-G4.5.TEST.04` (2h) — Integration WF-03: WF-02 + tạo trả góp → ghi nhận 3 kỳ.
-- [ ] `T-G4.5.TEST.05` (1h) — UAT theo AC-TG-*.
+- [x] `T-G4.5.TEST.01` (3h) `[BLOCKER]` — Unit test `calculate_monthly_payment` với 5 case: P=500tr/r=10%/n=24, P=1tỷ/r=8%/n=36, edge case r=0, r=30, n=6, n=84.
+- [x] `T-G4.5.TEST.02` (2h) — Unit test `create` → `n` kỳ `tra_gop_lich_su` đúng số tiền + ngày.
+- [x] `T-G4.5.TEST.03` (1h) — Test job TRG-07: kỳ chậm 6 ngày → `qua_han`.
+- [x] `T-G4.5.TEST.04` (2h) — Integration WF-03: WF-02 + tạo trả góp → ghi nhận 3 kỳ.
+- [x] `T-G4.5.TEST.05` (1h) — UAT theo AC-TG-*.
 
 #### GIT (0.25 ngày)
 
