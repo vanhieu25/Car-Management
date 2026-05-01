@@ -42,31 +42,38 @@ def marketing_db():
     conn = sqlite3.connect(db_path)
     conn.execute("PRAGMA foreign_keys = ON")
 
-    runner = MigrationRunner(conn)
-    runner.run_all()
+    # Run migrations using path
+    runner = MigrationRunner(db_path)
+    runner.run_pending()
 
     # Seed required data
     cursor = conn.cursor()
 
-    # Seed vai_tro
-    cursor.execute("""
-        INSERT INTO vai_tro (id, ma_vai_tro, ten_vai_tro)
-        VALUES (1, 'A-01', 'Admin'), (2, 'A-02', 'Sales'), (3, 'A-03', 'KyThuat')
-    """)
+    # Seed vai_tro (migration already seeds, check first)
+    cursor.execute('SELECT COUNT(*) FROM vai_tro')
+    if cursor.fetchone()[0] == 0:
+        cursor.execute("""
+            INSERT INTO vai_tro (id, ma_vai_tro, ten_vai_tro)
+            VALUES (1, 'A-01', 'Admin'), (2, 'A-02', 'Sales'), (3, 'A-03', 'KyThuat')
+        """)
 
     # Seed nhan_vien
-    cursor.execute("""
-        INSERT INTO nhan_vien (id, username, mat_khau_hash, ho_ten, vai_tro_id, trang_thai)
-        VALUES (1, 'admin', '$2b$12$dummy', 'Nguyen Van A', 1, 'dang_lam'),
-               (2, 'sales1', '$2b$12$dummy', 'Tran Van B', 2, 'dang_lam'),
-               (3, 'sales2', '$2b$12$dummy', 'Le Thi C', 2, 'dang_lam')
-    """)
+    cursor.execute('SELECT COUNT(*) FROM nhan_vien')
+    if cursor.fetchone()[0] == 0:
+        cursor.execute("""
+            INSERT INTO nhan_vien (id, username, mat_khau_hash, ho_ten, email, vai_tro_id, trang_thai)
+            VALUES (1, 'admin', '$2b$12$dummy', 'Nguyen Van A', 'admin@test.com', 1, 'active'),
+                   (2, 'sales1', '$2b$12$dummy', 'Tran Van B', 'sales1@test.com', 2, 'active'),
+                   (3, 'sales2', '$2b$12$dummy', 'Le Thi C', 'sales2@test.com', 2, 'active')
+        """)
 
     # Seed khach_hang (need for integration test)
-    cursor.execute("""
-        INSERT INTO khach_hang (id, ho_ten, so_dien_thoai, email)
-        VALUES (1, 'Khach Hang Test', '0909000001', 'kh1@test.com')
-    """)
+    cursor.execute('SELECT COUNT(*) FROM khach_hang')
+    if cursor.fetchone()[0] == 0:
+        cursor.execute("""
+            INSERT INTO khach_hang (id, ho_ten, so_dien_thoai, email)
+            VALUES (1, 'Khach Hang Test', '0909000001', 'kh1@test.com')
+        """)
 
     conn.commit()
     yield conn

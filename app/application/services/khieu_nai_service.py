@@ -230,7 +230,7 @@ class KhieuNaiService:
             raise KhieuNaiNotFoundError(f"Khiếu nại {kn_id} không tồn tại")
 
         # BR-KN-04: Satisfaction rating 1-5 is mandatory
-        if not (1 <= danh_gia_hai_long <= 5):
+        if danh_gia_hai_long is None or not (1 <= danh_gia_hai_long <= 5):
             raise ValidationError("Đánh giá hài lòng phải từ 1-5 sao (BR-KN-04)")
 
         # Only allow close from 'dang_xu_ly' or 'da_giai_quyet' status
