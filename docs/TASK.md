@@ -979,13 +979,13 @@ Mỗi Sprint **PHẢI** đi qua 6 bước theo đúng thứ tự. Không nhảy 
 
 #### REQ (0.5 ngày)
 
-- [ ] `T-G5.1.REQ.01` (1h) — Đọc BRD §5.10 + AC-HM-*.
-- [ ] `T-G5.1.REQ.02` (0.5h) — Hiểu BR-TIME-02 (nhắc 7 ngày trước lịch BD), BR-TIME-05 (sinh nhật KH ±7 ngày).
-- [ ] `T-G5.1.REQ.03` (0.5h) — Phân biệt BD (định kỳ, có lịch) vs Cứu hộ (đột xuất, có vị trí).
+- [x] `T-G5.1.REQ.01` (1h) — Đọc BRD §5.10 + AC-HM-*.
+- [x] `T-G5.1.REQ.02` (0.5h) — Hiểu BR-TIME-02 (nhắc 7 ngày trước lịch BD), BR-TIME-05 (sinh nhật KH ±7 ngày).
+- [x] `T-G5.1.REQ.03` (0.5h) — Phân biệt BD (định kỳ, có lịch) vs Cứu hộ (đột xuất, có vị trí).
 
 #### DB (0.25 ngày)
 
-- [ ] `T-G5.1.DB.01` (0.5h) — Verify `bao_duong`, `cuu_ho`.
+- [x] `T-G5.1.DB.01` (0.5h) — Verify `bao_duong`, `cuu_ho`.
 
 #### BE (1.5 ngày)
 
