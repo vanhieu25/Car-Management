@@ -58,6 +58,7 @@ def haumai_db():
 
     conn = sqlite3.connect(db_path)
     conn.execute("PRAGMA foreign_keys = ON")
+    conn.row_factory = sqlite3.Row  # Enable dict(row) / from_row for all queries
 
     # Run migrations
     from app.infrastructure.database.migrations.runner import MigrationRunner
