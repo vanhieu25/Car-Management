@@ -1,4 +1,5 @@
 """Xe repository - vehicle data access layer.
+from dataclasses import dataclass
 
 Provides database operations for Xe entity with search capabilities.
 """

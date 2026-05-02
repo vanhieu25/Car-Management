@@ -297,6 +297,12 @@ class DashboardScreen(QWidget):
             session: Current user session.
             parent: Parent widget.
         """
+        import sys
+        print("[DASHBOARD] __init__ called", file=sys.stderr)
+        print(f"[DASHBOARD]   db_conn={db_conn}", file=sys.stderr)
+        print(f"[DASHBOARD]   session={session}", file=sys.stderr)
+        print(f"[DASHBOARD]   session.vai_tro_ma={session.vai_tro_ma if session else None}", file=sys.stderr)
+        
         super().__init__(parent)
         self._db_conn = db_conn
         self._session = session
@@ -305,8 +311,11 @@ class DashboardScreen(QWidget):
         self._kpi_cards: Dict[str, KpiCard] = {}
         self._alerts: list = []
 
+        print("[DASHBOARD] Calling _setup_ui()", file=sys.stderr)
         self._setup_ui()
+        print("[DASHBOARD] Calling _start_auto_refresh()", file=sys.stderr)
         self._start_auto_refresh()
+        print("[DASHBOARD] Calling _load_data()", file=sys.stderr)
         self._load_data()
 
     def _setup_ui(self):
@@ -455,12 +464,21 @@ class DashboardScreen(QWidget):
 
     def _load_data(self):
         """Load dashboard data from service."""
+        import logging
+        logger = logging.getLogger("car_management")
+        
         try:
             role = self._session.vai_tro_ma if self._session else "A-01"
             user_id = getattr(self._session, "nhan_vien_id", None) if self._session else None
 
+            logger.info(f"[Dashboard] Loading data - role: {role}, user_id: {user_id}")
+            logger.info(f"[Dashboard] DB service: {self._dashboard_service}")
+            logger.info(f"[Dashboard] DB conn: {self._db_conn}")
+
             result = self._dashboard_service.get_summary(role=role, user_id=user_id)
             kpis = result.get("kpis", {})
+
+            logger.info(f"[Dashboard] KPIs loaded: {kpis}")
 
             # Update KPI cards
             self._update_kpi_card("revenue_month", kpis.get("revenue_month", 0))
@@ -482,6 +500,7 @@ class DashboardScreen(QWidget):
             self._refresh_time_label.setText(f"Cập nhật lúc: {now}")
 
         except Exception as e:
+            logger.error(f"[Dashboard] Error: {e}", exc_info=True)
             QMessageBox.critical(self, "Lỗi", f"Không thể tải dashboard: {str(e)}")
 
     def _update_kpi_card(self, key: str, value):

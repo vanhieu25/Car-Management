@@ -23,6 +23,8 @@ class SidebarItem(QPushButton):
     Displays icon + label, highlights on hover/active.
     """
     
+    module_clicked = pyqtSignal(str)  # module_id
+    
     def __init__(self, module_id: str, label: str, icon: str = "", parent=None):
         """Initialize sidebar item.
         
@@ -61,7 +63,7 @@ class SidebarItem(QPushButton):
     
     def _emit_module_selected(self):
         """Emit module selected signal."""
-        self.parent().item_clicked(self.module_id) if self.parent() else None
+        self.module_clicked.emit(self.module_id)
 
 
 class SidebarGroup(QWidget):
@@ -69,6 +71,8 @@ class SidebarGroup(QWidget):
     
     Displays a group header and list of items.
     """
+    
+    module_clicked = pyqtSignal(str)  # module_id
     
     def __init__(self, group_name: str, parent=None):
         """Initialize sidebar group.
@@ -111,6 +115,7 @@ class SidebarGroup(QWidget):
         """
         self._items.append(item)
         self.items_layout.addWidget(item)
+        item.module_clicked.connect(self.module_clicked.emit)
     
     def set_active(self, module_id: str):
         """Set the active item in this group.
@@ -236,6 +241,7 @@ class Sidebar(QWidget):
             SidebarGroup instance.
         """
         group = SidebarGroup(group_name, self._scroll_content)
+        group.module_clicked.connect(self.item_clicked)
         
         # Insert before the stretch
         self._scroll_layout.insertWidget(self._scroll_layout.count() - 1, group)

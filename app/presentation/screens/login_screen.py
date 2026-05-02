@@ -37,7 +37,7 @@ class LoginScreen(QDialog):
         change_password_requested: Emitted when user needs to change password.
     """
     
-    login_successful = pyqtSignal()
+    login_successful = pyqtSignal(int)
     change_password_requested = pyqtSignal(int)  # user_id
     
     def __init__(self, parent=None):
@@ -265,7 +265,7 @@ class LoginScreen(QDialog):
             self.change_password_requested.emit(user.id)
         else:
             self.close()
-            self.login_successful.emit()
+            self.login_successful.emit(user.id)
     
     def _handle_failed_login(self, result: LoginResult):
         """Handle failed login attempt."""

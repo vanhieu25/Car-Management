@@ -1,4 +1,5 @@
 """DonDatHang repository - purchase order data access layer."""
+from dataclasses import dataclass
 
 from datetime import datetime
 from typing import List, Optional, Any

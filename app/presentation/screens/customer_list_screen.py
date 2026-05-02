@@ -23,6 +23,7 @@ from PyQt6.QtWidgets import (
     QApplication
 )
 from PyQt6.QtCore import Qt, pyqtSignal
+from PyQt6.QtGui import QColor
 
 from app.application.services.khach_hang_service import KhachHangService, KhachHangSearchResult
 from app.application.services.session import CurrentSession
