@@ -146,14 +146,14 @@ class KpiCard(QWidget):
         self._is_alert = is_alert
         self._alert_color = alert_color
 
-        self.setMinimumSize(160, 90)
+        self.setMinimumSize(200, 110)
         self.setCursor(Qt.CursorShape.PointingHandCursor)
         self.setStyleSheet(f"""
             QWidget {{
                 background-color: white;
                 border: 1px solid #d2d2d7;
                 border-radius: 10px;
-                padding: 14px;
+                padding: 16px;
             }}
             QWidget:hover {{
                 border: 2px solid #0066cc;
@@ -162,8 +162,8 @@ class KpiCard(QWidget):
         """)
 
         layout = QVBoxLayout(self)
-        layout.setContentsMargins(12, 10, 12, 10)
-        layout.setSpacing(6)
+        layout.setContentsMargins(14, 12, 14, 12)
+        layout.setSpacing(8)
 
         # Top row: icon + title
         top_layout = QHBoxLayout()
@@ -182,7 +182,7 @@ class KpiCard(QWidget):
         # Value
         self._value_label = QLabel(value)
         value_color = color if not is_alert else alert_color
-        self._value_label.setStyleSheet(f"font-size: 22px; font-weight: 600; color: {value_color};")
+        self._value_label.setStyleSheet(f"font-size: 26px; font-weight: 700; color: {value_color};")
 
         # Alert badge
         if is_alert:
