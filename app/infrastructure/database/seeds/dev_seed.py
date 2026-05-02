@@ -6,7 +6,9 @@ from datetime import datetime, timedelta
 from pathlib import Path
 
 # Default password hash for all seed users (cost 12) - USED BY seed_nhan_vien
-SEED_PASSWORD_HASH = "$2b$12$RtiaqN7EwQj0Asv9Snd4buS5Lmd/aCePAMfsw02c0Zswian1YHcvK" = ["Toyota", "Honda", "Ford", "BMW", "Mercedes"]
+SEED_PASSWORD_HASH = "$2b$12$RtiaqN7EwQj0Asv9Snd4buS5Lmd/aCePAMfsw02c0Zswian1YHcvK"
+
+CAR_BRANDS = ["Toyota", "Honda", "Ford", "BMW", "Mercedes"]
 CAR_MODELS = {
     "Toyota": ["Camry", "Corolla", "Fortuner", "RAV4"],
     "Honda": ["Civic", "Accord", "CR-V", "City"],
