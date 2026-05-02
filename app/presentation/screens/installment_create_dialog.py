@@ -19,10 +19,12 @@ from PyQt6.QtWidgets import (
     QWidget, QVBoxLayout, QHBoxLayout, QLabel, QTableWidget,
     QTableWidgetItem, QPushButton, QComboBox, QLineEdit,
     QHeaderView, QMessageBox, QDialog, QScrollArea, QGroupBox,
-    QFormLayout, QDoubleSpinBox, QSpinBox
+    QFormLayout
 )
 from PyQt6.QtCore import Qt, pyqtSignal
 from PyQt6.QtGui import QColor
+
+from app.presentation.widgets.inputs import InlineNumericEdit
 
 from app.application.services.tra_gop_service import TraGopService, ValidationError
 from app.application.services.hop_dong_service import HopDongService
@@ -142,52 +144,39 @@ class InstallmentCreateDialog(QDialog):
         params_layout.addRow("Ngân hàng:", self._bank_input)
 
         # Loan amount
-        self._amount_input = QSpinBox()
-        self._amount_input.setRange(0, 100000000000)
-        self._amount_input.setSuffix(" đ")
-        self._amount_input.setStyleSheet("""
-            QSpinBox {
-                padding: 10px 12px;
-                border: 1px solid #d2d2d7;
-                border-radius: 6px;
-                min-width: 200px;
-            }
-        """)
+        self._amount_input = InlineNumericEdit(
+            value=0,
+            minimum=0,
+            maximum=100000000000,
+            step=1000000,
+            suffix="đ",
+            is_float=False,
+        )
         self._amount_input.valueChanged.connect(self._on_params_changed)
         params_layout.addRow("Số tiền vay:", self._amount_input)
 
         # Interest rate slider
-        rate_layout = QHBoxLayout()
-        self._rate_slider = QSpinBox()
-        self._rate_slider.setRange(0, 30)
-        self._rate_slider.setSuffix(" %")
-        self._rate_slider.setStyleSheet("""
-            QSpinBox {
-                padding: 10px 12px;
-                border: 1px solid #d2d2d7;
-                border-radius: 6px;
-                min-width: 80px;
-            }
-        """)
-        self._rate_slider.valueChanged.connect(self._on_params_changed)
-        rate_layout.addWidget(self._rate_slider)
-        rate_layout.addWidget(QLabel("Lãi suất năm"))
-
+        self._rate_slider = InlineNumericEdit(
+            value=0,
+            minimum=0,
+            maximum=30,
+            step=0.5,
+            suffix="%",
+            is_float=True,
+            decimals=1,
+        )
         self._rate_slider.valueChanged.connect(self._on_params_changed)
         params_layout.addRow("Lãi suất:", self._rate_slider)
 
         # Months slider
-        self._months_slider = QSpinBox()
-        self._months_slider.setRange(6, 84)
-        self._months_slider.setSuffix(" tháng")
-        self._months_slider.setStyleSheet("""
-            QSpinBox {
-                padding: 10px 12px;
-                border: 1px solid #d2d2d7;
-                border-radius: 6px;
-                min-width: 80px;
-            }
-        """)
+        self._months_slider = InlineNumericEdit(
+            value=6,
+            minimum=6,
+            maximum=84,
+            step=1,
+            suffix="tháng",
+            is_float=False,
+        )
         self._months_slider.valueChanged.connect(self._on_params_changed)
         params_layout.addRow("Số kỳ trả:", self._months_slider)
 
@@ -331,7 +320,7 @@ class InstallmentCreateDialog(QDialog):
                 f"Khách hàng: {data['khach_hang']} | Xe: {data['xe']} | Tổng tiền: {data['tong_tien']:,}đ".replace(",", ".")
             )
             # Set max amount to contract total
-            self._amount_input.setMaximum(data["tong_tien"])
+            self._amount_input.setRange(0, data["tong_tien"])
             self._amount_input.setValue(data["tong_tien"])
         else:
             self._contract_info_label.setText("Chưa chọn hợp đồng")
@@ -353,8 +342,8 @@ class InstallmentCreateDialog(QDialog):
             return
 
         P = self._amount_input.value()
-        r_year = self._rate_slider.value()
-        n = self._months_slider.value()
+        r_year = float(self._rate_slider.value())
+        n = int(self._months_slider.value())
 
         if P <= 0 or n <= 0:
             self._monthly_payment_label.setText("0 đ")
@@ -425,8 +414,8 @@ class InstallmentCreateDialog(QDialog):
         hop_dong_id = data["id"]
         ngan_hang = self._bank_input.text().strip()
         P = self._amount_input.value()
-        r_year = self._rate_slider.value()
-        n = self._months_slider.value()
+        r_year = float(self._rate_slider.value())
+        n = int(self._months_slider.value())
 
         if not ngan_hang:
             QMessageBox.warning(self, "Cảnh báo", "Vui lòng nhập tên ngân hàng")

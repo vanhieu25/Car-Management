@@ -15,10 +15,12 @@ from PyQt6.QtWidgets import (
     QDialog, QVBoxLayout, QHBoxLayout, QLabel, QLineEdit,
     QPushButton, QFormLayout, QMessageBox,
     QGroupBox, QComboBox, QDateEdit,
-    QSpinBox, QTextEdit
+    QTextEdit
 )
 from PyQt6.QtCore import Qt, pyqtSignal, QDate
 from PyQt6.QtGui import QFont
+
+from app.presentation.widgets.inputs import InlineNumericEdit
 
 from app.application.services.chien_dich_mk_service import (
     ChienDichMkService,
@@ -150,17 +152,24 @@ class CampaignFormDialog(QDialog):
         form_layout.addRow("Ngày kết thúc *:", self._ngay_ket_thuc)
 
         # ngan_sach
-        self._ngan_sach = QSpinBox()
-        self._ngan_sach.setRange(0, 999999999)
-        self._ngan_sach.setPrefix("")
-        self._ngan_sach.setSuffix(" VNĐ")
-        self._ngan_sach.setValue(0)
+        self._ngan_sach = InlineNumericEdit(
+            value=0,
+            minimum=0,
+            maximum=999999999,
+            step=1000000,
+            suffix="VNĐ",
+            is_float=False,
+        )
         form_layout.addRow("Ngân sách:", self._ngan_sach)
 
         # so_luong_lead_muc_tieu
-        self._lead_muc_tieu = QSpinBox()
-        self._lead_muc_tieu.setRange(0, 99999)
-        self._lead_muc_tieu.setValue(0)
+        self._lead_muc_tieu = InlineNumericEdit(
+            value=0,
+            minimum=0,
+            maximum=99999,
+            step=1,
+            is_float=False,
+        )
         form_layout.addRow("Lead mục tiêu:", self._lead_muc_tieu)
 
         # muc_tieu

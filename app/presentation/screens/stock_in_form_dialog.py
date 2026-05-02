@@ -21,6 +21,8 @@ from PyQt6.QtWidgets import (
 from PyQt6.QtCore import Qt, pyqtSignal, QTimer
 from PyQt6.QtGui import QFont
 
+from app.presentation.widgets.inputs import InlineNumericEdit
+
 from app.application.services.nhap_kho_service import NhapKhoService
 from app.application.services.kho_service import KhoService
 from app.application.services.session import CurrentSession
@@ -206,22 +208,13 @@ class StockInFormDialog(QDialog):
         sl_label.setStyleSheet("font-weight: 500;")
         sl_layout.addWidget(sl_label)
         
-        self._so_luong_spin = QSpinBox()
-        self._so_luong_spin.setMinimum(1)
-        self._so_luong_spin.setValue(1)
-        self._so_luong_spin.setStyleSheet("""
-            QSpinBox {
-                padding: 10px 12px;
-                border: 1px solid #d2d2d7;
-                border-radius: 6px;
-                font-size: 14px;
-                background: white;
-                min-width: 100px;
-            }
-            QSpinBox:focus {
-                border: 2px solid #0066cc;
-            }
-        """)
+        self._so_luong_spin = InlineNumericEdit(
+            value=1,
+            minimum=1,
+            maximum=999999999,
+            step=1,
+            is_float=False,
+        )
         sl_layout.addWidget(self._so_luong_spin)
         
         row2_layout.addLayout(sl_layout)
@@ -234,23 +227,14 @@ class StockInFormDialog(QDialog):
         gia_label.setStyleSheet("font-weight: 500;")
         gia_layout.addWidget(gia_label)
         
-        self._gia_nhap_spin = QSpinBox()
-        self._gia_nhap_spin.setMinimum(0)
-        self._gia_nhap_spin.setValue(0)
-        self._gia_nhap_spin.setSingleStep(1000000)
-        self._gia_nhap_spin.setStyleSheet("""
-            QSpinBox {
-                padding: 10px 12px;
-                border: 1px solid #d2d2d7;
-                border-radius: 6px;
-                font-size: 14px;
-                background: white;
-                min-width: 150px;
-            }
-            QSpinBox:focus {
-                border: 2px solid #0066cc;
-            }
-        """)
+        self._gia_nhap_spin = InlineNumericEdit(
+            value=0,
+            minimum=0,
+            maximum=999999999,
+            step=1000000,
+            suffix="đ",
+            is_float=False,
+        )
         gia_layout.addWidget(self._gia_nhap_spin)
         
         row2_layout.addLayout(gia_layout)

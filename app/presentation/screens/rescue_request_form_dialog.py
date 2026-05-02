@@ -17,10 +17,12 @@ from typing import Optional
 from PyQt6.QtWidgets import (
     QDialog, QVBoxLayout, QHBoxLayout, QLabel, QLineEdit,
     QPushButton, QMessageBox, QGroupBox, QComboBox,
-    QDateTimeEdit, QTextEdit, QSpinBox
+    QDateTimeEdit, QTextEdit
 )
 from PyQt6.QtCore import Qt, pyqtSignal, QDateTime
 from PyQt6.QtGui import QFont
+
+from app.presentation.widgets.inputs import InlineNumericEdit
 
 from app.application.services.cuu_ho_service import (
     CuuHoService, CuuHoCreateData, CuuHoUpdateData,
@@ -256,22 +258,14 @@ class RescueRequestFormDialog(QDialog):
         cp_label.setMinimumWidth(130)
         cp_layout.addWidget(cp_label)
         
-        self._cp_spin = QSpinBox()
-        self._cp_spin.setMinimum(0)
-        self._cp_spin.setMaximum(999999999)
-        self._cp_spin.setValue(0)
-        self._cp_spin.setStyleSheet("""
-            QSpinBox {
-                padding: 10px 12px;
-                border: 1px solid #d2d2d7;
-                border-radius: 6px;
-                font-size: 14px;
-                background: white;
-            }
-            QSpinBox:focus {
-                border: 2px solid #0066cc;
-            }
-        """)
+        self._cp_spin = InlineNumericEdit(
+            value=0,
+            minimum=0,
+            maximum=999999999,
+            step=100000,
+            suffix="VNĐ",
+            is_float=False,
+        )
         cp_layout.addWidget(self._cp_spin)
         
         cp_unit = QLabel("VNĐ")

@@ -22,13 +22,14 @@ from typing import Optional, Dict, Any
 from PyQt6.QtWidgets import (
     QWidget, QVBoxLayout, QHBoxLayout, QLabel, QTextEdit,
     QPushButton, QMessageBox, QDialog, QComboBox,
-    QDateEdit, QSpinBox, QGroupBox, QCheckBox
+    QDateEdit, QGroupBox, QCheckBox
 )
 from PyQt6.QtCore import Qt, QDate, pyqtSignal
 from PyQt6.QtGui import QFont
 
 from app.application.services.bao_hanh_service import BaoHanhService, BaoHanhYeuCauData
 from app.application.services.session import CurrentSession
+from app.presentation.widgets.inputs import InlineNumericEdit
 
 
 # Keywords that indicate customer fault (tinh_phi)
@@ -169,18 +170,14 @@ class WarrantyRequestFormDialog(QDialog):
         # Chi phi
         chi_phi_layout = QHBoxLayout()
         chi_phi_layout.addWidget(QLabel("Chi phí dự kiến (VNĐ):"))
-        self._chi_phi = QSpinBox()
-        self._chi_phi.setMinimum(0)
-        self._chi_phi.setMaximum(999999999)
-        self._chi_phi.setValue(0)
-        self._chi_phi.setStyleSheet("""
-            QSpinBox {
-                padding: 8px;
-                border: 1px solid #d2d2d7;
-                border-radius: 6px;
-                font-size: 14px;
-            }
-        """)
+        self._chi_phi = InlineNumericEdit(
+            value=0,
+            minimum=0,
+            maximum=999999999,
+            step=100000,
+            suffix="VNĐ",
+            is_float=False,
+        )
         self._chi_phi_layout = chi_phi_layout
         chi_phi_layout.addWidget(self._chi_phi)
         chi_phi_layout.addStretch()

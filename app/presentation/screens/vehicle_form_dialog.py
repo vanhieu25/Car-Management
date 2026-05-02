@@ -16,11 +16,13 @@ References:
 
 from PyQt6.QtWidgets import (
     QDialog, QVBoxLayout, QHBoxLayout, QLabel, QLineEdit,
-    QSpinBox, QPushButton, QFormLayout, QMessageBox,
-    QGroupBox, QDoubleSpinBox
+    QPushButton, QFormLayout, QMessageBox,
+    QGroupBox
 )
 from PyQt6.QtCore import Qt, pyqtSignal
 from PyQt6.QtGui import QFont
+
+from app.presentation.widgets.inputs import InlineNumericEdit
 
 from app.application.services.xe_service import (
     XeService, XeCreateData, XeUpdateData,
@@ -146,19 +148,16 @@ class VehicleFormDialog(QDialog):
         form_layout.addRow("Dòng xe *:", self._dong_input)
         
         # nam_san_xuat (BR-XE-09: 1990 - current_year+1)
-        self._nam_spin = QSpinBox()
-        self._nam_spin.setRange(1990, 2027)
-        self._nam_spin.setSuffix("")
-        self._nam_spin.setStyleSheet("""
-            QSpinBox {
-                padding: 10px 12px;
-                border: 1px solid #d2d2d7;
-                border-radius: 6px;
-                font-size: 14px;
-                background: white;
-            }
-            QSpinBox:focus {
-                border: 2px solid #0066cc;
+        self._nam_spin = InlineNumericEdit(
+            value=2026,
+            minimum=1990,
+            maximum=2027,
+            step=1,
+            is_float=False,
+        )
+        self._nam_spin.setStyleSheet(""""
+            QWidget {
+                padding: 0;
             }
         """)
         form_layout.addRow("Năm sản xuất *:", self._nam_spin)
@@ -171,48 +170,36 @@ class VehicleFormDialog(QDialog):
         form_layout.addRow("Màu sắc:", self._mau_input)
         
         # gia_ban (BR-DATA-01: ≥ 0)
-        self._gia_spin = QDoubleSpinBox()
-        self._gia_spin.setRange(0, 9999999999)
-        self._gia_spin.setDecimals(0)
-        self._gia_spin.setSuffix(" đ")
-        self._gia_spin.setStyleSheet("""
-            QDoubleSpinBox {
-                padding: 10px 12px;
-                border: 1px solid #d2d2d7;
-                border-radius: 6px;
-                font-size: 14px;
-                background: white;
-            }
-            QDoubleSpinBox:focus {
-                border: 2px solid #0066cc;
-            }
-        """)
+        self._gia_spin = InlineNumericEdit(
+            value=0,
+            minimum=0,
+            maximum=9999999999,
+            step=1000000,
+            suffix="đ",
+            is_float=False,
+        )
         form_layout.addRow("Giá bán *:", self._gia_spin)
         
         # so_luong_ton (BR-DATA-02: ≥ 0)
-        self._ton_spin = QSpinBox()
-        self._ton_spin.setRange(0, 9999)
-        self._ton_spin.setSuffix(" xe")
-        self._ton_spin.setStyleSheet("""
-            QSpinBox {
-                padding: 10px 12px;
-                border: 1px solid #d2d2d7;
-                border-radius: 6px;
-                font-size: 14px;
-                background: white;
-            }
-            QSpinBox:focus {
-                border: 2px solid #0066cc;
-            }
-        """)
+        self._ton_spin = InlineNumericEdit(
+            value=0,
+            minimum=0,
+            maximum=9999,
+            step=1,
+            suffix="xe",
+            is_float=False,
+        )
         form_layout.addRow("Số lượng tồn:", self._ton_spin)
         
         # muc_toi_thieu
-        self._muc_spin = QSpinBox()
-        self._muc_spin.setRange(0, 100)
-        self._muc_spin.setSuffix(" xe")
-        self._muc_spin.setStyleSheet(self._ton_spin.styleSheet())
-        self._muc_spin.setValue(2)
+        self._muc_spin = InlineNumericEdit(
+            value=2,
+            minimum=0,
+            maximum=100,
+            step=1,
+            suffix="xe",
+            is_float=False,
+        )
         form_layout.addRow("Mức tồn tối thiểu:", self._muc_spin)
         
         # mo_ta
@@ -282,7 +269,7 @@ class VehicleFormDialog(QDialog):
         self._dong_input.setText(xe.dong_xe)
         self._nam_spin.setValue(xe.nam_san_xuat)
         self._mau_input.setText(xe.mau_sac or "")
-        self._gia_spin.setValue(xe.gia_ban)
+        self._gia_spin.setValue(int(xe.gia_ban))
         self._ton_spin.setValue(xe.so_luong_ton)
         self._muc_spin.setValue(xe.muc_toi_thieu)
         self._mo_ta_input.setText(xe.mo_ta or "")

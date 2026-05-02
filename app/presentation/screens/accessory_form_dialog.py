@@ -10,9 +10,11 @@ Features:
 from PyQt6.QtWidgets import (
     QDialog, QVBoxLayout, QHBoxLayout, QLabel, QLineEdit,
     QTextEdit, QComboBox, QPushButton, QFormLayout, QGroupBox,
-    QMessageBox, QDoubleSpinBox, QSpinBox
+    QMessageBox
 )
 from PyQt6.QtCore import Qt, pyqtSignal
+
+from app.presentation.widgets.inputs import InlineNumericEdit
 
 from app.application.services.phu_kien_service import (
     PhuKienService,
@@ -151,40 +153,24 @@ class AccessoryFormDialog(QDialog):
         form_layout.addRow("Phân loại *:", self._phan_loai_combo)
 
         # Giá bán
-        self._gia_ban_input = QSpinBox()
-        self._gia_ban_input.setMinimum(0)
-        self._gia_ban_input.setMaximum(999999999)
-        self._gia_ban_input.setSuffix(" đ")
-        self._gia_ban_input.setStyleSheet("""
-            QSpinBox {
-                padding: 10px 12px;
-                border: 1px solid #d2d2d7;
-                border-radius: 6px;
-                font-size: 14px;
-                background: white;
-            }
-            QSpinBox:focus {
-                border: 2px solid #0066cc;
-            }
-        """)
+        self._gia_ban_input = InlineNumericEdit(
+            value=0,
+            minimum=0,
+            maximum=999999999,
+            step=1000,
+            suffix="đ",
+            is_float=False,
+        )
         form_layout.addRow("Giá bán *:", self._gia_ban_input)
 
         # Tồn kho
-        self._ton_kho_input = QSpinBox()
-        self._ton_kho_input.setMinimum(0)
-        self._ton_kho_input.setMaximum(999999999)
-        self._ton_kho_input.setStyleSheet("""
-            QSpinBox {
-                padding: 10px 12px;
-                border: 1px solid #d2d2d7;
-                border-radius: 6px;
-                font-size: 14px;
-                background: white;
-            }
-            QSpinBox:focus {
-                border: 2px solid #0066cc;
-            }
-        """)
+        self._ton_kho_input = InlineNumericEdit(
+            value=0,
+            minimum=0,
+            maximum=999999999,
+            step=1,
+            is_float=False,
+        )
         form_layout.addRow("Tồn kho *:", self._ton_kho_input)
 
         # Mô tả

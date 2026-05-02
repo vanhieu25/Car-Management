@@ -24,10 +24,12 @@ from PyQt6.QtWidgets import (
     QDialog, QVBoxLayout, QHBoxLayout, QLabel, QLineEdit,
     QPushButton, QFormLayout, QMessageBox,
     QGroupBox, QComboBox, QCheckBox, QDateEdit,
-    QSpinBox, QDoubleSpinBox
+    QTextEdit
 )
 from PyQt6.QtCore import Qt, pyqtSignal, QDate
 from PyQt6.QtGui import QFont
+
+from app.presentation.widgets.inputs import InlineNumericEdit
 
 from app.application.services.khuyen_mai_service import (
     KhuyenMaiService,
@@ -186,20 +188,13 @@ class PromoFormDialog(QDialog):
         value_layout.setSpacing(12)
 
         # gia_tri (dynamic based on loai_km)
-        self._gia_tri_spin = QSpinBox()
-        self._gia_tri_spin.setRange(0, 999999999)
-        self._gia_tri_spin.setStyleSheet("""
-            QSpinBox {
-                padding: 10px 12px;
-                border: 1px solid #d2d2d7;
-                border-radius: 6px;
-                font-size: 14px;
-                background: white;
-            }
-            QSpinBox:focus {
-                border: 2px solid #0066cc;
-            }
-        """)
+        self._gia_tri_spin = InlineNumericEdit(
+            value=0,
+            minimum=0,
+            maximum=999999999,
+            step=1,
+            is_float=False,
+        )
         self._value_unit_label = QLabel("đ")
         self._value_unit_label.setStyleSheet("font-size: 14px; color: #86868b;")
 
@@ -211,17 +206,14 @@ class PromoFormDialog(QDialog):
 
         # gia_tri_toi_da (for phan_tram only)
         self._gia_tri_max_layout = QHBoxLayout()
-        self._gia_tri_max_spin = QSpinBox()
-        self._gia_tri_max_spin.setRange(0, 9999999999)
-        self._gia_tri_max_spin.setStyleSheet("""
-            QSpinBox {
-                padding: 10px 12px;
-                border: 1px solid #d2d2d7;
-                border-radius: 6px;
-                font-size: 14px;
-                background: white;
-            }
-        """)
+        self._gia_tri_max_spin = InlineNumericEdit(
+            value=0,
+            minimum=0,
+            maximum=9999999999,
+            step=1000000,
+            suffix="đ",
+            is_float=False,
+        )
         self._gia_tri_max_layout.addWidget(self._gia_tri_max_spin)
         self._gia_tri_max_layout.addWidget(QLabel("đ"))
         self._gia_tri_max_layout.addStretch()
@@ -231,19 +223,15 @@ class PromoFormDialog(QDialog):
 
         # lai_suat_toi_da (for giam_lai_suat only)
         self._lai_suat_max_layout = QHBoxLayout()
-        self._lai_suat_max_spin = QDoubleSpinBox()
-        self._lai_suat_max_spin.setRange(0, 100)
-        self._lai_suat_max_spin.setDecimals(2)
-        self._lai_suat_max_spin.setSuffix(" %")
-        self._lai_suat_max_spin.setStyleSheet("""
-            QDoubleSpinBox {
-                padding: 10px 12px;
-                border: 1px solid #d2d2d7;
-                border-radius: 6px;
-                font-size: 14px;
-                background: white;
-            }
-        """)
+        self._lai_suat_max_spin = InlineNumericEdit(
+            value=0,
+            minimum=0,
+            maximum=100,
+            step=0.5,
+            suffix="%",
+            is_float=True,
+            decimals=1,
+        )
         self._lai_suat_max_layout.addWidget(self._lai_suat_max_spin)
         self._lai_suat_max_layout.addStretch()
         self._lai_suat_max_label = QLabel("Lãi suất tối đa:")
@@ -443,30 +431,36 @@ class PromoFormDialog(QDialog):
 
         if loai_km == "giam_phan_tram":
             self._gia_tri_spin.setRange(0, 100)
+            self._gia_tri_spin._suffix = " %"
             self._gia_tri_spin.setSuffix(" %")
             self._value_unit_label.setText("%")
             self._gia_tri_max_label.setVisible(True)
             self._gia_tri_max_layout.setVisible(True)
         elif loai_km == "giam_tien_mat":
             self._gia_tri_spin.setRange(0, 999999999)
+            self._gia_tri_spin._suffix = " đ"
             self._gia_tri_spin.setSuffix(" đ")
             self._value_unit_label.setText("VND")
         elif loai_km == "tang_phu_kien":
             self._gia_tri_spin.setRange(0, 9999)
+            self._gia_tri_spin._suffix = " sản phẩm"
             self._gia_tri_spin.setSuffix(" sản phẩm")
             self._value_unit_label.setText("")
         elif loai_km == "giam_lai_suat":
             self._gia_tri_spin.setRange(0, 30)
+            self._gia_tri_spin._suffix = " %"
             self._gia_tri_spin.setSuffix(" %")
             self._value_unit_label.setText("%")
             self._lai_suat_max_label.setVisible(True)
             self._lai_suat_max_layout.setVisible(True)
         elif loai_km == "combo":
             self._gia_tri_spin.setRange(0, 100)
+            self._gia_tri_spin._suffix = " %"
             self._gia_tri_spin.setSuffix(" %")
             self._value_unit_label.setText("% giảm")
         else:
             self._gia_tri_spin.setRange(0, 999999999)
+            self._gia_tri_spin._suffix = ""
             self._gia_tri_spin.setSuffix("")
             self._value_unit_label.setText("")
 

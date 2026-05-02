@@ -22,6 +22,8 @@ from PyQt6.QtWidgets import (
 from PyQt6.QtCore import Qt, pyqtSignal
 from PyQt6.QtGui import QColor
 
+from app.presentation.widgets.inputs import InlineNumericEdit
+
 from app.application.services.nha_cung_cap_service import NhaCungCapService, NotFoundError
 from app.application.services.nhap_kho_service import NhapKhoService
 from app.application.services.session import CurrentSession
@@ -297,17 +299,13 @@ class SupplierDetailScreen(QWidget):
             # Chat luong
             cl_layout = QHBoxLayout()
             cl_layout.addWidget(QLabel("Chất lượng:"))
-            self._cl_spin = QSpinBox()
-            self._cl_spin.setRange(1, 5)
-            self._cl_spin.setValue(5)
-            self._cl_spin.setStyleSheet("""
-                QSpinBox {
-                    padding: 6px 10px;
-                    border: 1px solid #d2d2d7;
-                    border-radius: 6px;
-                    min-width: 70px;
-                }
-            """)
+            self._cl_spin = InlineNumericEdit(
+                value=5,
+                minimum=1,
+                maximum=5,
+                step=1,
+                is_float=False,
+            )
             cl_layout.addWidget(self._cl_spin)
             cl_layout.addStretch()
             rating_btn_layout.addLayout(cl_layout)
@@ -315,17 +313,13 @@ class SupplierDetailScreen(QWidget):
             # Thoi gian giao
             tg_layout = QHBoxLayout()
             tg_layout.addWidget(QLabel("Giao hàng:"))
-            self._tg_spin = QSpinBox()
-            self._tg_spin.setRange(1, 5)
-            self._tg_spin.setValue(5)
-            self._tg_spin.setStyleSheet("""
-                QSpinBox {
-                    padding: 6px 10px;
-                    border: 1px solid #d2d2d7;
-                    border-radius: 6px;
-                    min-width: 70px;
-                }
-            """)
+            self._tg_spin = InlineNumericEdit(
+                value=5,
+                minimum=1,
+                maximum=5,
+                step=1,
+                is_float=False,
+            )
             tg_layout.addWidget(self._tg_spin)
             tg_layout.addStretch()
             rating_btn_layout.addLayout(tg_layout)
@@ -333,17 +327,13 @@ class SupplierDetailScreen(QWidget):
             # Gia ca
             gc_layout = QHBoxLayout()
             gc_layout.addWidget(QLabel("Giá cả:"))
-            self._gc_spin = QSpinBox()
-            self._gc_spin.setRange(1, 5)
-            self._gc_spin.setValue(5)
-            self._gc_spin.setStyleSheet("""
-                QSpinBox {
-                    padding: 6px 10px;
-                    border: 1px solid #d2d2d7;
-                    border-radius: 6px;
-                    min-width: 70px;
-                }
-            """)
+            self._gc_spin = InlineNumericEdit(
+                value=5,
+                minimum=1,
+                maximum=5,
+                step=1,
+                is_float=False,
+            )
             gc_layout.addWidget(self._gc_spin)
             gc_layout.addStretch()
             rating_btn_layout.addLayout(gc_layout)

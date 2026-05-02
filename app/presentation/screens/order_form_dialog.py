@@ -15,12 +15,14 @@ from typing import Optional, List
 
 from PyQt6.QtWidgets import (
     QWidget, QVBoxLayout, QHBoxLayout, QLabel, QTableWidget,
-    QTableWidgetItem, QPushButton, QComboBox, QSpinBox,
-    QDoubleSpinBox, QDialog, QMessageBox, QFormLayout,
-    QGroupBox, QScrollArea, QLineEdit
+    QTableWidgetItem, QPushButton, QComboBox,
+    QDialog, QMessageBox, QFormLayout,
+    QGroupBox, QScrollArea, QLineEdit, QAbstractItemView
 )
 from PyQt6.QtCore import Qt, pyqtSignal
 from PyQt6.QtGui import QColor
+
+from app.presentation.widgets.inputs import InlineNumericEdit
 
 from app.application.services.don_dat_hang_service import (
     DonDatHangService,
@@ -170,31 +172,23 @@ class OrderFormDialog(QDialog):
         """)
         add_item_layout.addWidget(self._item_combo)
 
-        self._quantity_spin = QSpinBox()
-        self._quantity_spin.setRange(1, 100)
-        self._quantity_spin.setValue(1)
-        self._quantity_spin.setStyleSheet("""
-            QSpinBox {
-                padding: 8px 12px;
-                border: 1px solid #d2d2d7;
-                border-radius: 6px;
-                min-width: 80px;
-            }
-        """)
+        self._quantity_spin = InlineNumericEdit(
+            value=1,
+            minimum=1,
+            maximum=100,
+            step=1,
+            is_float=False,
+        )
         add_item_layout.addWidget(self._quantity_spin)
 
-        self._price_spin = QDoubleSpinBox()
-        self._price_spin.setRange(0, 999999999)
-        self._price_spin.setDecimals(0)
-        self._price_spin.setValue(0)
-        self._price_spin.setStyleSheet("""
-            QDoubleSpinBox {
-                padding: 8px 12px;
-                border: 1px solid #d2d2d7;
-                border-radius: 6px;
-                min-width: 120px;
-            }
-        """)
+        self._price_spin = InlineNumericEdit(
+            value=0,
+            minimum=0,
+            maximum=999999999,
+            step=100000,
+            suffix="đ",
+            is_float=False,
+        )
         add_item_layout.addWidget(self._price_spin)
 
         add_btn = QPushButton("➕ Thêm")

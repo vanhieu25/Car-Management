@@ -16,10 +16,12 @@ from typing import Optional, List
 from PyQt6.QtWidgets import (
     QDialog, QVBoxLayout, QHBoxLayout, QLabel, QLineEdit,
     QPushButton, QMessageBox, QGroupBox, QComboBox,
-    QDateEdit, QTextEdit, QSpinBox
+    QDateEdit, QTextEdit
 )
 from PyQt6.QtCore import Qt, pyqtSignal, QDate
 from PyQt6.QtGui import QFont
+
+from app.presentation.widgets.inputs import InlineNumericEdit
 
 from app.application.services.bao_duong_service import (
     BaoDuongService, BaoDuongCreateData, BaoDuongUpdateData,
@@ -221,22 +223,14 @@ class MaintenanceFormDialog(QDialog):
         km_label.setMinimumWidth(120)
         km_layout.addWidget(km_label)
         
-        self._km_spin = QSpinBox()
-        self._km_spin.setMinimum(0)
-        self._km_spin.setMaximum(999999)
-        self._km_spin.setValue(0)
-        self._km_spin.setStyleSheet("""
-            QSpinBox {
-                padding: 10px 12px;
-                border: 1px solid #d2d2d7;
-                border-radius: 6px;
-                font-size: 14px;
-                background: white;
-            }
-            QSpinBox:focus {
-                border: 2px solid #0066cc;
-            }
-        """)
+        self._km_spin = InlineNumericEdit(
+            value=0,
+            minimum=0,
+            maximum=999999,
+            step=1000,
+            suffix="km",
+            is_float=False,
+        )
         km_layout.addWidget(self._km_spin)
         
         km_unit = QLabel("km")
@@ -278,22 +272,14 @@ class MaintenanceFormDialog(QDialog):
         cp_label.setMinimumWidth(120)
         cp_layout.addWidget(cp_label)
         
-        self._cp_spin = QSpinBox()
-        self._cp_spin.setMinimum(0)
-        self._cp_spin.setMaximum(999999999)
-        self._cp_spin.setValue(0)
-        self._cp_spin.setStyleSheet("""
-            QSpinBox {
-                padding: 10px 12px;
-                border: 1px solid #d2d2d7;
-                border-radius: 6px;
-                font-size: 14px;
-                background: white;
-            }
-            QSpinBox:focus {
-                border: 2px solid #0066cc;
-            }
-        """)
+        self._cp_spin = InlineNumericEdit(
+            value=0,
+            minimum=0,
+            maximum=999999999,
+            step=100000,
+            suffix="VNĐ",
+            is_float=False,
+        )
         cp_layout.addWidget(self._cp_spin)
         
         cp_unit = QLabel("VNĐ")

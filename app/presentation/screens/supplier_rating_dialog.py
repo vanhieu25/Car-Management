@@ -15,11 +15,12 @@ UI Tasks: T-G4.4.UI.01 (part of supplier_list)
 
 from PyQt6.QtWidgets import (
     QWidget, QVBoxLayout, QHBoxLayout, QLabel, QPushButton,
-    QDialog, QMessageBox, QSpinBox, QFormLayout, QGroupBox
+    QDialog, QMessageBox, QFormLayout, QGroupBox
 )
 from PyQt6.QtCore import Qt, pyqtSignal
 
 from app.application.services.nha_cung_cap_service import NhaCungCapService
+from app.presentation.widgets.inputs import InlineNumericEdit
 
 
 class SupplierRatingDialog(QDialog):
@@ -81,51 +82,36 @@ class SupplierRatingDialog(QDialog):
 
         # Chat luong
         cl_layout = QHBoxLayout()
-        self._cl_spin = QSpinBox()
-        self._cl_spin.setRange(1, 5)
-        self._cl_spin.setValue(5)
-        self._cl_spin.setStyleSheet("""
-            QSpinBox {
-                padding: 8px 12px;
-                border: 1px solid #d2d2d7;
-                border-radius: 6px;
-                min-width: 80px;
-                background: white;
-            }
-        """)
+        self._cl_spin = InlineNumericEdit(
+            value=5,
+            minimum=1,
+            maximum=5,
+            step=1,
+            is_float=False,
+        )
         cl_layout.addWidget(self._cl_spin)
         cl_layout.addWidget(QLabel("★ Chất lượng sản phẩm"))
         cl_layout.addStretch()
         rating_layout.addRow("Chất lượng sản phẩm:", self._cl_spin)
 
         # Thoi gian giao
-        self._tg_spin = QSpinBox()
-        self._tg_spin.setRange(1, 5)
-        self._tg_spin.setValue(5)
-        self._tg_spin.setStyleSheet("""
-            QSpinBox {
-                padding: 8px 12px;
-                border: 1px solid #d2d2d7;
-                border-radius: 6px;
-                min-width: 80px;
-                background: white;
-            }
-        """)
+        self._tg_spin = InlineNumericEdit(
+            value=5,
+            minimum=1,
+            maximum=5,
+            step=1,
+            is_float=False,
+        )
         rating_layout.addRow("Thời gian giao hàng:", self._tg_spin)
 
         # Gia ca
-        self._gc_spin = QSpinBox()
-        self._gc_spin.setRange(1, 5)
-        self._gc_spin.setValue(5)
-        self._gc_spin.setStyleSheet("""
-            QSpinBox {
-                padding: 8px 12px;
-                border: 1px solid #d2d2d7;
-                border-radius: 6px;
-                min-width: 80px;
-                background: white;
-            }
-        """)
+        self._gc_spin = InlineNumericEdit(
+            value=5,
+            minimum=1,
+            maximum=5,
+            step=1,
+            is_float=False,
+        )
         rating_layout.addRow("Giá cả hợp lý:", self._gc_spin)
 
         layout.addWidget(rating_group)
