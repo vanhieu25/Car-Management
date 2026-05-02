@@ -29,7 +29,12 @@ class CurrentSession:
     login_time: datetime = field(default_factory=datetime.now)
     last_activity: datetime = field(default_factory=datetime.now)
     must_change_password: bool = False  # BR-NV-08: Force password change on first login
-    
+    nhan_vien_id: int = 0  # Alias for user_id (matches table FK)
+
+    def __post_init__(self):
+        # nhan_vien_id aliases user_id so FK references work without separate mapping
+        self.nhan_vien_id = self.user_id
+
     def is_expired(self) -> bool:
         """Check if session has expired due to inactivity.
         
