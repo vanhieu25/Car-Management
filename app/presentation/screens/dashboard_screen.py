@@ -146,14 +146,14 @@ class KpiCard(QWidget):
         self._is_alert = is_alert
         self._alert_color = alert_color
 
-        self.setMinimumSize(200, 110)
+        self.setMinimumSize(300, 300)
         self.setCursor(Qt.CursorShape.PointingHandCursor)
         self.setStyleSheet(f"""
             QWidget {{
                 background-color: white;
-                border: 1px solid #d2d2d7;
-                border-radius: 10px;
-                padding: 16px;
+                border: 2px solid #d2d2d7;
+                border-radius: 12px;
+                padding: 20px;
             }}
             QWidget:hover {{
                 border: 2px solid #0066cc;
@@ -162,19 +162,22 @@ class KpiCard(QWidget):
         """)
 
         layout = QVBoxLayout(self)
-        layout.setContentsMargins(14, 12, 14, 12)
-        layout.setSpacing(8)
+        layout.setContentsMargins(18, 16, 18, 16)
+        layout.setSpacing(12)
 
         # Top row: icon + title
         top_layout = QHBoxLayout()
         top_layout.setSpacing(8)
 
         self._icon_label = QLabel(icon)
-        self._icon_label.setStyleSheet("font-size: 18px;")
+        self._icon_label.setStyleSheet("font-size: 28px;")
+        self._icon_label.setAlignment(Qt.AlignmentFlag.AlignCenter)
         top_layout.addWidget(self._icon_label)
 
         self._title_label = QLabel(title)
-        self._title_label.setStyleSheet("font-size: 12px; color: #86868b; font-weight: 400;")
+        self._title_label.setStyleSheet("font-size: 15px; color: #86868b; font-weight: 500;")
+        self._title_label.setAlignment(Qt.AlignmentFlag.AlignCenter)
+        self._title_label.setWordWrap(True)
         top_layout.addWidget(self._title_label, stretch=1)
 
         layout.addLayout(top_layout)
@@ -182,19 +185,21 @@ class KpiCard(QWidget):
         # Value
         self._value_label = QLabel(value)
         value_color = color if not is_alert else alert_color
-        self._value_label.setStyleSheet(f"font-size: 26px; font-weight: 700; color: {value_color};")
+        self._value_label.setStyleSheet(f"font-size: 36px; font-weight: 700; color: {value_color};")
+        self._value_label.setAlignment(Qt.AlignmentFlag.AlignCenter)
 
         # Alert badge
         if is_alert:
             val_layout = QHBoxLayout()
+            val_layout.addStretch()
             val_layout.addWidget(self._value_label)
             val_layout.addStretch()
             alert_badge = QLabel("⚠️")
-            alert_badge.setStyleSheet("font-size: 16px;")
+            alert_badge.setStyleSheet("font-size: 20px;")
             val_layout.addWidget(alert_badge)
             layout.addLayout(val_layout)
         else:
-            layout.addWidget(self._value_label, alignment=Qt.AlignmentFlag.AlignLeft)
+            layout.addWidget(self._value_label, alignment=Qt.AlignmentFlag.AlignCenter)
 
         layout.addStretch()
 
@@ -386,8 +391,9 @@ class DashboardScreen(QWidget):
         ]
 
         for idx, (key, title, icon, color, is_alert) in enumerate(kpi_configs):
-            row = idx // 4
-            col = idx % 4
+            # 2-column grid: cards 300x300 min, making them square
+            row = idx // 2
+            col = idx % 2
             card = KpiCard(
                 key=key,
                 title=title,
