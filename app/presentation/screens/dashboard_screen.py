@@ -146,7 +146,7 @@ class KpiCard(QWidget):
         self._is_alert = is_alert
         self._alert_color = alert_color
 
-        self.setMinimumSize(160, 90)
+        self.setMinimumSize(250, 250)
         self.setCursor(Qt.CursorShape.PointingHandCursor)
         self.setStyleSheet(f"""
             QWidget {{
