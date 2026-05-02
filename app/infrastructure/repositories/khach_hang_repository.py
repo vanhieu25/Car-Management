@@ -1,4 +1,5 @@
 """KhachHang repository - customer data access layer.
+from dataclasses import dataclass
 
 Provides database operations for KhachHang entity with search capabilities.
 """

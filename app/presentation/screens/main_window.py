@@ -220,18 +220,48 @@ class MainWindow(QMainWindow):
         Returns:
             QWidget screen instance.
         """
-        if module_id == "audit_log":
+        if module_id == "dashboard":
+            # S-DASH-01: Dashboard
+            import logging
+            from app.infrastructure.database.connection import get_connection
+            logger = logging.getLogger("car_management")
+            logger.info(f"[MainWindow] Creating dashboard - db_conn: {self._db_conn}, session: {self._session}")
+            # Use self._db_conn if available, otherwise get new connection
+            conn = self._db_conn if self._db_conn else get_connection()
+            if self._session:
+                from app.presentation.screens.dashboard_screen import DashboardScreen
+                screen = DashboardScreen(conn, self._session)
+                logger.info(f"[MainWindow] Dashboard screen created: {screen}")
+                return screen
+            else:
+                logger.warning(f"[MainWindow] Cannot create dashboard - session is None")
+        elif module_id == "audit_log":
             # S-SYS-01: Audit log viewer
-            if self._db_conn and self._session:
-                return AuditLogScreen(self._db_conn, self._session)
+            import logging
+            logger = logging.getLogger("car_management")
+            from app.infrastructure.database.connection import get_connection
+            conn = self._db_conn if self._db_conn else get_connection()
+            logger.info("[Module] audit_log - conn: %s, session: %s" % (conn, self._session))
+            if conn and self._session:
+                return AuditLogScreen(conn, self._session)
         elif module_id == "he_thong":
             # S-CFG-01: System settings
-            if self._db_conn and self._session:
-                return SystemSettingsScreen(self._db_conn, self._session)
+            import logging
+            logger = logging.getLogger("car_management")
+            from app.infrastructure.database.connection import get_connection
+            conn = self._db_conn if self._db_conn else get_connection()
+            logger.info("[Module] he_thong - conn: %s, session: %s" % (conn, self._session))
+            if conn and self._session:
+                return SystemSettingsScreen(conn, self._session)
         elif module_id == "xe":
             # S-XE-01: Vehicle list
-            if self._db_conn and self._session:
-                screen = VehicleListScreen(self._db_conn, self._session)
+            import logging
+            logger = logging.getLogger("car_management")
+            from app.infrastructure.database.connection import get_connection
+            conn = self._db_conn if self._db_conn else get_connection()
+            logger.info("[Module] xe - conn: %s, session: %s" % (conn, self._session))
+            if conn and self._session:
+                screen = VehicleListScreen(conn, self._session)
                 # Connect signals
                 screen.add_vehicle_clicked.connect(lambda: self._show_vehicle_form(None))
                 screen.edit_vehicle_clicked.connect(self._show_vehicle_form)
@@ -239,8 +269,13 @@ class MainWindow(QMainWindow):
                 return screen
         elif module_id == "khach_hang":
             # S-KH-01: Customer list
-            if self._db_conn and self._session:
-                screen = CustomerListScreen(self._db_conn, self._session)
+            import logging
+            logger = logging.getLogger("car_management")
+            from app.infrastructure.database.connection import get_connection
+            conn = self._db_conn if self._db_conn else get_connection()
+            logger.info("[Module] khach_hang - conn: %s, session: %s" % (conn, self._session))
+            if conn and self._session:
+                screen = CustomerListScreen(conn, self._session)
                 # Connect signals
                 screen.add_customer_clicked.connect(lambda: self._show_customer_form(None))
                 screen.edit_customer_clicked.connect(self._show_customer_form)
@@ -248,35 +283,190 @@ class MainWindow(QMainWindow):
                 return screen
         elif module_id == "tra_gop":
             # S-TG-01: Installment list
-            if self._db_conn and self._session:
+            import logging
+            logger = logging.getLogger("car_management")
+            from app.infrastructure.database.connection import get_connection
+            conn = self._db_conn if self._db_conn else get_connection()
+            logger.info("[Module] tra_gop - conn: %s, session: %s" % (conn, self._session))
+            if conn and self._session:
                 from app.presentation.screens.installment_list_screen import InstallmentListScreen
                 from app.presentation.screens.installment_create_dialog import InstallmentCreateDialog
                 from app.presentation.screens.installment_progress_screen import InstallmentProgressScreen
-                screen = InstallmentListScreen(self._db_conn, self._session)
+                screen = InstallmentListScreen(conn, self._session)
                 screen.create_installment_clicked.connect(self._show_installment_create_dialog)
                 screen.view_installment_clicked.connect(self._show_installment_progress)
                 return screen
         elif module_id == "marketing":
             # S-MK-01: Campaign list + Lead manager (tabbed)
-            if self._db_conn and self._session:
+            import logging
+            logger = logging.getLogger("car_management")
+            from app.infrastructure.database.connection import get_connection
+            conn = self._db_conn if self._db_conn else get_connection()
+            logger.info("[Module] marketing - conn: %s, session: %s" % (conn, self._session))
+            if conn and self._session:
                 from app.presentation.screens.campaign_list_screen import CampaignListScreen
                 from app.presentation.screens.campaign_form_dialog import CampaignFormDialog
                 from app.presentation.screens.lead_manager_screen import LeadManagerScreen
                 from app.presentation.screens.lead_form_dialog import LeadFormDialog
-                screen = CampaignListScreen(self._db_conn, self._session)
+                screen = CampaignListScreen(conn, self._session)
                 screen.add_campaign_clicked.connect(self._show_campaign_form)
                 screen.edit_campaign_clicked.connect(self._show_campaign_form)
                 return screen
         elif module_id == "khieu_nai":
             # S-KN-01: Complaint list
-            if self._db_conn and self._session:
+            import logging
+            logger = logging.getLogger("car_management")
+            from app.infrastructure.database.connection import get_connection
+            conn = self._db_conn if self._db_conn else get_connection()
+            logger.info("[Module] khieu_nai - conn: %s, session: %s" % (conn, self._session))
+            if conn and self._session:
                 from app.presentation.screens.complaint_list_screen import ComplaintListScreen
-                screen = ComplaintListScreen(self._db_conn, self._session)
+                screen = ComplaintListScreen(conn, self._session)
                 screen.add_complaint_clicked.connect(self._show_complaint_form)
                 screen.view_complaint_clicked.connect(self._show_complaint_detail)
                 return screen
 
+
+        elif module_id == "nhan_vien":
+            # S-NV-01: Employee list
+            import logging
+            logger = logging.getLogger("car_management")
+            from app.infrastructure.database.connection import get_connection
+            conn = self._db_conn if self._db_conn else get_connection()
+            logger.info("[Module] nhan_vien - conn: %s, session: %s" % (conn, self._session))
+            if conn and self._session:
+                from app.presentation.screens.employee_list_screen import EmployeeListScreen
+                screen = EmployeeListScreen(conn, self._session)
+                screen.add_employee_clicked.connect(self._show_employee_form)
+                
+                screen.view_employee_clicked.connect(self._show_employee_detail)
+                return screen
+
+        elif module_id == "hop_dong":
+            # S-HD-01: Contract list
+            import logging
+            logger = logging.getLogger("car_management")
+            from app.infrastructure.database.connection import get_connection
+            conn = self._db_conn if self._db_conn else get_connection()
+            logger.info("[Module] hop_dong - conn: %s, session: %s" % (conn, self._session))
+            if conn and self._session:
+                from app.presentation.screens.contract_list_screen import ContractListScreen
+                screen = ContractListScreen(conn, self._session)
+                screen.create_contract_clicked.connect(self._show_contract_wizard)
+                
+                screen.view_contract_clicked.connect(self._show_contract_detail)
+                return screen
+
+        elif module_id == "phu_kien":
+            # S-PK-01: Accessory list
+            import logging
+            logger = logging.getLogger("car_management")
+            from app.infrastructure.database.connection import get_connection
+            conn = self._db_conn if self._db_conn else get_connection()
+            logger.info("[Module] phu_kien - conn: %s, session: %s" % (conn, self._session))
+            if conn and self._session:
+                from app.presentation.screens.accessory_list_screen import AccessoryListScreen
+                screen = AccessoryListScreen(conn, self._session)
+                screen.add_accessory_clicked.connect(self._show_accessory_form)
+                screen.edit_accessory_clicked.connect(self._show_accessory_form)
+                return screen
+
+        elif module_id == "bao_hanh":
+            # S-BH-01: Warranty list
+            import logging
+            logger = logging.getLogger("car_management")
+            from app.infrastructure.database.connection import get_connection
+            conn = self._db_conn if self._db_conn else get_connection()
+            logger.info("[Module] bao_hanh - conn: %s, session: %s" % (conn, self._session))
+            if conn and self._session:
+                from app.presentation.screens.warranty_list_screen import WarrantyListScreen
+                screen = WarrantyListScreen(conn, self._session)
+                
+                screen.view_warranty_clicked.connect(self._show_warranty_detail)
+                return screen
+
+        elif module_id == "nha_cung_cap":
+            # S-NCC-01: Supplier list
+            import logging
+            logger = logging.getLogger("car_management")
+            from app.infrastructure.database.connection import get_connection
+            conn = self._db_conn if self._db_conn else get_connection()
+            logger.info("[Module] nha_cung_cap - conn: %s, session: %s" % (conn, self._session))
+            if conn and self._session:
+                from app.presentation.screens.supplier_list_screen import SupplierListScreen
+                screen = SupplierListScreen(conn, self._session)
+                screen.add_supplier_clicked.connect(self._show_supplier_form)
+                screen.edit_supplier_clicked.connect(self._show_supplier_detail)
+                screen.view_supplier_clicked.connect(self._show_supplier_detail)
+                return screen
+
+        elif module_id == "bao_duong":
+            # S-BD-01: Maintenance schedule
+            import logging
+            logger = logging.getLogger("car_management")
+            from app.infrastructure.database.connection import get_connection
+            conn = self._db_conn if self._db_conn else get_connection()
+            logger.info("[Module] bao_duong - conn: %s, session: %s" % (conn, self._session))
+            if conn and self._session:
+                from app.presentation.screens.maintenance_schedule_screen import MaintenanceScheduleScreen
+                screen = MaintenanceScheduleScreen(conn, self._session)
+                return screen
+
+        elif module_id == "khuyen_mai":
+            # S-KM-01: Promotion - placeholder for now
+            import logging
+            logger = logging.getLogger("car_management")
+            from app.infrastructure.database.connection import get_connection
+            conn = self._db_conn if self._db_conn else get_connection()
+            logger.info("[Module] khuyen_mai - conn: %s, session: %s" % (conn, self._session))
+            if conn and self._session:
+                from app.presentation.screens.campaign_list_screen import CampaignListScreen
+                screen = CampaignListScreen(conn, self._session)
+                return screen
+
+        elif module_id == "cuu_ho":
+            # S-CH-01: Rescue requests - use RescueRequestListScreen
+            import logging
+            logger = logging.getLogger("car_management")
+            from app.infrastructure.database.connection import get_connection
+            conn = self._db_conn if self._db_conn else get_connection()
+            logger.info("[Module] cuu_ho - conn: %s, session: %s" % (conn, self._session))
+            if conn and self._session:
+                from app.presentation.screens.rescue_request_list_screen import RescueRequestListScreen
+                screen = RescueRequestListScreen(conn, self._session)
+                screen.add_rescue_clicked.connect(self._show_rescue_form)
+                screen.edit_rescue_clicked.connect(self._show_rescue_form)
+                return screen
+
+        elif module_id == "bao_cao":
+            # S-BC-01: Reports - use RevenueReportScreen as default
+            import logging
+            logger = logging.getLogger("car_management")
+            from app.infrastructure.database.connection import get_connection
+            conn = self._db_conn if self._db_conn else get_connection()
+            logger.info("[Module] bao_cao - conn: %s, session: %s" % (conn, self._session))
+            if conn and self._session:
+                from app.presentation.screens.revenue_report_screen import RevenueReportScreen
+                screen = RevenueReportScreen(conn, self._session)
+                return screen
+
+        elif module_id == "kho":
+            # S-KHO-01: Warehouse - use InventoryOverviewScreen
+            import logging
+            logger = logging.getLogger("car_management")
+            from app.infrastructure.database.connection import get_connection
+            conn = self._db_conn if self._db_conn else get_connection()
+            logger.info("[Module] kho - conn: %s, session: %s" % (conn, self._session))
+            if conn and self._session:
+                from app.presentation.screens.inventory_overview_screen import InventoryOverviewScreen
+                screen = InventoryOverviewScreen(conn, self._session)
+                screen.stock_in_clicked.connect(self._show_stock_in_dialog)
+                return screen
+
         # Default: placeholder
+        import logging
+        logger = logging.getLogger("car_management")
+        logger.warning("[Module] %s - NO SCREEN IMPLEMENTED, showing EmptyScreen" % module_id)
         return EmptyScreen(module_name=module_id.replace("_", " ").title())
 
     def _show_vehicle_form(self, xe_id: int = None):
@@ -361,6 +551,47 @@ class MainWindow(QMainWindow):
         # Refresh customer list if visible
         if self.content_area.has_screen("khach_hang"):
             screen = self.content_area.get_screen("khach_hang")
+            if hasattr(screen, 'refresh'):
+                screen.refresh()
+
+    def _show_stock_in_dialog(self):
+        """Show stock-in dialog."""
+        from app.presentation.screens.stock_in_form_dialog import StockInFormDialog
+
+        dialog = StockInFormDialog(self._db_conn, self._session, self)
+        dialog.saved.connect(self._on_stock_in_saved)
+        dialog.exec()
+
+    def _show_rescue_form(self, cuu_ho_id: int = None):
+        """Show rescue request form dialog.
+
+        Args:
+            cuu_ho_id: CuuHo ID to edit, or None for add new.
+        """
+        from app.presentation.screens.rescue_request_form_dialog import RescueRequestFormDialog
+        from app.domain.entities import CuuHo
+
+        cuu_ho = None
+        if cuu_ho_id:
+            from app.application.services.cuu_ho_service import CuuHoService
+            service = CuuHoService(self._db_conn)
+            cuu_ho = service.get_by_id(cuu_ho_id)
+
+        dialog = RescueRequestFormDialog(self._db_conn, self._session, cuu_ho, self)
+        dialog.saved.connect(self._on_rescue_saved)
+        dialog.exec()
+
+    def _on_rescue_saved(self):
+        """Handle rescue saved signal - refresh cuu_ho screen."""
+        if self.content_area.has_screen("cuu_ho"):
+            screen = self.content_area.get_screen("cuu_ho")
+            if hasattr(screen, 'refresh'):
+                screen.refresh()
+
+    def _on_stock_in_saved(self):
+        """Handle stock-in saved signal - refresh kho screen."""
+        if self.content_area.has_screen("kho"):
+            screen = self.content_area.get_screen("kho")
             if hasattr(screen, 'refresh'):
                 screen.refresh()
 
@@ -474,6 +705,64 @@ class MainWindow(QMainWindow):
             screen = self.content_area.get_screen("khieu_nai")
             if hasattr(screen, 'refresh'):
                 screen.refresh()
+
+    def _show_employee_form(self, nhan_vien_id: int = None):
+        """Show employee add/edit form dialog."""
+        from app.presentation.screens.employee_form_dialog import EmployeeFormDialog
+        dialog = EmployeeFormDialog(self._db_conn, self._session, nhan_vien_id, self)
+        dialog.exec()
+
+    def _show_employee_detail(self, nhan_vien_id: int):
+        """Show employee profile screen."""
+        from app.presentation.screens.employee_profile_screen import EmployeeProfileScreen
+        screen = EmployeeProfileScreen(self._db_conn, self._session, parent=self)
+        self.content_area.register_screen("employee_detail", screen)
+        self.content_area.show_screen("employee_detail")
+
+    def _show_contract_wizard(self, hop_dong_id: int = None):
+        """Show contract creation wizard."""
+        from app.presentation.screens.contract_wizard_dialog import ContractWizardDialog
+        dialog = ContractWizardDialog(self._db_conn, self._session, hop_dong_id, self)
+        dialog.exec()
+
+    def _show_contract_detail(self, hop_dong_id: int):
+        """Show contract detail screen."""
+        from app.presentation.screens.contract_detail_screen import ContractDetailScreen
+        screen = ContractDetailScreen(self._db_conn, self._session, hop_dong_id, self)
+        self.content_area.register_screen("contract_detail", screen)
+        self.content_area.show_screen("contract_detail")
+
+    def _show_accessory_form(self, phu_kien_id: int = None):
+        """Show accessory add/edit form dialog."""
+        from app.presentation.screens.accessory_form_dialog import AccessoryFormDialog
+        dialog = AccessoryFormDialog(self._db_conn, self._session, phu_kien_id, self)
+        dialog.exec()
+
+    def _show_warranty_request_form(self):
+        """Show warranty request form dialog."""
+        from app.presentation.screens.warranty_request_form_dialog import WarrantyRequestFormDialog
+        dialog = WarrantyRequestFormDialog(self._db_conn, self._session, self)
+        dialog.exec()
+
+    def _show_warranty_detail(self, bao_hanh_id: int):
+        """Show warranty detail screen."""
+        from app.presentation.screens.warranty_detail_screen import WarrantyDetailScreen
+        screen = WarrantyDetailScreen(self._db_conn, self._session, bao_hanh_id, self)
+        self.content_area.register_screen("warranty_detail", screen)
+        self.content_area.show_screen("warranty_detail")
+
+    def _show_supplier_form(self):
+        """Show supplier add dialog."""
+        from app.presentation.screens.supplier_detail_screen import SupplierDetailScreen
+        screen = SupplierDetailScreen(self._db_conn, self._session, None, self)
+        screen.exec()
+
+    def _show_supplier_detail(self, nha_cung_cap_id: int):
+        """Show supplier detail screen."""
+        from app.presentation.screens.supplier_detail_screen import SupplierDetailScreen
+        screen = SupplierDetailScreen(self._db_conn, self._session, nha_cung_cap_id, self)
+        self.content_area.register_screen("supplier_detail", screen)
+        self.content_area.show_screen("supplier_detail")
 
     def _on_logout_requested(self):
         """Handle logout request."""

@@ -336,8 +336,8 @@ class InstallmentListScreen(QWidget):
                 trang_thai=params.get("trang_thai"),
                 has_qua_han=params.get("has_qua_han"),
                 keyword=params.get("keyword"),
-                page=self._current_page,
-                page_size=PAGE_SIZE,
+                limit=PAGE_SIZE,
+                offset=self._current_page * PAGE_SIZE,
             )
 
             self._total_pages = max(1, (total + PAGE_SIZE - 1) // PAGE_SIZE) if total > 0 else 1

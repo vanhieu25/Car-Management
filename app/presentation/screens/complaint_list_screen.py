@@ -304,7 +304,7 @@ class ComplaintListScreen(QWidget):
 
         # Resize columns
         self._table.resizeColumnsToContents()
-        self._table.column(0).setWidth(200)
+        self._table.setColumnWidth(0, 200)
 
         # Update pagination
         self._page_label.setText(f"Trang {self._current_page + 1}")

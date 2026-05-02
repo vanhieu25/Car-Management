@@ -169,7 +169,8 @@ class StrengthIndicator(QWidget):
     def paintEvent(self, event):
         """Paint the strength bar."""
         from PyQt6.QtWidgets import QStylePainter
-        from PyQt6.QtGui import QColor, QBrush, QPainter, QRect
+        from PyQt6.QtGui import QColor, QBrush, QPainter
+        from PyQt6.QtCore import QRect
         
         painter = QPainter(self)
         painter.setRenderHint(QPainter.RenderHint.Antialiasing)

@@ -71,12 +71,23 @@ class DashboardService:
         - A-03 (staff): limited view (revenue only)
 
         Args:
-            role: User role code (A-01, A-02, A-03).
+            role: User role code (A-01, A-02, A-03) or vai_tro_ma (admin, sales, ky_thuat_bh).
             user_id: User's nhan_vien_id for filtering.
 
         Returns:
             Dict with KPI values and metadata.
         """
+        # Normalize role: vai_tro_ma names to role codes
+        role_map = {
+            "admin": "A-01",
+            "A-01": "A-01",
+            "sales": "A-02",
+            "A-02": "A-02",
+            "ky_thuat_bh": "A-03",
+            "A-03": "A-03",
+        }
+        role = role_map.get(role, "A-03")  # Default to A-03 (limited) if unknown
+        
         now = datetime.now()
         current_month_start = f"{now.year}-{now.month:02d}-01"
 

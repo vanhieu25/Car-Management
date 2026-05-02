@@ -46,6 +46,8 @@ class NhanVien(BaseEntity):
     must_change_password: int = 0
     password_min_length: int = 8
     last_password_change: Optional[str] = None
+    so_hop_dong: int = 0
+    doanh_thu: int = 0
 
 
 @dataclass

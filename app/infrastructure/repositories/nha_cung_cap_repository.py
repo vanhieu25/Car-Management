@@ -1,4 +1,5 @@
 """NhaCungCap repository - supplier data access layer."""
+from dataclasses import dataclass
 
 from typing import List, Optional, Any
 
