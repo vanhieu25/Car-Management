@@ -106,7 +106,7 @@ def seed_nhan_vien(cursor):
     """
     # Default password hash for seed users (cost 12, meets BR-SEC-01)
     # Password: Admin@123 -> bcrypt hash with cost factor 12
-    SEED_PASSWORD_HASH = "$2b$12$LQv3c1yqBwEbKrB3qVLZjeqMWrT6Gv.rJr7.N1VxVYqPZrA.1wXq"
+    SEED_PASSWORD_HASH = "$2b$12$RtiaqN7EwQj0Asv9Snd4buS5Lmd/aCePAMfsw02c0Zswian1YHcvK"
     
     employees = [
         # username, hash, ho_ten, email, phone, vai_tro_id, trang_thai, must_change_password
