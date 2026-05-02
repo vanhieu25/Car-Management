@@ -384,9 +384,9 @@ class VehicleDetailScreen(QWidget):
                LEFT JOIN km_pham_vi kmv ON km.id = kmv.khuyen_mai_id
                WHERE km.trang_thai = 'dang_chay'
                AND (
-                   kmv.pham_vi_type = 'hang' AND kmv.gia_tri = ?
-                   OR kmv.pham_vi_type = 'dong_xe' AND kmv.gia_tri = ?
-                   OR kmv.pham_vi_type = 'xe' AND kmv.gia_tri = ?
+                   kmv.loai_ap_dung = 'hang' AND kmv.gia_tri_ap_dung = ?
+                   OR kmv.loai_ap_dung = 'dong_xe' AND kmv.gia_tri_ap_dung = ?
+                   OR kmv.loai_ap_dung = 'xe' AND kmv.gia_tri_ap_dung = ?
                    OR NOT EXISTS (SELECT 1 FROM km_pham_vi WHERE khuyen_mai_id = km.id)
                )
                ORDER BY km.den_ngay DESC""",
