@@ -28,6 +28,23 @@ def run_migrations():
         print(f"Migration warning: {e}")
 
 
+def seed_if_empty():
+    """Seed database with sample data if nhan_vien table is empty."""
+    try:
+        conn = get_connection()
+        cursor = conn.execute("SELECT COUNT(*) FROM nhan_vien")
+        count = cursor.fetchone()[0]
+        if count == 0:
+            print("Database is empty, seeding sample data...")
+            from app.infrastructure.database.seeds.dev_seed import seed_all
+            from app.infrastructure.database.connection import get_db_path
+            seed_all(get_db_path())
+            print("Seeding completed. Default login: admin / password123")
+        conn.close()
+    except Exception as e:
+        print(f"Seed warning: {e}")
+
+
 class Application(QApplication):
     """Main application class managing login flow."""
 
@@ -41,6 +58,7 @@ class Application(QApplication):
 
         # Run migrations on startup
         run_migrations()
+        seed_if_empty()
 
     def start(self) -> int:
         """Start the application with login screen."""
