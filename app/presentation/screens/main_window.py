@@ -722,7 +722,7 @@ class MainWindow(QMainWindow):
     def _show_contract_wizard(self, hop_dong_id: int = None):
         """Show contract creation wizard."""
         from app.presentation.screens.contract_wizard_dialog import ContractWizardDialog
-        dialog = ContractWizardDialog(self._db_conn, self._session, hop_dong_id, self)
+        dialog = ContractWizardDialog(self._db_conn, self._session, self)
         dialog.exec()
 
     def _show_contract_detail(self, hop_dong_id: int):
