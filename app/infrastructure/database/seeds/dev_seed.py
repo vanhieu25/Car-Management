@@ -5,10 +5,8 @@ import sqlite3
 from datetime import datetime, timedelta
 from pathlib import Path
 
-# Default password hash for all seed users (cost 12)
-DEFAULT_PASSWORD_HASH = "$2b$12$/0qxr1yABV6uiSr2ELJ6mOwMKkSFkz2Bo5MTVUSDQffZzC0ml2.q."
-
-CAR_BRANDS = ["Toyota", "Honda", "Ford", "BMW", "Mercedes"]
+# Default password hash for all seed users (cost 12) - USED BY seed_nhan_vien
+SEED_PASSWORD_HASH = "$2b$12$RtiaqN7EwQj0Asv9Snd4buS5Lmd/aCePAMfsw02c0Zswian1YHcvK" = ["Toyota", "Honda", "Ford", "BMW", "Mercedes"]
 CAR_MODELS = {
     "Toyota": ["Camry", "Corolla", "Fortuner", "RAV4"],
     "Honda": ["Civic", "Accord", "CR-V", "City"],
