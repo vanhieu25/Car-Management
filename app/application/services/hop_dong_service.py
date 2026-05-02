@@ -294,9 +294,10 @@ class HopDongService:
             created_by=data.created_by or nhan_vien_id,
         )
 
-        # Insert within transaction
+        # Insert within savepoint (SQLite implicit transaction already active)
+        sp_name = "sp_create"
         try:
-            self.conn.execute("BEGIN TRANSACTION")
+            self.conn.execute(f"SAVEPOINT {sp_name}")
 
             # Create contract
             created_hd = self._repo.create(hop_dong)
@@ -312,9 +313,9 @@ class HopDongService:
                 gia_ban = row[0] if row else 0
                 self._repo.add_phu_kien(created_hd.id, pk_id, so_luong, gia_ban)
 
-            self.conn.execute("COMMIT")
+            self.conn.execute(f"RELEASE SAVEPOINT {sp_name}")
         except Exception as e:
-            self.conn.execute("ROLLBACK")
+            self.conn.execute(f"ROLLBACK TO SAVEPOINT {sp_name}")
             raise
 
         # Audit log
@@ -479,8 +480,10 @@ class HopDongService:
                     f"Phụ kiện (ID: {pk_id}) không có đủ hàng tồn"
                 )
 
+        # Update within savepoint (SQLite implicit transaction already active)
+        sp_name = "sp_paid"
         try:
-            self.conn.execute("BEGIN TRANSACTION")
+            self.conn.execute(f"SAVEPOINT {sp_name}")
 
             now = datetime.now().isoformat()
 
@@ -509,9 +512,9 @@ class HopDongService:
                     (so_luong, now, pk_id)
                 )
 
-            self.conn.execute("COMMIT")
+            self.conn.execute(f"RELEASE SAVEPOINT {sp_name}")
         except Exception as e:
-            self.conn.execute("ROLLBACK")
+            self.conn.execute(f"ROLLBACK TO SAVEPOINT {sp_name}")
             raise
 
         # Audit log
@@ -571,8 +574,10 @@ class HopDongService:
         ngay_giao_xe = now.isoformat()
         ngay_ket_thuc = (now + relativedelta(months=thoi_han_bh)).isoformat()
 
+        # Update within savepoint (SQLite implicit transaction already active)
+        sp_name = "sp_delivered"
         try:
-            self.conn.execute("BEGIN TRANSACTION")
+            self.conn.execute(f"SAVEPOINT {sp_name}")
 
             # BR-HD-04: Update status
             self.conn.execute(
@@ -638,9 +643,9 @@ class HopDongService:
                 (hop_dong.tong_tien, ngay_giao_xe, hop_dong.nhan_vien_id)
             )
 
-            self.conn.execute("COMMIT")
+            self.conn.execute(f"RELEASE SAVEPOINT {sp_name}")
         except Exception as e:
-            self.conn.execute("ROLLBACK")
+            self.conn.execute(f"ROLLBACK TO SAVEPOINT {sp_name}")
             raise
 
         # Audit log
@@ -705,8 +710,10 @@ class HopDongService:
                 "Không thể hủy hợp đồng đã giao xe"
             )
 
+        # Update within savepoint (SQLite implicit transaction already active)
+        sp_name = "sp_cancel"
         try:
-            self.conn.execute("BEGIN TRANSACTION")
+            self.conn.execute(f"SAVEPOINT {sp_name}")
 
             now = datetime.now().isoformat()
 
@@ -753,9 +760,9 @@ class HopDongService:
                 (ly_do, now, hop_dong_id)
             )
 
-            self.conn.execute("COMMIT")
+            self.conn.execute(f"RELEASE SAVEPOINT {sp_name}")
         except Exception as e:
-            self.conn.execute("ROLLBACK")
+            self.conn.execute(f"ROLLBACK TO SAVEPOINT {sp_name}")
             raise
 
         # Audit log
