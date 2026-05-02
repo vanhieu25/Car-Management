@@ -508,7 +508,7 @@ class ContractDetailScreen(QWidget):
         
         if status == 'moi_tao':
             # Show payment and cancel for admin/sales
-            if self._session and self._session.vai_tro_ma in ("A-01", "A-02"):
+            if self._session and self._session.vai_tro_ma in ("A-01", "A-02", "admin", "sales"):
                 self._payment_btn.setVisible(True)
                 self._cancel_btn.setVisible(True)
         

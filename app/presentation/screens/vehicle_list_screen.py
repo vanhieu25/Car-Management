@@ -89,7 +89,7 @@ class VehicleListScreen(QWidget):
         header_layout.addStretch()
         
         # Add vehicle button (only for A-01 and A-02)
-        if self._session and self._session.vai_tro_ma in ("A-01", "A-02"):
+        if self._session and self._session.vai_tro_ma in ("A-01", "A-02", "admin", "sales"):
             self._add_btn = QPushButton("➕ Thêm xe")
             self._add_btn.setStyleSheet("""
                 QPushButton {

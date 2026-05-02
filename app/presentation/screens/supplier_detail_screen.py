@@ -92,7 +92,7 @@ class SupplierDetailScreen(QWidget):
         header_layout.addStretch()
 
         # Edit button (only for A-01, A-02)
-        if self._session and self._session.vai_tro_ma in ("A-01", "A-02"):
+        if self._session and self._session.vai_tro_ma in ("A-01", "A-02", "admin", "sales"):
             self._edit_btn = QPushButton("✏️ Sửa")
             self._edit_btn.setStyleSheet("""
                 QPushButton {
@@ -276,7 +276,7 @@ class SupplierDetailScreen(QWidget):
         layout.addWidget(rating_group)
 
         # Add rating section (for A-01, A-02)
-        if self._session and self._session.vai_tro_ma in ("A-01", "A-02"):
+        if self._session and self._session.vai_tro_ma in ("A-01", "A-02", "admin", "sales"):
             add_rating_group = QGroupBox("Thêm đánh giá mới")
             add_rating_group.setStyleSheet("""
                 QGroupBox {

@@ -75,7 +75,7 @@ class MaintenanceScheduleScreen(QWidget):
         header_layout.addStretch()
         
         # Add maintenance button (permission-based)
-        if self._session and self._session.vai_tro_ma in ("A-01", "A-02", "A-04"):
+        if self._session and self._session.vai_tro_ma in ("A-01", "A-02", "A-04", "admin", "sales"):
             self._add_btn = QPushButton("➕ Thêm lịch bảo dưỡng")
             self._add_btn.setStyleSheet("""
                 QPushButton {

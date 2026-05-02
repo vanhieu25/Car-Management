@@ -99,7 +99,7 @@ class OrderListScreen(QWidget):
         header_layout.addStretch()
 
         # Create order button (only for A-01, A-02)
-        if self._session and self._session.vai_tro_ma in ("A-01", "A-02"):
+        if self._session and self._session.vai_tro_ma in ("A-01", "A-02", "admin", "sales"):
             self._create_btn = QPushButton("🛒 Tạo đơn mới")
             self._create_btn.setStyleSheet("""
                 QPushButton {
