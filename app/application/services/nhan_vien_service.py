@@ -140,6 +140,7 @@ class NhanVienService:
         keyword: str = None,
         page: int = 1,
         page_size: int = 50,
+        include_inactive: bool = False,
     ) -> NhanVienSearchResult:
         """Search employees with filters.
         
@@ -147,6 +148,7 @@ class NhanVienService:
             keyword: Keyword search (username, ho_ten).
             page: Page number (1-indexed).
             page_size: Results per page.
+            include_inactive: If True, include inactive (deleted) employees.
             
         Returns:
             NhanVienSearchResult with items and pagination info.
@@ -156,6 +158,10 @@ class NhanVienService:
         # Build query
         conditions = []
         params = []
+        
+        # Always filter active by default (except when include_inactive=True)
+        if not include_inactive:
+            conditions.append("trang_thai = 'active'")
         
         if keyword:
             conditions.append("(username LIKE ? OR ho_ten LIKE ?)")
