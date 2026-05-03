@@ -659,7 +659,8 @@ class EmployeeListScreen(QWidget):
             return
 
         try:
-            self._nv_service.delete(nhan_vien_id)
+            # Soft delete = lock account
+            self._nv_service.lock(nhan_vien_id, "Xoá nhân viên")
             QMessageBox.information(self, "Thành công", f"Đã xoá nhân viên {nv.ho_ten}")
             self._load_data()
         except Exception as e:
