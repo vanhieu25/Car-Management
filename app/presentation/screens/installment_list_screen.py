@@ -349,13 +349,14 @@ class InstallmentListScreen(QWidget):
                 self._overdue_banner.setVisible(False)
 
             # Load data
+            offset = (self._current_page - 1) * PAGE_SIZE
             items, total = self._service.get_all(
                 ngan_hang=params.get("ngan_hang"),
                 trang_thai=params.get("trang_thai"),
                 has_qua_han=params.get("has_qua_han"),
                 keyword=params.get("keyword"),
-                page=self._current_page,
-                page_size=PAGE_SIZE,
+                limit=PAGE_SIZE,
+                offset=offset,
             )
 
             self._total_pages = max(1, (total + PAGE_SIZE - 1) // PAGE_SIZE) if total > 0 else 1
