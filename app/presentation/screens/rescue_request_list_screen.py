@@ -104,7 +104,7 @@ class RescueRequestListScreen(QWidget):
         header_layout.addStretch()
 
         # Add button (only for admin/A-02)
-        if self._session and self._session.vai_tro_ma in ("admin", "sales"):
+        if self._session and self._session.vai_tro_ma in ("A-01", "A-02"):
             self._add_btn = QPushButton("➕ Thêm yêu cầu")
             self._add_btn.setStyleSheet("""
                 QPushButton {
