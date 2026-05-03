@@ -65,6 +65,7 @@ class RescueRequestListScreen(QWidget):
 
     add_rescue_clicked = pyqtSignal()
     edit_rescue_clicked = pyqtSignal(int)
+    delete_rescue_clicked = pyqtSignal(int)
 
     def __init__(self, db_conn, session: CurrentSession, parent=None):
         """Initialize rescue request list screen.
@@ -121,6 +122,25 @@ class RescueRequestListScreen(QWidget):
                 }
             """)
             self._add_btn.clicked.connect(self._on_add_clicked)
+            # Delete button (only for admin)
+            if self._session and self._session.vai_tro_ma == "A-01":
+                self._delete_btn = QPushButton("🗑️ Xóa")
+                self._delete_btn.setStyleSheet("""
+                    QPushButton {
+                        background-color: #ff3b30;
+                        color: white;
+                        border: none;
+                        border-radius: 6px;
+                        padding: 10px 20px;
+                        font-size: 14px;
+                        font-weight: 500;
+                    }
+                    QPushButton:hover {
+                        background-color: #d63030;
+                    }
+                """)
+                self._delete_btn.clicked.connect(self._on_delete_clicked)
+                header_layout.addWidget(self._delete_btn)
             header_layout.addWidget(self._add_btn)
 
         layout.addLayout(header_layout)
@@ -411,6 +431,29 @@ class RescueRequestListScreen(QWidget):
         if self._current_page < self._total_pages:
             self._current_page += 1
             self._load_data()
+
+    def _on_delete_clicked(self):
+        """Handle delete button click."""
+        selected = self._table.selectionModel().selectedRows()
+        if not selected:
+            QMessageBox.warning(self, "Thông báo", "Vui lòng chọn một dòng để xóa!")
+            return
+        row = selected[0].row()
+        item = self._table.item(row, 0)
+        if not item:
+            return
+        cuu_ho_id = item.data(Qt.ItemDataRole.UserRole)
+        reply = QMessageBox.question(
+            self, "Xác nhận", "Bạn có chắc muốn xóa yêu cầu cứu hộ này?",
+            QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No
+        )
+        if reply == QMessageBox.StandardButton.Yes:
+            try:
+                self._ch_service.delete(cuu_ho_id)
+                QMessageBox.information(self, "Thành công", "Đã xóa yêu cầu cứu hộ!")
+                self._load_data()
+            except Exception as e:
+                QMessageBox.critical(self, "Lỗi", f"Không thể xóa: {e}")
 
     def _on_add_clicked(self):
         """Handle add button click."""

@@ -246,4 +246,30 @@ class CuuHoService:
             )
             self.conn.commit()
 
+
+    def delete(self, cuu_ho_id: int, nhan_vien_id: int = None) -> bool:
+        """Delete a rescue request (soft delete).
+
+        Args:
+            cuu_ho_id: CuuHo ID to delete.
+            nhan_vien_id: ID of deleting user (for audit).
+
+        Returns:
+            True if deleted.
+
+        Raises:
+            CuuHoNotFoundError: If not found.
+        """
+        # Check exists
+        ch = self._repo.find_by_id(cuu_ho_id)
+        if not ch:
+            raise CuuHoNotFoundError(f"Khong tim thay cuu ho voi ID {cuu_ho_id}")
+
+        # Soft delete: mark as cancelled
+        self.conn.execute(
+            """UPDATE cuu_ho SET trang_thai = 'huy', updated_at = ? WHERE id = ?""",
+            (datetime.now().isoformat(), cuu_ho_id)
+        )
+        self.conn.commit()
+        return True
         return self._repo.find_by_id(id)
