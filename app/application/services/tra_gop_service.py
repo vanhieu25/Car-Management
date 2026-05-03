@@ -403,9 +403,9 @@ class TraGopService:
                 so_tien_tra_thang=row["so_tien_tra_thang"],
                 trang_thai=row["trang_thai"],
                 has_qua_han=bool(row["has_qua_han"]),
-                khach_hang_sdt=row.get("khach_hang_sdt", ""),
-                xe_hang=row.get("xe_hang", ""),
-                xe_dong=row.get("xe_dong", ""),
+                khach_hang_sdt=row["khach_hang_sdt"],
+                xe_hang=row["xe_hang"],
+                xe_dong=row["xe_dong"],
             ))
 
         return items, total
