@@ -50,15 +50,12 @@ class ContentArea(QStackedWidget):
             True if registered, False if module already exists.
         """
         if module_id in self._screens:
-            # Unregister old screen instance so new one replaces it
-            old_screen = self._screens.pop(module_id)
-            if old_screen in [self.widget(i) for i in range(self.count())]:
-                self.removeWidget(old_screen)
-
+            return False
+        
         # Add to stacked widget
         index = self.addWidget(screen)
         self._screens[module_id] = screen
-
+        
         return True
     
     def unregister_screen(self, module_id: str) -> bool:

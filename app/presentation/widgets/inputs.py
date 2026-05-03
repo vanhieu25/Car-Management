@@ -267,6 +267,7 @@ class InlineNumericEdit(QWidget):
             }
             QLabel:hover {
                 background: #f5f5f7;
+                cursor: text;
             }
         """)
         layout.addWidget(self._display)
