@@ -352,7 +352,7 @@ class LeadManagerScreen(QWidget):
 
         # Resize columns
         self._table.resizeColumnsToContents()
-        self._table.column(0).setWidth(150)
+        # RESIZED via horizontalHeader instead: self._table.setColumnWidth(0, 150)
 
         # Update pagination
         self._page_label.setText(f"Trang {self._current_page + 1}")

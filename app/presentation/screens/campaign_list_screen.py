@@ -309,7 +309,7 @@ class CampaignListScreen(QWidget):
 
         # Resize columns
         self._table.resizeColumnsToContents()
-        self._table.column(0).setWidth(200)
+        # RESIZED via horizontalHeader instead: self._table.setColumnWidth(0, 200)
 
         # Update pagination
         total = len(campaigns)
