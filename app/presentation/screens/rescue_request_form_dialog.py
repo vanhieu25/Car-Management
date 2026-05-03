@@ -287,7 +287,7 @@ class RescueRequestFormDialog(QDialog):
         
         self._tg_datetime = QDateTimeEdit()
         self._tg_datetime.setCalendarPopup(True)
-        self._tg_datetime.setDateTime(QDateTime.currentDateTime().addHours(1))
+        self._tg_datetime.setDateTime(QDateTime.currentDateTime().addSecs(3600))
         self._tg_datetime.setStyleSheet("""
             QDateTimeEdit {
                 padding: 10px 12px;

@@ -266,7 +266,7 @@ class ComplaintListScreen(QWidget):
         for row, kn in enumerate(kns):
             # Title
             title_item = QTableWidgetItem(kn.get('tieu_de', ''))
-            title_item.setData(Qt.UserRole, kn['id'])
+            title_item.setData(Qt.ItemDataRole.UserRole, kn['id'])
             self._table.setItem(row, 0, title_item)
 
             # Customer
@@ -334,7 +334,7 @@ class ComplaintListScreen(QWidget):
         """Handle table row double click."""
         item = self._table.item(row, 0)
         if item:
-            kn_id = item.data(Qt.UserRole)
+            kn_id = item.data(Qt.ItemDataRole.UserRole)
             self.view_complaint_clicked.emit(kn_id)
 
     def _on_prev_page(self):

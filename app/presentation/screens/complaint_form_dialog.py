@@ -180,8 +180,11 @@ class ComplaintFormDialog(QDialog):
         self._kh_combo.addItem("-- Chọn khách hàng --", None)
         self._kh_map = {}
         for kh in customers:
-            self._kh_combo.addItem(f"{kh.get('ho_ten', '')} - {kh.get('so_dien_thoai', '')}", kh.get('id'))
-            self._kh_map[kh.get('id')] = kh
+            self._kh_combo.addItem(
+                f"{kh.ho_ten or ''} - {kh.so_dien_thoai or ''}",
+                kh.id
+            )
+            self._kh_map[kh.id] = kh
 
         # Load contracts (all)
         contracts = self._hd_service.get_all(limit=200)
@@ -189,10 +192,10 @@ class ComplaintFormDialog(QDialog):
         self._hd_combo.addItem("-- Không có HĐ --", None)
         self._hd_map = {}
         for hd in contracts:
-            if hd.get('trang_thai') not in ('da_huy', 'tu_choi'):
-                display = f"{hd.get('ma_hop_dong', '')} - {hd.get('khach_hang_ten', '')}"
-                self._hd_combo.addItem(display, hd.get('id'))
-                self._hd_map[hd.get('id')] = hd
+            if hd.trang_thai not in ('da_huy', 'tu_choi'):
+                display = f"{hd.ma_hop_dong or ''} - {hd.khach_hang_id or ''}"
+                self._hd_combo.addItem(display, hd.id)
+                self._hd_map[hd.id] = hd
 
     def _on_save(self):
         """Handle save button click."""

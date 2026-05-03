@@ -102,7 +102,7 @@ class PromoListScreen(QWidget):
         header_layout.addStretch()
 
         # Add promotion button (only for admin A-01)
-        if self._session and self._session.vai_tro_ma in ("A-01", "admin"):
+        if self._session and self._session.vai_tro_ma in ("admin"):
             self._add_btn = QPushButton("➕ Thêm khuyến mãi")
             self._add_btn.setStyleSheet("""
                 QPushButton {

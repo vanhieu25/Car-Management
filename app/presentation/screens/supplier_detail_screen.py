@@ -17,7 +17,8 @@ from typing import Optional
 from PyQt6.QtWidgets import (
     QWidget, QVBoxLayout, QHBoxLayout, QLabel, QTableWidget,
     QTableWidgetItem, QPushButton, QTabWidget, QMessageBox,
-    QFormLayout, QLineEdit, QTextEdit, QGroupBox, QFrame
+    QFormLayout, QLineEdit, QTextEdit, QGroupBox, QFrame,
+    QAbstractItemView
 )
 from PyQt6.QtCore import Qt, pyqtSignal
 from PyQt6.QtGui import QColor
@@ -94,7 +95,7 @@ class SupplierDetailScreen(QWidget):
         header_layout.addStretch()
 
         # Edit button (only for A-01, A-02)
-        if self._session and self._session.vai_tro_ma in ("A-01", "A-02", "admin", "sales"):
+        if self._session and self._session.vai_tro_ma in ("admin", "sales"):
             self._edit_btn = QPushButton("✏️ Sửa")
             self._edit_btn.setStyleSheet("""
                 QPushButton {
@@ -152,13 +153,14 @@ class SupplierDetailScreen(QWidget):
     def _create_info_tab(self) -> QWidget:
         """Create the info tab widget."""
         widget = QWidget()
-        layout = QVBoxLayout(widget)
-        layout.setSpacing(12)
+        main_layout = QVBoxLayout(widget)
+        main_layout.setSpacing(12)
+        main_layout.setContentsMargins(0, 0, 0, 0)
 
-        self._info_form = QFormLayout()
-        self._info_form.setLabelWidth(120)
-        self._info_form.setHorizontalSpacing(20)
-        self._info_form.setVerticalSpacing(10)
+        # Use a form layout directly as the main layout
+        info_form = QFormLayout()
+        info_form.setHorizontalSpacing(20)
+        info_form.setVerticalSpacing(10)
 
         # Labels for info fields
         self._info_labels = {
@@ -186,11 +188,11 @@ class SupplierDetailScreen(QWidget):
             ("Đánh giá TB:", self._info_labels["avg_rating"]),
         ]
 
-        for label_text, widget in rows:
-            self._info_form.addRow(label_text, widget)
+        for label_text, lbl in rows:
+            info_form.addRow(label_text, lbl)
 
-        layout.addLayout(self._info_form)
-        layout.addStretch()
+        main_layout.addLayout(info_form)
+        main_layout.addStretch()
 
         return widget
 
@@ -257,7 +259,6 @@ class SupplierDetailScreen(QWidget):
             }
         """)
         rating_layout = QFormLayout(rating_group)
-        rating_layout.setLabelWidth(140)
 
         self._rating_labels = {
             "chat_luong": QLabel("0 / 5"),
@@ -278,7 +279,7 @@ class SupplierDetailScreen(QWidget):
         layout.addWidget(rating_group)
 
         # Add rating section (for A-01, A-02)
-        if self._session and self._session.vai_tro_ma in ("A-01", "A-02", "admin", "sales"):
+        if self._session and self._session.vai_tro_ma in ("admin", "sales"):
             add_rating_group = QGroupBox("Thêm đánh giá mới")
             add_rating_group.setStyleSheet("""
                 QGroupBox {
@@ -367,6 +368,11 @@ class SupplierDetailScreen(QWidget):
 
     def _load_data(self):
         """Load supplier data."""
+        # Add mode - no data to load
+        if self._ncc_id is None:
+            self._ncc_data = None
+            return
+
         try:
             self._ncc_data = self._ncc_service.get_by_id(self._ncc_id)
             if not self._ncc_data:

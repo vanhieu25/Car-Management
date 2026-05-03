@@ -78,7 +78,7 @@ class InstallmentListScreen(QWidget):
         header_layout.addStretch()
 
         # Create button (only for A-01, A-02)
-        if self._session and self._session.vai_tro_ma in ("A-01", "A-02", "admin", "sales"):
+        if self._session and self._session.vai_tro_ma in ("admin", "sales"):
             self._create_btn = QPushButton("➕ Tạo phương án trả góp")
             self._create_btn.setStyleSheet("""
                 QPushButton {
@@ -337,7 +337,7 @@ class InstallmentListScreen(QWidget):
                 has_qua_han=params.get("has_qua_han"),
                 keyword=params.get("keyword"),
                 limit=PAGE_SIZE,
-                offset=self._current_page * PAGE_SIZE,
+                offset=(self._current_page - 1) * PAGE_SIZE,
             )
 
             self._total_pages = max(1, (total + PAGE_SIZE - 1) // PAGE_SIZE) if total > 0 else 1

@@ -90,7 +90,7 @@ class VehicleDetailScreen(QWidget):
         header_layout.addStretch()
         
         # Edit button (only for A-01, A-02)
-        if self._session and self._session.vai_tro_ma in ("A-01", "A-02", "admin", "sales"):
+        if self._session and self._session.vai_tro_ma in ("admin", "sales"):
             self._edit_btn = QPushButton("✏️ Sửa")
             self._edit_btn.setStyleSheet("""
                 QPushButton {

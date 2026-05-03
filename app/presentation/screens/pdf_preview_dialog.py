@@ -181,13 +181,13 @@ class PdfPreviewDialog(QDialog):
                 self._preview_stack.setCurrentWidget(self._error_widget)
                 return
             
-            hd = data.get('hop_dong', {})
+            hd = data
             kh = data.get('khach_hang', {})
             xe = data.get('xe', {})
             nv = data.get('nhan_vien', {})
             pk_list = data.get('phu_kien_list', [])
             km = data.get('khuyen_mai', {})
-            
+
             self._title_label.setText(f"Hợp đồng: {hd.get('ma_hop_dong', 'N/A')}")
             
             # Build HTML content
@@ -210,7 +210,7 @@ class PdfPreviewDialog(QDialog):
         Returns:
             HTML string for rendering.
         """
-        hd = data.get('hop_dong', {})
+        hd = data
         kh = data.get('khach_hang', {})
         xe = data.get('xe', {})
         nv = data.get('nhan_vien', {})
@@ -433,7 +433,7 @@ class PdfPreviewDialog(QDialog):
                 QMessageBox.critical(self, "Lỗi", "Không tìm thấy hợp đồng")
                 return
             
-            hd = data.get('hop_dong', {})
+            hd = data
             default_name = f"HopDong_{hd.get('ma_hop_dong', 'unknown')}.pdf"
             
             # Show save dialog

@@ -59,6 +59,7 @@ class ComplaintDetailScreen(QWidget):
     """
 
     back_clicked = pyqtSignal()
+    closed = pyqtSignal()
 
     def __init__(self, db_conn, session: CurrentSession, kn_id: int, parent=None):
         """Initialize complaint detail screen.
@@ -415,8 +416,8 @@ class ComplaintDetailScreen(QWidget):
             nhan_viens = self._nv_service.get_all()
             self._assign_nv_combo.addItem("-- Chọn nhân viên --", None)
             for nv in nhan_viens:
-                if nv.get('trang_thai') == 'dang_lam':
-                    self._assign_nv_combo.addItem(nv.get('ho_ten', ''), nv.get('id'))
+                if nv.trang_thai == 'active':
+                    self._assign_nv_combo.addItem(nv.ho_ten, nv.id)
 
             # Disable tabs based on status
             status = kn.get('trang_thai', 'moi')

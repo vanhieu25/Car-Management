@@ -355,14 +355,14 @@ class ContractDetailScreen(QWidget):
             
             self._contract_data = data
             self._populate_ui(data)
-            self._update_action_buttons(data.get('hop_dong', {}).get('trang_thai', 'moi_tao'))
+            self._update_action_buttons(data.get('trang_thai', 'moi_tao'))
         except Exception as e:
             QMessageBox.critical(self, "Lỗi", f"Không thể tải dữ liệu: {str(e)}")
             self._on_back()
     
     def _populate_ui(self, data: Dict):
         """Populate UI with contract data."""
-        hd = data.get('hop_dong', {})
+        hd = data
         kh = data.get('khach_hang', {})
         xe = data.get('xe', {})
         nv = data.get('nhan_vien', {})
@@ -499,7 +499,7 @@ class ContractDetailScreen(QWidget):
         - da_thanh_toan: "Giao xe" (primary), "Hủy" (danger) — only A-01
         - da_giao_xe: No actions (final state)
         """
-        is_admin = self._session and self._session.vai_tro_ma == "A-01"
+        is_admin = self._session and self._session.vai_tro_ma == "admin"
         
         # Hide all by default
         self._payment_btn.setVisible(False)
@@ -508,7 +508,7 @@ class ContractDetailScreen(QWidget):
         
         if status == 'moi_tao':
             # Show payment and cancel for admin/sales
-            if self._session and self._session.vai_tro_ma in ("A-01", "A-02", "admin", "sales"):
+            if self._session and self._session.vai_tro_ma in ("admin", "sales"):
                 self._payment_btn.setVisible(True)
                 self._cancel_btn.setVisible(True)
         

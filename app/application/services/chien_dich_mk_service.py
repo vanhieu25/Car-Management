@@ -31,7 +31,7 @@ class ChienDichMkNotFoundError(ChienDichMkServiceError):
 
 @dataclass
 class ChienDichMkCreateData:
-    """Data for creating a marketing campaign."""
+    """"Data for creating a marketing campaign."""
     ten_chien_dich: str
     kenh_tiep_thi: str
     ngay_bat_dau: str
@@ -39,6 +39,7 @@ class ChienDichMkCreateData:
     ngan_sach: int = 0
     muc_tieu: str = ""
     so_luong_lead_muc_tieu: int = 0
+    trang_thai: str = "nhap"
     created_by: Optional[int] = None
 
 
@@ -98,7 +99,7 @@ class ChienDichMkService:
             'ngan_sach': data.ngan_sach,
             'muc_tieu': data.muc_tieu,
             'so_luong_lead_muc_tieu': data.so_luong_lead_muc_tieu,
-            'trang_thai': 'nhap',
+            'trang_thai': data.trang_thai,
             'created_by': data.created_by
         })
         

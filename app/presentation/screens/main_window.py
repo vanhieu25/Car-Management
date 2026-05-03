@@ -338,7 +338,7 @@ class MainWindow(QMainWindow):
                 from app.presentation.screens.employee_list_screen import EmployeeListScreen
                 screen = EmployeeListScreen(conn, self._session)
                 screen.add_employee_clicked.connect(self._show_employee_form)
-                
+                screen.edit_employee_clicked.connect(self._show_employee_form)
                 screen.view_employee_clicked.connect(self._show_employee_detail)
                 return screen
 
@@ -410,10 +410,12 @@ class MainWindow(QMainWindow):
             if conn and self._session:
                 from app.presentation.screens.maintenance_schedule_screen import MaintenanceScheduleScreen
                 screen = MaintenanceScheduleScreen(conn, self._session)
+                screen.add_maintenance_clicked.connect(self._show_maintenance_form)
+                screen.edit_maintenance_clicked.connect(self._show_maintenance_form)
                 return screen
 
         elif module_id == "khuyen_mai":
-            # S-KM-01: Promotion - placeholder for now
+            # S-KM-01: Promotion - uses campaign_list_screen
             import logging
             logger = logging.getLogger("car_management")
             from app.infrastructure.database.connection import get_connection
@@ -422,6 +424,8 @@ class MainWindow(QMainWindow):
             if conn and self._session:
                 from app.presentation.screens.campaign_list_screen import CampaignListScreen
                 screen = CampaignListScreen(conn, self._session)
+                screen.add_campaign_clicked.connect(self._show_campaign_form)
+                screen.edit_campaign_clicked.connect(self._show_campaign_form)
                 return screen
 
         elif module_id == "cuu_ho":
@@ -645,10 +649,11 @@ class MainWindow(QMainWindow):
 
     def _on_campaign_saved(self):
         """Handle campaign saved signal - refresh list."""
-        if self.content_area.has_screen("marketing"):
-            screen = self.content_area.get_screen("marketing")
-            if hasattr(screen, 'refresh'):
-                screen.refresh()
+        for screen_name in ("marketing", "khuyen_mai"):
+            if self.content_area.has_screen(screen_name):
+                screen = self.content_area.get_screen(screen_name)
+                if hasattr(screen, 'refresh'):
+                    screen.refresh()
 
     def _show_lead_form(self, lead_id: int = None):
         """Show lead add/edit form dialog.
@@ -707,10 +712,27 @@ class MainWindow(QMainWindow):
                 screen.refresh()
 
     def _show_employee_form(self, nhan_vien_id: int = None):
-        """Show employee add/edit form dialog."""
+        """Show employee add/edit form dialog.
+
+        Args:
+            nhan_vien_id: Employee ID to edit, or None for add new.
+        """
         from app.presentation.screens.employee_form_dialog import EmployeeFormDialog
-        dialog = EmployeeFormDialog(self._db_conn, self._session, nhan_vien_id, self)
+        from app.application.services.nhan_vien_service import NhanVienService
+        nhan_vien = None
+        if nhan_vien_id:
+            service = NhanVienService(self._db_conn, self._session)
+            nhan_vien = service.get_by_id(nhan_vien_id)
+        dialog = EmployeeFormDialog(self._db_conn, self._session, nhan_vien, self)
+        dialog.saved.connect(self._on_employee_saved)
         dialog.exec()
+
+    def _on_employee_saved(self):
+        """Handle employee saved signal - refresh list."""
+        if self.content_area.has_screen("nhan_vien"):
+            screen = self.content_area.get_screen("nhan_vien")
+            if hasattr(screen, 'refresh'):
+                screen.refresh()
 
     def _show_employee_detail(self, nhan_vien_id: int):
         """Show employee profile screen."""
@@ -729,8 +751,27 @@ class MainWindow(QMainWindow):
         """Show contract detail screen."""
         from app.presentation.screens.contract_detail_screen import ContractDetailScreen
         screen = ContractDetailScreen(self._db_conn, self._session, hop_dong_id, self)
+        screen.closed.connect(lambda: self.navigate_to("hop_dong"))
         self.content_area.register_screen("contract_detail", screen)
         self.content_area.show_screen("contract_detail")
+
+    def _show_maintenance_form(self, lich_bao_duong_id: int = None):
+        """Show maintenance add/edit form dialog.
+
+        Args:
+            lich_bao_duong_id: Maintenance schedule ID to edit, or None for add new.
+        """
+        from app.presentation.screens.maintenance_form_dialog import MaintenanceFormDialog
+        dialog = MaintenanceFormDialog(self._db_conn, self._session, lich_bao_duong_id, self)
+        dialog.saved.connect(self._on_maintenance_saved)
+        dialog.exec()
+
+    def _on_maintenance_saved(self):
+        """Handle maintenance saved signal - refresh list."""
+        if self.content_area.has_screen("bao_duong"):
+            screen = self.content_area.get_screen("bao_duong")
+            if hasattr(screen, 'refresh'):
+                screen.refresh()
 
     def _show_accessory_form(self, phu_kien_id: int = None):
         """Show accessory add/edit form dialog."""
@@ -751,18 +792,40 @@ class MainWindow(QMainWindow):
         self.content_area.register_screen("warranty_detail", screen)
         self.content_area.show_screen("warranty_detail")
 
-    def _show_supplier_form(self):
-        """Show supplier add dialog."""
-        from app.presentation.screens.supplier_detail_screen import SupplierDetailScreen
-        screen = SupplierDetailScreen(self._db_conn, self._session, None, self)
-        screen.exec()
+    def _show_supplier_form(self, nha_cung_cap_id: int = None):
+        """Show supplier add/edit dialog.
+
+
+        Args:
+            nha_cung_cap_id: Supplier ID to edit, or None for add new.
+        """
+        from app.presentation.screens.supplier_form_dialog import SupplierFormDialog
+        from app.application.services.nha_cung_cap_service import NhaCungCapService
+        from app.domain.entities import NhaCungCap
+        ncc = None
+        if nha_cung_cap_id:
+            service = NhaCungCapService(self._db_conn)
+            ncc_dict = service.get_by_id(nha_cung_cap_id)
+            if ncc_dict:
+                ncc = NhaCungCap.from_row(ncc_dict)
+        dialog = SupplierFormDialog(self._db_conn, self._session, ncc, self)
+        dialog.saved.connect(self._on_supplier_saved)
+        dialog.exec()
 
     def _show_supplier_detail(self, nha_cung_cap_id: int):
         """Show supplier detail screen."""
         from app.presentation.screens.supplier_detail_screen import SupplierDetailScreen
         screen = SupplierDetailScreen(self._db_conn, self._session, nha_cung_cap_id, self)
+        screen.back_clicked.connect(lambda: self.navigate_to("nha_cung_cap"))
+        screen.edit_clicked.connect(self._show_supplier_form)
         self.content_area.register_screen("supplier_detail", screen)
         self.content_area.show_screen("supplier_detail")
+
+    def _on_supplier_saved(self):
+        """Handle supplier saved event - refresh supplier list."""
+        if hasattr(self, 'content_area') and self.content_area.has_screen("nha_cung_cap"):
+            screen = self.content_area.get_screen("nha_cung_cap")
+            screen.refresh()
 
     def _on_logout_requested(self):
         """Handle logout request."""

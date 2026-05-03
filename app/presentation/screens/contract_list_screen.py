@@ -77,7 +77,7 @@ class ContractListScreen(QWidget):
         header_layout.addStretch()
         
         # Create contract button (only for A-01, A-02)
-        if self._session and self._session.vai_tro_ma in ("A-01", "A-02", "admin", "sales"):
+        if self._session and self._session.vai_tro_ma in ("admin", "sales"):
             self._create_btn = QPushButton("➕ Tạo hợp đồng mới")
             self._create_btn.setStyleSheet("""
                 QPushButton {

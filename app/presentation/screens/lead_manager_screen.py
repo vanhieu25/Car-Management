@@ -304,7 +304,7 @@ class LeadManagerScreen(QWidget):
         for row, lead in enumerate(leads):
             # Name
             name_item = QTableWidgetItem(lead.get('ho_ten', ''))
-            name_item.setData(Qt.UserRole, lead['id'])
+            name_item.setData(Qt.ItemDataRole.UserRole, lead['id'])
             self._table.setItem(row, 0, name_item)
 
             # Phone
@@ -381,7 +381,7 @@ class LeadManagerScreen(QWidget):
         """Handle table row double click."""
         item = self._table.item(row, 0)
         if item:
-            lead_id = item.data(Qt.UserRole)
+            lead_id = item.data(Qt.ItemDataRole.UserRole)
             self.edit_lead_clicked.emit(lead_id)
 
     def _on_update_status_clicked(self):
@@ -392,7 +392,7 @@ class LeadManagerScreen(QWidget):
             return
 
         row = selected_rows[0].row()
-        lead_id = self._table.item(row, 0).data(Qt.UserRole)
+        lead_id = self._table.item(row, 0).data(Qt.ItemDataRole.UserRole)
 
         from app.presentation.screens.lead_status_dialog import LeadStatusDialog
         dialog = LeadStatusDialog(self._db_conn, self._session, lead_id, self)
@@ -407,7 +407,7 @@ class LeadManagerScreen(QWidget):
             return
 
         row = selected_rows[0].row()
-        lead_id = self._table.item(row, 0).data(Qt.UserRole)
+        lead_id = self._table.item(row, 0).data(Qt.ItemDataRole.UserRole)
         lead_name = self._table.item(row, 0).text()
 
         reply = QMessageBox.question(
@@ -434,7 +434,7 @@ class LeadManagerScreen(QWidget):
             return
 
         row = selected_rows[0].row()
-        lead_id = self._table.item(row, 0).data(Qt.UserRole)
+        lead_id = self._table.item(row, 0).data(Qt.ItemDataRole.UserRole)
 
         from app.presentation.screens.lead_assign_dialog import LeadAssignDialog
         dialog = LeadAssignDialog(self._db_conn, self._session, lead_id, self)

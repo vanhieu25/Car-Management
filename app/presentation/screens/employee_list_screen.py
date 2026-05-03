@@ -181,6 +181,7 @@ class EmployeeListScreen(QWidget):
     
     add_employee_clicked = pyqtSignal()
     view_employee_clicked = pyqtSignal(int)
+    edit_employee_clicked = pyqtSignal(int)
     
     def __init__(self, db_conn, session: CurrentSession, parent=None):
         """Initialize employee list screen.
@@ -218,7 +219,7 @@ class EmployeeListScreen(QWidget):
         header_layout.addStretch()
         
         # Add employee button (only for A-01)
-        if self._session and self._session.vai_tro_ma == "A-01":
+        if self._session and self._session.vai_tro_ma in ("admin"):
             self._add_btn = QPushButton("➕ Thêm nhân viên")
             self._add_btn.setStyleSheet("""
                 QPushButton {
@@ -320,7 +321,7 @@ class EmployeeListScreen(QWidget):
         layout.addWidget(self._table)
         
         # Action buttons (only for A-01)
-        if self._session and self._session.vai_tro_ma == "A-01":
+        if self._session and self._session.vai_tro_ma in ("admin"):
             action_layout = QHBoxLayout()
             
             self._lock_btn = QPushButton("🔒 Khoá")
@@ -358,7 +359,43 @@ class EmployeeListScreen(QWidget):
             """)
             self._unlock_btn.clicked.connect(self._on_unlock_clicked)
             action_layout.addWidget(self._unlock_btn)
-            
+
+            self._edit_btn = QPushButton("✏️ Sửa")
+            self._edit_btn.setStyleSheet("""
+                QPushButton {
+                    background-color: #007aff;
+                    color: white;
+                    border: none;
+                    border-radius: 6px;
+                    padding: 10px 20px;
+                    font-size: 14px;
+                    font-weight: 500;
+                }
+                QPushButton:hover {
+                    background-color: #0055bb;
+                }
+            """)
+            self._edit_btn.clicked.connect(self._on_edit_clicked)
+            action_layout.addWidget(self._edit_btn)
+
+            self._delete_btn = QPushButton("🗑️ Xoá")
+            self._delete_btn.setStyleSheet("""
+                QPushButton {
+                    background-color: #ff3b30;
+                    color: white;
+                    border: none;
+                    border-radius: 6px;
+                    padding: 10px 20px;
+                    font-size: 14px;
+                    font-weight: 500;
+                }
+                QPushButton:hover {
+                    background-color: #cc2f26;
+                }
+            """)
+            self._delete_btn.clicked.connect(self._on_delete_clicked)
+            action_layout.addWidget(self._delete_btn)
+
             action_layout.addStretch()
             
             layout.addLayout(action_layout)
@@ -591,6 +628,43 @@ class EmployeeListScreen(QWidget):
         except Exception as e:
             QMessageBox.critical(self, "Lỗi", f"Không thể mở khoá: {str(e)}")
     
+    def _on_edit_clicked(self):
+        """"Handle edit button click."""
+        nhan_vien_id = self._get_selected_id()
+        if nhan_vien_id < 0:
+            QMessageBox.warning(self, "Chưa chọn", "Vui lòng chọn nhân viên cần sửa.")
+            return
+        self.edit_employee_clicked.emit(nhan_vien_id)
+
+    def _on_delete_clicked(self):
+        """Handle delete button click."""
+        nhan_vien_id = self._get_selected_id()
+        if nhan_vien_id < 0:
+            QMessageBox.warning(self, "Chưa chọn", "Vui lòng chọn nhân viên cần xoá.")
+            return
+
+        nv = self._nv_service.get_by_id(nhan_vien_id)
+        if not nv:
+            QMessageBox.critical(self, "Lỗi", "Không tìm thấy nhân viên.")
+            return
+
+        reply = QMessageBox.question(
+            self,
+            "Xác nhận xoá",
+            f"Bạn có chắc muốn xoá nhân viên {nv.ho_ten}?\n\nHành động này không thể hoàn tác.",
+            QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No
+        )
+
+        if reply != QMessageBox.StandardButton.Yes:
+            return
+
+        try:
+            self._nv_service.delete(nhan_vien_id)
+            QMessageBox.information(self, "Thành công", f"Đã xoá nhân viên {nv.ho_ten}")
+            self._load_data()
+        except Exception as e:
+            QMessageBox.critical(self, "Lỗi", f"Không thể xoá: {str(e)}")
+
     def refresh(self):
         """Refresh the data."""
         self._load_data()

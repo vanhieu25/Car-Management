@@ -44,6 +44,12 @@ KENH_OPTIONS = [
 
 KENH_DISPLAY = {k: v for k, v in KENH_OPTIONS}
 
+TRANG_THAI_OPTIONS = [
+    ("nhap", "Nháp"),
+    ("dang_chay", "Đang chạy"),
+    ("ket_thuc", "Kết thúc"),
+]
+
 
 class CampaignFormDialog(QDialog):
     """Dialog for adding or editing a marketing campaign.
@@ -172,6 +178,11 @@ class CampaignFormDialog(QDialog):
         )
         form_layout.addRow("Lead mục tiêu:", self._lead_muc_tieu)
 
+        # trang_thai
+        self._trang_thai_combo = QComboBox()
+        self._trang_thai_combo.addItems([v for k, v in TRANG_THAI_OPTIONS])
+        form_layout.addRow("Trạng thái:", self._trang_thai_combo)
+
         # muc_tieu
         self._muc_tieu = QTextEdit()
         self._muc_tieu.setPlaceholderText("Mô tả mục tiêu chiến dịch...")
@@ -219,6 +230,13 @@ class CampaignFormDialog(QDialog):
         self._lead_muc_tieu.setValue(campaign.get('so_luong_lead_muc_tieu', 0))
         self._muc_tieu.setPlainText(campaign.get('muc_tieu', ''))
 
+        # Set trang_thai
+        trang_thai_val = campaign.get('trang_thai', 'nhap')
+        for i, (k, v) in enumerate(TRANG_THAI_OPTIONS):
+            if k == trang_thai_val:
+                self._trang_thai_combo.setCurrentIndex(i)
+                break
+
     def _on_save(self):
         """Handle save button click."""
         # Get values
@@ -230,6 +248,8 @@ class CampaignFormDialog(QDialog):
         ngan_sach = self._ngan_sach.value()
         lead_muc_tieu = self._lead_muc_tieu.value()
         muc_tieu = self._muc_tieu.toPlainText().strip()
+        trang_thai_display = self._trang_thai_combo.currentText()
+        trang_thai_val = next((k for k, v in TRANG_THAI_OPTIONS if v == trang_thai_display), 'nhap')
 
         # Validate
         if not ten:
@@ -251,6 +271,7 @@ class CampaignFormDialog(QDialog):
                     ngan_sach=ngan_sach,
                     muc_tieu=muc_tieu,
                     so_luong_lead_muc_tieu=lead_muc_tieu,
+                    trang_thai=trang_thai_val,
                 )
                 self._service.update(self._campaign['id'], data)
             else:
@@ -262,6 +283,7 @@ class CampaignFormDialog(QDialog):
                     ngan_sach=ngan_sach,
                     muc_tieu=muc_tieu,
                     so_luong_lead_muc_tieu=lead_muc_tieu,
+                    trang_thai=trang_thai_val,
                     created_by=self._session.user_id,
                 )
                 self._service.create(data)
