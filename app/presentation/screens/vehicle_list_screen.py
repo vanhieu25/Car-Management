@@ -89,7 +89,9 @@ class VehicleListScreen(QWidget):
         header_layout.addStretch()
         
         # Action buttons (only for A-01 and A-02)
+        print(f"[DEBUG] vehicle_list_screen: vai_tro_ma={getattr(self._session, 'vai_tro_ma', None)}")
         if self._session and self._session.vai_tro_ma in ("A-01", "A-02"):
+            print(f"[DEBUG] vehicle_list_screen: CREATE BUTTONS for A-01/A-02")
             action_layout = QHBoxLayout()
             
             self._add_btn = QPushButton("➕ Thêm xe")

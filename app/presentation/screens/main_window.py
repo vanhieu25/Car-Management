@@ -259,6 +259,7 @@ class MainWindow(QMainWindow):
             logger = logging.getLogger("car_management")
             from app.infrastructure.database.connection import get_connection
             conn = self._db_conn if self._db_conn else get_connection()
+            logger.info(f"[Module] xe - session vai_tro_ma: {self._session.vai_tro_ma if self._session else None}")
             logger.info("[Module] xe - conn: %s, session: %s" % (conn, self._session))
             if conn and self._session:
                 screen = VehicleListScreen(conn, self._session)
