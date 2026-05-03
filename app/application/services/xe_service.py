@@ -58,6 +58,7 @@ class XeCreateData:
     dong_xe: str
     nam_san_xuat: int
     gia_ban: int
+    trang_thai: str = "con_hang"
     mau_sac: str = ""
     so_luong_ton: int = 0
     muc_toi_thieu: int = 2
@@ -189,7 +190,7 @@ class XeService:
             gia_ban=data.gia_ban,
             so_luong_ton=data.so_luong_ton,
             muc_toi_thieu=data.muc_toi_thieu,
-            trang_thai="con_hang",
+            trang_thai=data.trang_thai,
             ngay_nhap_dau_tien=now if data.so_luong_ton > 0 else None,
             mo_ta=data.mo_ta,
             created_by=data.created_by,

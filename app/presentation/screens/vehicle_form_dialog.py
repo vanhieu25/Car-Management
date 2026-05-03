@@ -17,7 +17,7 @@ References:
 from PyQt6.QtWidgets import (
     QDialog, QVBoxLayout, QHBoxLayout, QLabel, QLineEdit,
     QPushButton, QFormLayout, QMessageBox,
-    QGroupBox
+    QGroupBox, QComboBox
 )
 from PyQt6.QtCore import Qt, pyqtSignal
 from PyQt6.QtGui import QFont
@@ -209,6 +209,24 @@ class VehicleFormDialog(QDialog):
         self._mo_ta_input.setStyleSheet(self._ma_xe_input.styleSheet())
         form_layout.addRow("Mô tả:", self._mo_ta_input)
         
+        # trang_thai
+        self._trang_thai_combo = QComboBox()
+        self._trang_thai_combo.addItems(["Còn hàng", "Sắp về", "Đã bán"])
+        self._trang_thai_combo.setCurrentText("Còn hàng")
+        self._trang_thai_combo.setStyleSheet("""
+            QComboBox {
+                padding: 10px 12px;
+                border: 1px solid #d2d2d7;
+                border-radius: 6px;
+                font-size: 14px;
+                background: white;
+            }
+            QComboBox:focus {
+                border: 2px solid #0066cc;
+            }
+        """)
+        form_layout.addRow("Trạng thái:", self._trang_thai_combo)
+        
         form_group.setLayout(form_layout)
         layout.addWidget(form_group)
         
@@ -273,6 +291,9 @@ class VehicleFormDialog(QDialog):
         self._ton_spin.setValue(xe.so_luong_ton)
         self._muc_spin.setValue(xe.muc_toi_thieu)
         self._mo_ta_input.setText(xe.mo_ta or "")
+        # Set trang_thai combo
+        status_map = {"con_hang": "Còn hàng", "sap_ve": "Sắp về", "da_ban": "Đã bán"}
+        self._trang_thai_combo.setCurrentText(status_map.get(xe.trang_thai, "Còn hàng"))
     
     def _validate(self) -> bool:
         """Validate form inputs.
@@ -320,6 +341,7 @@ class VehicleFormDialog(QDialog):
         try:
             if self._is_edit:
                 # Update existing vehicle
+                status_map_inv = {"Còn hàng": "con_hang", "Sắp về": "sap_ve", "Đã bán": "da_ban"}
                 data = XeUpdateData(
                     hang=self._hang_input.text().strip(),
                     dong_xe=self._dong_input.text().strip(),
@@ -328,6 +350,7 @@ class VehicleFormDialog(QDialog):
                     gia_ban=int(self._gia_spin.value()),
                     so_luong_ton=self._ton_spin.value(),
                     muc_toi_thieu=self._muc_spin.value(),
+                    trang_thai=status_map_inv.get(self._trang_thai_combo.currentText(), "con_hang"),
                     mo_ta=self._mo_ta_input.text().strip() or None,
                 )
                 
@@ -340,12 +363,14 @@ class VehicleFormDialog(QDialog):
                 QMessageBox.information(self, "Thành công", "Đã cập nhật thông tin xe thành công!")
             else:
                 # Create new vehicle
+                status_map_inv = {"Còn hàng": "con_hang", "Sắp về": "sap_ve", "Đã bán": "da_ban"}
                 data = XeCreateData(
                     ma_xe=self._ma_xe_input.text().strip(),
                     hang=self._hang_input.text().strip(),
                     dong_xe=self._dong_input.text().strip(),
                     nam_san_xuat=self._nam_spin.value(),
                     gia_ban=int(self._gia_spin.value()),
+                    trang_thai=status_map_inv.get(self._trang_thai_combo.currentText(), "con_hang"),
                     mau_sac=self._mau_input.text().strip() or "",
                     so_luong_ton=self._ton_spin.value(),
                     muc_toi_thieu=self._muc_spin.value(),
