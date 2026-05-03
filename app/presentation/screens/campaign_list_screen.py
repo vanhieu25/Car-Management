@@ -277,7 +277,7 @@ class CampaignListScreen(QWidget):
         for row, campaign in enumerate(campaigns):
             # Campaign name
             name_item = QTableWidgetItem(campaign['ten_chien_dich'])
-            name_item.setData(Qt.UserRole, campaign['id'])
+            name_item.setData(Qt.ItemDataRole.UserRole, campaign['id'])
             self._table.setItem(row, 0, name_item)
 
             # Channel
@@ -338,7 +338,7 @@ class CampaignListScreen(QWidget):
         row = selected_rows[0].row()
         item = self._table.item(row, 0)
         if item:
-            return item.data(Qt.UserRole)
+            return item.data(Qt.ItemDataRole.UserRole)
         return -1
     
     def _on_delete_clicked(self):
@@ -368,7 +368,7 @@ class CampaignListScreen(QWidget):
         """Handle table row double click."""
         item = self._table.item(row, 0)
         if item:
-            campaign_id = item.data(Qt.UserRole)
+            campaign_id = item.data(Qt.ItemDataRole.UserRole)
             self.edit_campaign_clicked.emit(campaign_id)
 
     def _on_prev_page(self):
