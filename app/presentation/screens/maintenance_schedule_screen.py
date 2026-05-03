@@ -75,7 +75,9 @@ class MaintenanceScheduleScreen(QWidget):
         header_layout.addStretch()
         
         # Add maintenance button (permission-based)
-        if self._session and self._session.vai_tro_ma in ("admin", "sales", "A-04"):
+        action_layout = QHBoxLayout()
+        
+        if self._session and self._session.vai_tro_ma in ("A-01", "A-02", "A-04"):
             self._add_btn = QPushButton("➕ Thêm lịch bảo dưỡng")
             self._add_btn.setStyleSheet("""
                 QPushButton {
@@ -92,9 +94,29 @@ class MaintenanceScheduleScreen(QWidget):
                 }
             """)
             self._add_btn.clicked.connect(self._on_add_clicked)
-            header_layout.addWidget(self._add_btn)
+            action_layout.addWidget(self._add_btn)
+            
+            self._delete_btn = QPushButton("🗑️ Xoá")
+            self._delete_btn.setStyleSheet("""
+                QPushButton {
+                    background-color: #ff3b30;
+                    color: white;
+                    border: none;
+                    border-radius: 6px;
+                    padding: 10px 20px;
+                    font-size: 14px;
+                    font-weight: 500;
+                }
+                QPushButton:hover {
+                    background-color: #cc2f26;
+                }
+            """)
+            self._delete_btn.clicked.connect(self._on_delete_clicked)
+            action_layout.addWidget(self._delete_btn)
         
-        layout.addLayout(header_layout)
+        action_layout.addStretch()
+        
+        layout.addLayout(action_layout)
         
         # View toggle and filters
         controls_group = QGroupBox()
@@ -627,6 +649,50 @@ class MaintenanceScheduleScreen(QWidget):
         """Handle add maintenance button click."""
         self.add_maintenance_clicked.emit()
     
+    def _get_selected_id(self) -> int:
+        """Get selected maintenance ID from current table.
+        
+        Returns:
+            Maintenance ID or -1 if none selected.
+        """
+        # Determine which table is visible
+        if self._current_view == "calendar":
+            table = self._schedule_table
+        else:
+            table = self._list_table
+        
+        selected_rows = table.selectionModel().selectedRows()
+        if not selected_rows:
+            return -1
+        row = selected_rows[0].row()
+        item = table.item(row, 0)
+        if item:
+            return item.data(Qt.ItemDataRole.UserRole)
+        return -1
+    
+    def _on_delete_clicked(self):
+        """Handle delete button click."""
+        item_id = self._get_selected_id()
+        if item_id < 0:
+            QMessageBox.warning(self, "Chưa chọn", "Vui lòng chọn lịch bảo dưỡng cần xoá.")
+            return
+        
+        reply = QMessageBox.question(
+            self,
+            "Xác nhận xoá",
+            "Bạn có chắc muốn xoá lịch bảo dưỡng này?\n\nHành động này không thể hoàn tác.",
+            QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No
+        )
+        if reply != QMessageBox.StandardButton.Yes:
+            return
+        
+        try:
+            self._bd_service.delete(item_id)
+            QMessageBox.information(self, "Thành công", "Đã xoá thành công")
+            self._load_data()
+        except Exception as e:
+            QMessageBox.critical(self, "Lỗi", f"Không thể xoá: {str(e)}")
+
     def refresh(self):
         """Refresh the data."""
         self._load_data()

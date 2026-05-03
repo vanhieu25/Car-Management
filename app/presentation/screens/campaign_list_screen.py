@@ -160,6 +160,22 @@ class CampaignListScreen(QWidget):
         self._btn_add.clicked.connect(self._on_add_clicked)
         filter_layout.addWidget(self._btn_add)
 
+        if self._session and self._session.vai_tro_ma in ("A-01",):
+            self._btn_delete = QPushButton("🗑️ Xoá")
+            self._btn_delete.setStyleSheet("""
+                QPushButton {
+                    background-color: #ff3b30;
+                    color: white;
+                    border: none;
+                    border-radius: 6px;
+                    padding: 6px 16px;
+                    font-weight: 500;
+                }
+                QPushButton:hover { background-color: #e0342c; }
+            """)
+            self._btn_delete.clicked.connect(self._on_delete_clicked)
+            filter_layout.addWidget(self._btn_delete)
+
         main_layout.addLayout(filter_layout)
 
         # Table
@@ -261,7 +277,7 @@ class CampaignListScreen(QWidget):
         for row, campaign in enumerate(campaigns):
             # Campaign name
             name_item = QTableWidgetItem(campaign['ten_chien_dich'])
-            name_item.setData(Qt.ItemDataRole.UserRole, campaign['id'])
+            name_item.setData(Qt.UserRole, campaign['id'])
             self._table.setItem(row, 0, name_item)
 
             # Channel
@@ -293,7 +309,7 @@ class CampaignListScreen(QWidget):
 
         # Resize columns
         self._table.resizeColumnsToContents()
-        self._table.setColumnWidth(0, 200)
+        self._table.column(0).setWidth(200)
 
         # Update pagination
         total = len(campaigns)
@@ -309,12 +325,50 @@ class CampaignListScreen(QWidget):
     def _on_add_clicked(self):
         """Handle add campaign button click."""
         self.add_campaign_clicked.emit()
+    
+    def _get_selected_id(self) -> int:
+        """Get selected campaign ID from table.
+        
+        Returns:
+            Campaign ID or -1 if none selected.
+        """
+        selected_rows = self._table.selectionModel().selectedRows()
+        if not selected_rows:
+            return -1
+        row = selected_rows[0].row()
+        item = self._table.item(row, 0)
+        if item:
+            return item.data(Qt.UserRole)
+        return -1
+    
+    def _on_delete_clicked(self):
+        """Handle delete button click."""
+        item_id = self._get_selected_id()
+        if item_id < 0:
+            QMessageBox.warning(self, "Chưa chọn", "Vui lòng chọn chiến dịch cần xoá.")
+            return
+        
+        reply = QMessageBox.question(
+            self,
+            "Xác nhận xoá",
+            "Bạn có chắc muốn xoá chiến dịch này?\n\nHành động này không thể hoàn tác.",
+            QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No
+        )
+        if reply != QMessageBox.StandardButton.Yes:
+            return
+        
+        try:
+            self._service.delete(item_id)
+            QMessageBox.information(self, "Thành công", "Đã xoá thành công")
+            self._load_data()
+        except Exception as e:
+            QMessageBox.critical(self, "Lỗi", f"Không thể xoá: {str(e)}")
 
     def _on_row_double_clicked(self, row, column):
         """Handle table row double click."""
         item = self._table.item(row, 0)
         if item:
-            campaign_id = item.data(Qt.ItemDataRole.UserRole)
+            campaign_id = item.data(Qt.UserRole)
             self.edit_campaign_clicked.emit(campaign_id)
 
     def _on_prev_page(self):

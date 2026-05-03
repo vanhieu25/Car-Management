@@ -88,8 +88,10 @@ class VehicleListScreen(QWidget):
         
         header_layout.addStretch()
         
-        # Add vehicle button (only for A-01 and A-02)
-        if self._session and self._session.vai_tro_ma in ("admin", "sales"):
+        # Action buttons (only for A-01 and A-02)
+        if self._session and self._session.vai_tro_ma in ("A-01", "A-02"):
+            action_layout = QHBoxLayout()
+            
             self._add_btn = QPushButton("➕ Thêm xe")
             self._add_btn.setStyleSheet("""
                 QPushButton {
@@ -106,7 +108,29 @@ class VehicleListScreen(QWidget):
                 }
             """)
             self._add_btn.clicked.connect(self._on_add_clicked)
-            header_layout.addWidget(self._add_btn)
+            action_layout.addWidget(self._add_btn)
+            
+            self._delete_btn = QPushButton("🗑️ Xoá")
+            self._delete_btn.setStyleSheet("""
+                QPushButton {
+                    background-color: #ff3b30;
+                    color: white;
+                    border: none;
+                    border-radius: 6px;
+                    padding: 10px 20px;
+                    font-size: 14px;
+                    font-weight: 500;
+                }
+                QPushButton:hover {
+                    background-color: #cc2f26;
+                }
+            """)
+            self._delete_btn.clicked.connect(self._on_delete_clicked)
+            action_layout.addWidget(self._delete_btn)
+            
+            action_layout.addStretch()
+            
+            layout.addLayout(action_layout)
         
         layout.addLayout(header_layout)
         
@@ -526,6 +550,44 @@ class VehicleListScreen(QWidget):
         """Handle add vehicle button click."""
         self.add_vehicle_clicked.emit()
     
+    def _get_selected_id(self) -> int:
+        """Get selected vehicle ID from table.
+        
+        Returns:
+            Vehicle ID or -1 if none selected.
+        """
+        selected_rows = self._table.selectionModel().selectedRows()
+        if not selected_rows:
+            return -1
+        row = selected_rows[0].row()
+        item = self._table.item(row, 0)
+        if item:
+            return item.data(Qt.ItemDataRole.UserRole)
+        return -1
+    
+    def _on_delete_clicked(self):
+        """Handle delete button click."""
+        item_id = self._get_selected_id()
+        if item_id < 0:
+            QMessageBox.warning(self, "Chưa chọn", "Vui lòng chọn xe cần xoá.")
+            return
+        
+        reply = QMessageBox.question(
+            self,
+            "Xác nhận xoá",
+            "Bạn có chắc muốn xoá xe này?\n\nHành động này không thể hoàn tác.",
+            QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No
+        )
+        if reply != QMessageBox.StandardButton.Yes:
+            return
+        
+        try:
+            self._xe_service.delete(item_id)
+            QMessageBox.information(self, "Thành công", "Đã xoá thành công")
+            self._load_data()
+        except Exception as e:
+            QMessageBox.critical(self, "Lỗi", f"Không thể xoá: {str(e)}")
+
     def refresh(self):
         """Refresh the data."""
         self._load_data()

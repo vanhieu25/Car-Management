@@ -195,6 +195,22 @@ class LeadManagerScreen(QWidget):
         self._btn_assign.clicked.connect(self._on_assign_clicked)
         action_layout.addWidget(self._btn_assign)
 
+        if self._session and self._session.vai_tro_ma in ("A-01",):
+            self._btn_delete = QPushButton("🗑️ Xoá")
+            self._btn_delete.setStyleSheet("""
+                QPushButton {
+                    background-color: #ff3b30;
+                    color: white;
+                    border: none;
+                    border-radius: 6px;
+                    padding: 6px 16px;
+                    font-weight: 500;
+                }
+                QPushButton:hover { background-color: #e0342c; }
+            """)
+            self._btn_delete.clicked.connect(self._on_delete_clicked)
+            action_layout.addWidget(self._btn_delete)
+
         action_layout.addStretch()
         main_layout.addLayout(action_layout)
 
@@ -304,7 +320,7 @@ class LeadManagerScreen(QWidget):
         for row, lead in enumerate(leads):
             # Name
             name_item = QTableWidgetItem(lead.get('ho_ten', ''))
-            name_item.setData(Qt.ItemDataRole.UserRole, lead['id'])
+            name_item.setData(Qt.UserRole, lead['id'])
             self._table.setItem(row, 0, name_item)
 
             # Phone
@@ -336,7 +352,7 @@ class LeadManagerScreen(QWidget):
 
         # Resize columns
         self._table.resizeColumnsToContents()
-        self._table.setColumnWidth(0, 150)
+        self._table.column(0).setWidth(150)
 
         # Update pagination
         self._page_label.setText(f"Trang {self._current_page + 1}")
@@ -381,7 +397,7 @@ class LeadManagerScreen(QWidget):
         """Handle table row double click."""
         item = self._table.item(row, 0)
         if item:
-            lead_id = item.data(Qt.ItemDataRole.UserRole)
+            lead_id = item.data(Qt.UserRole)
             self.edit_lead_clicked.emit(lead_id)
 
     def _on_update_status_clicked(self):
@@ -392,7 +408,7 @@ class LeadManagerScreen(QWidget):
             return
 
         row = selected_rows[0].row()
-        lead_id = self._table.item(row, 0).data(Qt.ItemDataRole.UserRole)
+        lead_id = self._table.item(row, 0).data(Qt.UserRole)
 
         from app.presentation.screens.lead_status_dialog import LeadStatusDialog
         dialog = LeadStatusDialog(self._db_conn, self._session, lead_id, self)
@@ -407,7 +423,7 @@ class LeadManagerScreen(QWidget):
             return
 
         row = selected_rows[0].row()
-        lead_id = self._table.item(row, 0).data(Qt.ItemDataRole.UserRole)
+        lead_id = self._table.item(row, 0).data(Qt.UserRole)
         lead_name = self._table.item(row, 0).text()
 
         reply = QMessageBox.question(
@@ -434,12 +450,39 @@ class LeadManagerScreen(QWidget):
             return
 
         row = selected_rows[0].row()
-        lead_id = self._table.item(row, 0).data(Qt.ItemDataRole.UserRole)
+        lead_id = self._table.item(row, 0).data(Qt.UserRole)
 
         from app.presentation.screens.lead_assign_dialog import LeadAssignDialog
         dialog = LeadAssignDialog(self._db_conn, self._session, lead_id, self)
         dialog.saved.connect(self._load_data)
         dialog.exec()
+    
+    def _on_delete_clicked(self):
+        """Handle delete button click."""
+        selected_rows = self._table.selectionModel().selectedRows()
+        if not selected_rows:
+            QMessageBox.warning(self, "Chưa chọn", "Vui lòng chọn lead cần xoá.")
+            return
+        
+        row = selected_rows[0].row()
+        lead_id = self._table.item(row, 0).data(Qt.UserRole)
+        lead_name = self._table.item(row, 0).text()
+        
+        reply = QMessageBox.question(
+            self,
+            "Xác nhận xoá",
+            f"Bạn có chắc muốn xoá lead '{lead_name}'?\n\nHành động này không thể hoàn tác.",
+            QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No
+        )
+        if reply != QMessageBox.StandardButton.Yes:
+            return
+        
+        try:
+            self._service.delete(lead_id)
+            QMessageBox.information(self, "Thành công", "Đã xoá thành công")
+            self._load_data()
+        except Exception as e:
+            QMessageBox.critical(self, "Lỗi", f"Không thể xoá: {str(e)}")
 
     def _on_prev_page(self):
         """Go to previous page."""

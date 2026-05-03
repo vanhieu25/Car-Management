@@ -403,9 +403,9 @@ class TraGopService:
                 so_tien_tra_thang=row["so_tien_tra_thang"],
                 trang_thai=row["trang_thai"],
                 has_qua_han=bool(row["has_qua_han"]),
-                khach_hang_sdt=row["khach_hang_sdt"] if row["khach_hang_sdt"] is not None else "",
-                xe_hang=row["xe_hang"] if row["xe_hang"] is not None else "",
-                xe_dong=row["xe_dong"] if row["xe_dong"] is not None else "",
+                khach_hang_sdt=row.get("khach_hang_sdt", ""),
+                xe_hang=row.get("xe_hang", ""),
+                xe_dong=row.get("xe_dong", ""),
             ))
 
         return items, total
@@ -535,3 +535,41 @@ class TraGopService:
             SELECT COUNT(*) FROM tra_gop_lich_su WHERE trang_thai = 'qua_han'
         """)
         return cursor.fetchone()[0]
+    
+    def delete(self, tra_gop_id: int) -> bool:
+        """Delete an installment plan.
+        
+        Args:
+            tra_gop_id: TraGop ID to delete.
+            
+        Returns:
+            True if deleted successfully.
+            
+        Raises:
+            TraGopNotFoundError: If installment not found.
+        """
+        tra_gop = self._repo.find_by_id(tra_gop_id)
+        if not tra_gop:
+            raise TraGopNotFoundError(f"Không tìm thấy phương án trả góp với ID {tra_gop_id}")
+        
+        try:
+            self.conn.execute("BEGIN TRANSACTION")
+            
+            # Delete lich_su records first
+            self.conn.execute(
+                "DELETE FROM tra_gop_lich_su WHERE tra_gop_id = ?",
+                (tra_gop_id,)
+            )
+            
+            # Delete tra_gop record
+            self.conn.execute(
+                "DELETE FROM tra_gop WHERE id = ?",
+                (tra_gop_id,)
+            )
+            
+            self.conn.execute("COMMIT")
+        except Exception as e:
+            self.conn.execute("ROLLBACK")
+            raise
+        
+        return True

@@ -87,7 +87,9 @@ class SupplierListScreen(QWidget):
         header_layout.addStretch()
 
         # Add supplier button (only for A-01, A-02)
-        if self._session and self._session.vai_tro_ma in ("admin", "sales"):
+        if self._session and self._session.vai_tro_ma in ("A-01", "A-02"):
+            action_layout = QHBoxLayout()
+            
             self._add_btn = QPushButton("➕ Thêm nhà cung cấp")
             self._add_btn.setStyleSheet("""
                 QPushButton {
@@ -104,8 +106,30 @@ class SupplierListScreen(QWidget):
                 }
             """)
             self._add_btn.clicked.connect(self._on_add_clicked)
-            header_layout.addWidget(self._add_btn)
-
+            action_layout.addWidget(self._add_btn)
+            
+            self._delete_btn = QPushButton("🗑️ Xoá")
+            self._delete_btn.setStyleSheet("""
+                QPushButton {
+                    background-color: #ff3b30;
+                    color: white;
+                    border: none;
+                    border-radius: 6px;
+                    padding: 10px 20px;
+                    font-size: 14px;
+                    font-weight: 500;
+                }
+                QPushButton:hover {
+                    background-color: #cc2f26;
+                }
+            """)
+            self._delete_btn.clicked.connect(self._on_delete_clicked)
+            action_layout.addWidget(self._delete_btn)
+            
+            action_layout.addStretch()
+            
+            layout.addLayout(action_layout)
+        
         layout.addLayout(header_layout)
 
         # Search bar
@@ -383,7 +407,7 @@ class SupplierListScreen(QWidget):
 
         result = "★" * full_stars
         if half_star:
-            result += "½"
+            result += "1⁄2"
         result += "☆" * empty_stars
 
         return result
@@ -416,6 +440,44 @@ class SupplierListScreen(QWidget):
     def _on_add_clicked(self):
         """Handle add supplier button click."""
         self.add_supplier_clicked.emit()
+    
+    def _get_selected_id(self) -> int:
+        """Get selected supplier ID from table.
+        
+        Returns:
+            Supplier ID or -1 if none selected.
+        """
+        selected_rows = self._table.selectionModel().selectedRows()
+        if not selected_rows:
+            return -1
+        row = selected_rows[0].row()
+        item = self._table.item(row, 0)
+        if item:
+            return item.data(Qt.ItemDataRole.UserRole)
+        return -1
+    
+    def _on_delete_clicked(self):
+        """Handle delete button click."""
+        item_id = self._get_selected_id()
+        if item_id < 0:
+            QMessageBox.warning(self, "Chưa chọn", "Vui lòng chọn nhà cung cấp cần xoá.")
+            return
+        
+        reply = QMessageBox.question(
+            self,
+            "Xác nhận xoá",
+            "Bạn có chắc muốn xoá nhà cung cấp này?\n\nHành động này không thể hoàn tác.",
+            QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No
+        )
+        if reply != QMessageBox.StandardButton.Yes:
+            return
+        
+        try:
+            self._ncc_service.delete(item_id)
+            QMessageBox.information(self, "Thành công", "Đã xoá thành công")
+            self._load_data()
+        except Exception as e:
+            QMessageBox.critical(self, "Lỗi", f"Không thể xoá: {str(e)}")
 
     def refresh(self):
         """Refresh the data."""

@@ -78,7 +78,7 @@ class InstallmentListScreen(QWidget):
         header_layout.addStretch()
 
         # Create button (only for A-01, A-02)
-        if self._session and self._session.vai_tro_ma in ("admin", "sales"):
+        if self._session and self._session.vai_tro_ma in ("A-01", "A-02"):
             self._create_btn = QPushButton("➕ Tạo phương án trả góp")
             self._create_btn.setStyleSheet("""
                 QPushButton {
@@ -96,7 +96,25 @@ class InstallmentListScreen(QWidget):
             """)
             self._create_btn.clicked.connect(self._on_create_clicked)
             header_layout.addWidget(self._create_btn)
-
+            
+            self._delete_btn = QPushButton("🗑️ Xoá")
+            self._delete_btn.setStyleSheet("""
+                QPushButton {
+                    background-color: #ff3b30;
+                    color: white;
+                    border: none;
+                    border-radius: 6px;
+                    padding: 10px 20px;
+                    font-size: 14px;
+                    font-weight: 500;
+                }
+                QPushButton:hover {
+                    background-color: #cc2f26;
+                }
+            """)
+            self._delete_btn.clicked.connect(self._on_delete_clicked)
+            header_layout.addWidget(self._delete_btn)
+        
         layout.addLayout(header_layout)
 
         # Overdue warning banner (S-TG-04)
@@ -336,8 +354,8 @@ class InstallmentListScreen(QWidget):
                 trang_thai=params.get("trang_thai"),
                 has_qua_han=params.get("has_qua_han"),
                 keyword=params.get("keyword"),
-                limit=PAGE_SIZE,
-                offset=(self._current_page - 1) * PAGE_SIZE,
+                page=self._current_page,
+                page_size=PAGE_SIZE,
             )
 
             self._total_pages = max(1, (total + PAGE_SIZE - 1) // PAGE_SIZE) if total > 0 else 1
@@ -454,6 +472,44 @@ class InstallmentListScreen(QWidget):
     def _on_create_clicked(self):
         """Handle create installment button click."""
         self.create_installment_clicked.emit()
+    
+    def _get_selected_id(self) -> int:
+        """Get selected installment ID from table.
+        
+        Returns:
+            Installment ID or -1 if none selected.
+        """
+        selected_rows = self._table.selectionModel().selectedRows()
+        if not selected_rows:
+            return -1
+        row = selected_rows[0].row()
+        item = self._table.item(row, 0)
+        if item:
+            return item.data(Qt.ItemDataRole.UserRole)
+        return -1
+    
+    def _on_delete_clicked(self):
+        """Handle delete button click."""
+        item_id = self._get_selected_id()
+        if item_id < 0:
+            QMessageBox.warning(self, "Chưa chọn", "Vui lòng chọn phương án trả góp cần xoá.")
+            return
+        
+        reply = QMessageBox.question(
+            self,
+            "Xác nhận xoá",
+            "Bạn có chắc muốn xoá phương án trả góp này?\n\nHành động này không thể hoàn tác.",
+            QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No
+        )
+        if reply != QMessageBox.StandardButton.Yes:
+            return
+        
+        try:
+            self._service.delete(item_id)
+            QMessageBox.information(self, "Thành công", "Đã xoá thành công")
+            self._load_data()
+        except Exception as e:
+            QMessageBox.critical(self, "Lỗi", f"Không thể xoá: {str(e)}")
 
     def refresh(self):
         """Refresh the data."""
