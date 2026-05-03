@@ -499,7 +499,7 @@ class ContractDetailScreen(QWidget):
         - da_thanh_toan: "Giao xe" (primary), "Hủy" (danger) — only A-01
         - da_giao_xe: No actions (final state)
         """
-        is_admin = self._session and self._session.vai_tro_ma == "A-01"
+        is_admin = self._session and self._session.vai_tro_ma == "admin"
         
         # Hide all by default
         self._payment_btn.setVisible(False)
@@ -508,7 +508,7 @@ class ContractDetailScreen(QWidget):
         
         if status == 'moi_tao':
             # Show payment and cancel for admin/sales
-            if self._session and self._session.vai_tro_ma in ("A-01", "A-02"):
+            if self._session and self._session.vai_tro_ma in ("admin", "sales"):
                 self._payment_btn.setVisible(True)
                 self._cancel_btn.setVisible(True)
         

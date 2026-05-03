@@ -77,7 +77,8 @@ class MaintenanceScheduleScreen(QWidget):
         # Add maintenance button (permission-based)
         action_layout = QHBoxLayout()
         
-        if self._session and self._session.vai_tro_ma in ("A-01", "A-02", "A-04"):
+        if self._session and self._session.vai_tro_ma in ("admin", "sales", "A-04"):
+            # Note: A-04 mapped to ky_thuat_bh role
             self._add_btn = QPushButton("➕ Thêm lịch bảo dưỡng")
             self._add_btn.setStyleSheet("""
                 QPushButton {

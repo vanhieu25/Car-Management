@@ -195,7 +195,7 @@ class LeadManagerScreen(QWidget):
         self._btn_assign.clicked.connect(self._on_assign_clicked)
         action_layout.addWidget(self._btn_assign)
 
-        if self._session and self._session.vai_tro_ma in ("A-01",):
+        if self._session and self._session.vai_tro_ma in ("admin",):
             self._btn_delete = QPushButton("🗑️ Xoá")
             self._btn_delete.setStyleSheet("""
                 QPushButton {

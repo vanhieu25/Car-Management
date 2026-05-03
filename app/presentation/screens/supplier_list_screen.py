@@ -86,8 +86,8 @@ class SupplierListScreen(QWidget):
 
         header_layout.addStretch()
 
-        # Add supplier button (only for A-01, A-02)
-        if self._session and self._session.vai_tro_ma in ("A-01", "A-02"):
+        # Add supplier button (only for admin and sales roles)
+        if self._session and self._session.vai_tro_ma in ("admin", "sales"):
             action_layout = QHBoxLayout()
             
             self._add_btn = QPushButton("➕ Thêm nhà cung cấp")

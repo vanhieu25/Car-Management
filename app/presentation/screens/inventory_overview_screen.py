@@ -84,7 +84,8 @@ class InventoryOverviewScreen(QWidget):
         header_layout.addWidget(self._refresh_btn)
         
         # Stock-in button (permission-based)
-        if self._session and self._session.vai_tro_ma in ("A-01", "A-02", "A-03"):
+        if self._session and self._session.vai_tro_ma in ("admin", "sales", "ky_thuat_bh"):
+            # Note: A-03 mapped to ky_thuat_bh role
             self._stock_in_btn = QPushButton("📥 Nhập kho")
             self._stock_in_btn.setStyleSheet("""
                 QPushButton {

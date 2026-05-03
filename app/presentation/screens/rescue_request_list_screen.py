@@ -105,7 +105,7 @@ class RescueRequestListScreen(QWidget):
         header_layout.addStretch()
 
         # Add button (only for admin/A-02)
-        if self._session and self._session.vai_tro_ma in ("A-01", "A-02"):
+        if self._session and self._session.vai_tro_ma in ("admin", "sales"):
             self._add_btn = QPushButton("➕ Thêm yêu cầu")
             self._add_btn.setStyleSheet("""
                 QPushButton {
@@ -123,7 +123,7 @@ class RescueRequestListScreen(QWidget):
             """)
             self._add_btn.clicked.connect(self._on_add_clicked)
             # Delete button (only for admin)
-            if self._session and self._session.vai_tro_ma == "A-01":
+            if self._session and self._session.vai_tro_ma == "admin":
                 self._delete_btn = QPushButton("🗑️ Xóa")
                 self._delete_btn.setStyleSheet("""
                     QPushButton {

@@ -301,9 +301,9 @@ class LoginScreen(QDialog):
     def _get_role_ma(self, vai_tro_id: int) -> str:
         """Get role code from vai_tro_id."""
         role_map = {
-            1: "A-01",   # Admin
-            2: "A-02",   # Sales
-            3: "A-03",   # Ky thuat bao hanh
+            1: "admin",   # Admin
+            2: "sales",   # Sales
+            3: "ky_thuat_bh",   # Ky thuat bao hanh
         }
         return role_map.get(vai_tro_id, "")
     

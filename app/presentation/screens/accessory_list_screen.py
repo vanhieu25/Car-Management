@@ -86,7 +86,7 @@ class AccessoryListScreen(QWidget):
         header_layout.addStretch()
 
         # Add accessory button (only for admin)
-        if self._session and self._session.vai_tro_ma in ("A-01",):
+        if self._session and self._session.vai_tro_ma in ("admin",):
             action_layout = QHBoxLayout()
             
             self._add_btn = QPushButton("➕ Thêm phụ kiện")

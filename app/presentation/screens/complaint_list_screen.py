@@ -167,7 +167,7 @@ class ComplaintListScreen(QWidget):
         self._btn_add.clicked.connect(self._on_add_clicked)
         filter_layout.addWidget(self._btn_add)
 
-        if self._session and self._session.vai_tro_ma in ("A-01",):
+        if self._session and self._session.vai_tro_ma in ("admin",):
             self._btn_delete = QPushButton("🗑️ Xoá")
             self._btn_delete.setStyleSheet("""
                 QPushButton {

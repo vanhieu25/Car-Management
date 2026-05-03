@@ -77,8 +77,8 @@ class InstallmentListScreen(QWidget):
 
         header_layout.addStretch()
 
-        # Create button (only for A-01, A-02)
-        if self._session and self._session.vai_tro_ma in ("A-01", "A-02"):
+        # Create button (only for admin and sales roles)
+        if self._session and self._session.vai_tro_ma in ("admin", "sales"):
             self._create_btn = QPushButton("➕ Tạo phương án trả góp")
             self._create_btn.setStyleSheet("""
                 QPushButton {
