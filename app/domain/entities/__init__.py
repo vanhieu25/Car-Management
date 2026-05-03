@@ -39,6 +39,7 @@ class NhanVien(BaseEntity):
     ho_ten: str = ""
     email: str = ""
     so_dien_thoai: str = ""
+    dia_chi: str = ""
     vai_tro_id: int = 0
     trang_thai: str = "active"
     lan_dang_nhap_sai: int = 0
