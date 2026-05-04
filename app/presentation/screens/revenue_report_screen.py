@@ -408,25 +408,26 @@ class RevenueReportScreen(QWidget):
     def _create_kpi_card(self, title: str, value: str, color: str) -> QGroupBox:
         """Create a KPI card widget."""
         card = QGroupBox()
+        card.setMinimumWidth(160)
         card.setStyleSheet("""
             QGroupBox {
                 border: 1px solid #d2d2d7;
                 border-radius: 8px;
-                padding: 12px 16px;
+                padding: 16px 20px;
                 background-color: #fafafa;
             }
         """)
         layout = QVBoxLayout(card)
-        layout.setSpacing(4)
-        layout.setContentsMargins(12, 16, 12, 12)
+        layout.setSpacing(6)
+        layout.setContentsMargins(16, 20, 16, 16)
 
         title_label = QLabel(title)
-        title_label.setStyleSheet("font-size: 13px; color: #86868b;")
+        title_label.setStyleSheet("font-size: 14px; color: #86868b;")
         title_label.setAlignment(Qt.AlignmentFlag.AlignCenter)
         layout.addWidget(title_label)
 
         value_label = QLabel(value)
-        value_label.setStyleSheet(f"font-size: 24px; font-weight: 600; color: {color};")
+        value_label.setStyleSheet(f"font-size: 26px; font-weight: 600; color: {color};")
         value_label.setAlignment(Qt.AlignmentFlag.AlignCenter)
         layout.addWidget(value_label)
 

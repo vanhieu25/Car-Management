@@ -800,8 +800,25 @@ class ContractWizardDialog(QDialog):
         except Exception as e:
             QMessageBox.warning(self, "Lỗi", f"Không thể tải danh sách phụ kiện: {str(e)}")
         
+        # Load customers (show all or recent)
+        self._load_customers()
+        
         # Load promotions
         self._load_promotions()
+    
+    def _load_customers(self):
+        """Load customers into result table on dialog open."""
+        try:
+            result = self._kh_service.search(keyword=None, page=1, page_size=50)
+            self._kh_result_table.setRowCount(len(result.items))
+            for i, kh in enumerate(result.items):
+                self._kh_result_table.setItem(i, 0, QTableWidgetItem(str(kh.id)))
+                self._kh_result_table.setItem(i, 1, QTableWidgetItem(kh.ho_ten))
+                self._kh_result_table.setItem(i, 2, QTableWidgetItem(kh.so_dien_thoai))
+                self._kh_result_table.setItem(i, 3, QTableWidgetItem(kh.email or "-"))
+                self._kh_result_table.item(i, 0).setData(Qt.ItemDataRole.UserRole, kh.id)
+        except Exception as e:
+            QMessageBox.warning(self, "Lỗi", f"Không thể tải danh sách khách hàng: {str(e)}")
     
     def _load_promotions(self):
         """Load available promotions for current vehicle."""

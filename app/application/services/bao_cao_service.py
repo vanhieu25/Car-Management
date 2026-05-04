@@ -165,7 +165,7 @@ class BaoCaoService:
             SELECT
                 {period_expr} as period,
                 COUNT(hd.id) as so_hop_dong,
-                SUM(hd.tong_tien) as doanh_thu
+                COALESCE(SUM(hd.tong_tien), 0) as doanh_thu
             FROM hop_dong hd
             LEFT JOIN xe ON hd.xe_id = xe.id
             WHERE {where_clause}
@@ -260,7 +260,7 @@ class BaoCaoService:
                 xe.dong_xe,
                 xe.mau_sac,
                 COUNT(hd.id) as so_lan_ban,
-                SUM(hd.tong_tien) as doanh_thu
+                COALESCE(SUM(hd.tong_tien), 0) as doanh_thu
             FROM hop_dong hd
             JOIN xe ON hd.xe_id = xe.id
             WHERE {where_clause}
@@ -268,6 +268,7 @@ class BaoCaoService:
             ORDER BY doanh_thu DESC
             LIMIT ?
         """
+        params.append(top)
         params.append(top)
 
         cursor = self.conn.execute(query, params)
@@ -306,7 +307,7 @@ class BaoCaoService:
             SELECT
                 nv.id as nhan_vien_id,
                 nv.ho_ten,
-                nv.vai_tro,
+                vt.ten_vai_tro as vai_tro,
                 COUNT(CASE WHEN hd.trang_thai IN ('moi_tao', 'da_thanh_toan', 'da_giao_xe')
                       THEN hd.id END) as so_hop_dong_moi_tao,
                 COUNT(CASE WHEN hd.trang_thai = 'da_thanh_toan'
@@ -316,6 +317,7 @@ class BaoCaoService:
                 COALESCE(SUM(CASE WHEN hd.trang_thai = 'da_giao_xe'
                       THEN hd.tong_tien ELSE 0 END), 0) as doanh_thu
             FROM nhan_vien nv
+            LEFT JOIN vai_tro vt ON nv.vai_tro_id = vt.id
             LEFT JOIN hop_dong hd ON nv.id = hd.nhan_vien_id
                 AND DATE(hd.ngay_tao) >= DATE(?)
                 AND DATE(hd.ngay_tao) < DATE(?)
@@ -453,6 +455,160 @@ class BaoCaoService:
         return {
             "breakdown": breakdown,
             "total_cost": total_cost,
+            "from_date": from_date,
+            "to_date": to_date,
+        }
+
+    def new_customers(
+        self,
+        from_date: str,
+        to_date: str,
+    ) -> Dict[str, Any]:
+        """Generate new customer report.
+
+        Args:
+            from_date: Start date (YYYY-MM-DD).
+            to_date: End date (YYYY-MM-DD).
+
+        Returns:
+            Dict with new customer count and list.
+        """
+        self._validate_date_range(from_date, to_date)
+
+        query = """
+            SELECT id, ho_ten, so_dien_thoai, email, ngay_sinh, created_at
+            FROM khach_hang
+            WHERE date(created_at) BETWEEN date(?) AND date(?)
+            ORDER BY created_at DESC
+        """
+        cursor = self.conn.execute(query, (from_date, to_date))
+        customers = [dict(row) for row in cursor.fetchall()]
+
+        return {
+            "customers": customers,
+            "total_new": len(customers),
+            "from_date": from_date,
+            "to_date": to_date,
+        }
+
+    def maintenance_report(
+        self,
+        from_date: str,
+        to_date: str,
+        group_by: str = "month",
+    ) -> Dict[str, Any]:
+        """Generate maintenance report.
+
+        Args:
+            from_date: Start date (YYYY-MM-DD).
+            to_date: End date (YYYY-MM-DD).
+            group_by: 'day', 'month', 'quarter', or 'year'.
+
+        Returns:
+            Dict with maintenance stats breakdown.
+        """
+        self._validate_date_range(from_date, to_date)
+
+        # Date truncation based on group_by
+        date_format = {
+            "day": "%Y-%m-%d",
+            "month": "%Y-%m",
+            "quarter": "strftime('%Y-', ngay_du_kien) || printf('%02d', (cast(strftime('%m', ngay_du_kien) as integer) + 2) / 3)",
+            "year": "%Y",
+        }.get(group_by, "%Y-%m")
+
+        if group_by == "quarter":
+            date_expr = f"""strftime('%Y-', bd.ngay_du_kien) || 'Q' || ((cast(strftime('%m', bd.ngay_du_kien) as integer) + 2) / 3)"""
+        else:
+            date_expr = f"""strftime('{date_format}', bd.ngay_du_kien)"""
+
+        query = f"""
+            SELECT 
+                {date_expr} as period,
+                COUNT(*) as so_luong,
+                COALESCE(SUM(bd.chi_phi), 0) as tong_chi_phi,
+                COUNT(CASE WHEN bd.trang_thai = 'hoan_thanh' THEN 1 END) as da_hoan_thanh,
+                COUNT(CASE WHEN bd.trang_thai = 'huy' THEN 1 END) as da_huy
+            FROM bao_duong bd
+            WHERE date(bd.ngay_du_kien) BETWEEN date(?) AND date(?)
+            GROUP BY period
+            ORDER BY period DESC
+        """
+
+        cursor = self.conn.execute(query, (from_date, to_date))
+        breakdown = [dict(row) for row in cursor.fetchall()]
+
+        # Totals
+        totals = self.conn.execute(
+            """SELECT 
+                COUNT(*) as total_count,
+                COALESCE(SUM(chi_phi), 0) as total_cost,
+                COUNT(CASE WHEN trang_thai = 'hoan_thanh' THEN 1 END) as completed,
+                COUNT(CASE WHEN trang_thai = 'huy' THEN 1 END) as cancelled
+            FROM bao_duong
+            WHERE date(ngay_du_kien) BETWEEN date(?) AND date(?)""",
+            (from_date, to_date)
+        ).fetchone()
+
+        return {
+            "breakdown": breakdown,
+            "total_count": totals["total_count"] if totals else 0,
+            "total_cost": totals["total_cost"] if totals and totals["total_cost"] else 0,
+            "completed": totals["completed"] if totals else 0,
+            "cancelled": totals["cancelled"] if totals else 0,
+            "from_date": from_date,
+            "to_date": to_date,
+        }
+
+    def promotion_report(
+        self,
+        from_date: str,
+        to_date: str,
+    ) -> Dict[str, Any]:
+        """Generate promotion effectiveness report.
+
+        Args:
+            from_date: Start date (YYYY-MM-DD).
+            to_date: End date (YYYY-MM-DD).
+
+        Returns:
+            Dict with promotion stats.
+        """
+        self._validate_date_range(from_date, to_date)
+
+        query = """
+            SELECT 
+                km.id,
+                km.ten_km,
+                km.loai_km,
+                km.gia_tri,
+                km.kieu_gia_tri,
+                km.trang_thai,
+                km.den_ngay,
+                COUNT(hd.id) as so_hop_dong,
+                COALESCE(SUM(hd.tien_giam_km), 0) as tong_giam
+            FROM khuyen_mai km
+            LEFT JOIN hop_dong hd ON km.id = hd.khuyen_mai_id
+                AND date(hd.ngay_tao) BETWEEN date(?) AND date(?)
+            GROUP BY km.id
+            ORDER BY so_hop_dong DESC, tong_giam DESC
+        """
+        cursor = self.conn.execute(query, (from_date, to_date))
+        promotions = [dict(row) for row in cursor.fetchall()]
+
+        # Overall stats
+        total_km = self.conn.execute(
+            """SELECT COUNT(*) as count, COALESCE(SUM(tien_giam_km), 0) as total 
+               FROM hop_dong 
+               WHERE khuyen_mai_id IS NOT NULL 
+               AND date(ngay_tao) BETWEEN date(?) AND date(?)""",
+            (from_date, to_date)
+        ).fetchone()
+
+        return {
+            "promotions": promotions,
+            "total_applied": total_km["count"] if total_km else 0,
+            "total_discount": total_km["total"] if total_km and total_km["total"] else 0,
             "from_date": from_date,
             "to_date": to_date,
         }

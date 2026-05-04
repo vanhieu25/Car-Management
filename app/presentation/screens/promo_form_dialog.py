@@ -24,7 +24,7 @@ from PyQt6.QtWidgets import (
     QDialog, QVBoxLayout, QHBoxLayout, QLabel, QLineEdit,
     QPushButton, QFormLayout, QMessageBox,
     QGroupBox, QComboBox, QCheckBox, QDateEdit,
-    QTextEdit
+    QTextEdit, QWidget
 )
 from PyQt6.QtCore import Qt, pyqtSignal, QDate
 from PyQt6.QtGui import QFont
@@ -205,7 +205,9 @@ class PromoFormDialog(QDialog):
         value_layout.addRow("Giá trị *:", gia_tri_layout)
 
         # gia_tri_toi_da (for phan_tram only)
-        self._gia_tri_max_layout = QHBoxLayout()
+        self._gia_tri_max_container = QWidget()
+        gia_tri_max_layout = QHBoxLayout(self._gia_tri_max_container)
+        gia_tri_max_layout.setContentsMargins(0, 0, 0, 0)
         self._gia_tri_max_spin = InlineNumericEdit(
             value=0,
             minimum=0,
@@ -214,15 +216,18 @@ class PromoFormDialog(QDialog):
             suffix="đ",
             is_float=False,
         )
-        self._gia_tri_max_layout.addWidget(self._gia_tri_max_spin)
-        self._gia_tri_max_layout.addWidget(QLabel("đ"))
-        self._gia_tri_max_layout.addStretch()
+        gia_tri_max_layout.addWidget(self._gia_tri_max_spin)
+        gia_tri_max_layout.addWidget(QLabel("đ"))
+        gia_tri_max_layout.addStretch()
         self._gia_tri_max_label = QLabel("Giá trị tối đa:")
         self._gia_tri_max_label.setStyleSheet("font-size: 14px; color: #1d1d1f;")
-        value_layout.addRow(self._gia_tri_max_label, self._gia_tri_max_layout)
+        value_layout.addRow(self._gia_tri_max_label, self._gia_tri_max_container)
+
 
         # lai_suat_toi_da (for giam_lai_suat only)
-        self._lai_suat_max_layout = QHBoxLayout()
+        self._lai_suat_max_container = QWidget()
+        lai_suat_max_layout = QHBoxLayout(self._lai_suat_max_container)
+        lai_suat_max_layout.setContentsMargins(0, 0, 0, 0)
         self._lai_suat_max_spin = InlineNumericEdit(
             value=0,
             minimum=0,
@@ -232,20 +237,20 @@ class PromoFormDialog(QDialog):
             is_float=True,
             decimals=1,
         )
-        self._lai_suat_max_layout.addWidget(self._lai_suat_max_spin)
-        self._lai_suat_max_layout.addStretch()
+        lai_suat_max_layout.addWidget(self._lai_suat_max_spin)
+        lai_suat_max_layout.addStretch()
         self._lai_suat_max_label = QLabel("Lãi suất tối đa:")
         self._lai_suat_max_label.setStyleSheet("font-size: 14px; color: #1d1d1f;")
-        value_layout.addRow(self._lai_suat_max_label, self._lai_suat_max_layout)
+        value_layout.addRow(self._lai_suat_max_label, self._lai_suat_max_container)
 
         self._value_group.setLayout(value_layout)
         layout.addWidget(self._value_group)
 
         # Initially hide dynamic fields
         self._gia_tri_max_label.setVisible(False)
-        self._gia_tri_max_layout.setVisible(False)
+        self._gia_tri_max_container.setVisible(False)
         self._lai_suat_max_label.setVisible(False)
-        self._lai_suat_max_layout.setVisible(False)
+        self._lai_suat_max_container.setVisible(False)
 
         # === Date range group ===
         date_group = QGroupBox("Thời gian áp dụng")
@@ -425,9 +430,9 @@ class PromoFormDialog(QDialog):
 
         # Reset visibility
         self._gia_tri_max_label.setVisible(False)
-        self._gia_tri_max_layout.setVisible(False)
+        self._gia_tri_max_container.setVisible(False)
         self._lai_suat_max_label.setVisible(False)
-        self._lai_suat_max_layout.setVisible(False)
+        self._lai_suat_max_container.setVisible(False)
 
         if loai_km == "giam_phan_tram":
             self._gia_tri_spin.setRange(0, 100)
@@ -435,7 +440,7 @@ class PromoFormDialog(QDialog):
             self._gia_tri_spin.setSuffix(" %")
             self._value_unit_label.setText("%")
             self._gia_tri_max_label.setVisible(True)
-            self._gia_tri_max_layout.setVisible(True)
+            self._gia_tri_max_container.setVisible(True)
         elif loai_km == "giam_tien_mat":
             self._gia_tri_spin.setRange(0, 999999999)
             self._gia_tri_spin._suffix = " đ"
@@ -452,7 +457,7 @@ class PromoFormDialog(QDialog):
             self._gia_tri_spin.setSuffix(" %")
             self._value_unit_label.setText("%")
             self._lai_suat_max_label.setVisible(True)
-            self._lai_suat_max_layout.setVisible(True)
+            self._lai_suat_max_container.setVisible(True)
         elif loai_km == "combo":
             self._gia_tri_spin.setRange(0, 100)
             self._gia_tri_spin._suffix = " %"

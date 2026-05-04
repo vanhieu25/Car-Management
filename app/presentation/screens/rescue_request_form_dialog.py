@@ -137,8 +137,7 @@ class RescueRequestFormDialog(QDialog):
         kh_layout.addWidget(kh_label)
         
         self._kh_combo = QComboBox()
-        self._kh_combo.setEditable(True)
-        self._kh_combo.setPlaceholderText("-- Tìm kiếm khách hàng --")
+        self._kh_combo.setPlaceholderText("-- Chọn khách hàng --")
         self._kh_combo.setStyleSheet("""
             QComboBox {
                 padding: 10px 12px;
@@ -150,10 +149,6 @@ class RescueRequestFormDialog(QDialog):
             }
             QComboBox:focus {
                 border: 2px solid #0066cc;
-            }
-            QComboBox::drop-down {
-                border: none;
-                width: 30px;
             }
         """)
         self._kh_combo.currentIndexChanged.connect(self._on_kh_changed)
@@ -401,11 +396,13 @@ class RescueRequestFormDialog(QDialog):
         )
     
     def _load_khach_hang_list(self):
-        """Load customer list into dropdown."""
+        """Load customer list into dropdown (only customers with contracts)."""
         try:
             cursor = self._db_conn.execute(
-                """SELECT id, ho_ten, so_dien_thoai FROM khach_hang 
-                   WHERE trang_thai != 'inactive' ORDER BY ho_ten"""
+                """SELECT DISTINCT kh.id, kh.ho_ten, kh.so_dien_thoai 
+                   FROM khach_hang kh
+                   JOIN hop_dong hd ON kh.id = hd.khach_hang_id
+                   ORDER BY kh.ho_ten"""
             )
             for row in cursor.fetchall():
                 display_text = f"{row[1]} - {row[2]}"
@@ -427,7 +424,7 @@ class RescueRequestFormDialog(QDialog):
         
         try:
             cursor = self._db_conn.execute(
-                """SELECT x.id, x.hang, x.dong_xe, x.mau_sac, x.bien_so
+                """SELECT x.id, x.hang, x.dong_xe, x.mau_sac, x.ma_xe
                    FROM xe x
                    JOIN hop_dong hd ON x.id = hd.xe_id
                    WHERE hd.khach_hang_id = ?
@@ -443,7 +440,7 @@ class RescueRequestFormDialog(QDialog):
             if not has_vehicles:
                 # Also show vehicles from cuu_ho history
                 cursor2 = self._db_conn.execute(
-                    """SELECT DISTINCT x.id, x.hang, x.dong_xe, x.mau_sac, x.bien_so
+                    """SELECT DISTINCT x.id, x.hang, x.dong_xe, x.mau_sac, x.ma_xe
                        FROM xe x
                        JOIN cuu_ho ch ON x.id = ch.xe_id
                        WHERE ch.khach_hang_id = ?
@@ -513,7 +510,7 @@ class RescueRequestFormDialog(QDialog):
         # Set vehicle
         if ch.xe_id:
             cursor = self._db_conn.execute(
-                "SELECT hang, dong_xe, mau_sac, bien_so FROM xe WHERE id = ?",
+                "SELECT hang, dong_xe, mau_sac, ma_xe FROM xe WHERE id = ?",
                 (ch.xe_id,)
             )
             row = cursor.fetchone()

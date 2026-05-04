@@ -71,7 +71,6 @@ class NhanVienUpdateData:
     ho_ten: str = None
     email: str = None
     so_dien_thoai: str = None
-    dia_chi: str = None
     vai_tro_id: int = None
     trang_thai: str = None
 
@@ -348,9 +347,6 @@ class NhanVienService:
         
         if data.so_dien_thoai is not None:
             update_data["so_dien_thoai"] = data.so_dien_thoai.strip()
-        
-        if data.dia_chi is not None:
-            update_data["dia_chi"] = data.dia_chi.strip()
         
         if data.vai_tro_id is not None:
             update_data["vai_tro_id"] = data.vai_tro_id

@@ -54,6 +54,7 @@ class StockInFormDialog(QDialog):
         
         self._setup_ui()
         self._load_nha_cung_cap()
+        self._load_items_by_loai("Xe")  # Load items immediately on dialog open
         self._load_recent_history()
     
     def _setup_ui(self):

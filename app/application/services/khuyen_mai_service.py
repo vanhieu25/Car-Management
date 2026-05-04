@@ -56,12 +56,12 @@ VALID_LOAI_KM = {"giam_tien_mat", "giam_phan_tram", "tang_phu_kien", "giam_lai_s
 class KhuyenMaiCreateData:
     """Data for creating a new promotion."""
     ten_km: str
-    mo_ta: str = ""
     loai_km: str  # 'giam_tien_mat', 'giam_phan_tram', 'tang_phu_kien', 'giam_lai_suat', 'combo'
     gia_tri: int
-    kieu_gia_tri: str = "tien"  # 'tien' or 'phan_tram'
     tu_ngay: str  # ISO date string YYYY-MM-DD
     den_ngay: str  # ISO date string YYYY-MM-DD
+    mo_ta: str = ""
+    kieu_gia_tri: str = "tien"  # 'tien' or 'phan_tram'
     trang_thai: str = "dang_chay"
     so_luong_cho_phep: Optional[int] = None
     created_by: int = None

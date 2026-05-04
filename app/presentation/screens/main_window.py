@@ -416,17 +416,17 @@ class MainWindow(QMainWindow):
                 return screen
 
         elif module_id == "khuyen_mai":
-            # S-KM-01: Promotion - uses campaign_list_screen
+            # S-KM-01: Promotion - use promo_list_screen
             import logging
             logger = logging.getLogger("car_management")
             from app.infrastructure.database.connection import get_connection
             conn = self._db_conn if self._db_conn else get_connection()
             logger.info("[Module] khuyen_mai - conn: %s, session: %s" % (conn, self._session))
             if conn and self._session:
-                from app.presentation.screens.campaign_list_screen import CampaignListScreen
-                screen = CampaignListScreen(conn, self._session)
-                screen.add_campaign_clicked.connect(self._show_campaign_form)
-                screen.edit_campaign_clicked.connect(self._show_campaign_form)
+                from app.presentation.screens.promo_list_screen import PromoListScreen
+                screen = PromoListScreen(conn, self._session)
+                screen.add_promo_clicked.connect(self._show_promo_form)
+                screen.edit_promo_clicked.connect(self._show_promo_form)
                 return screen
 
         elif module_id == "cuu_ho":
@@ -444,15 +444,15 @@ class MainWindow(QMainWindow):
                 return screen
 
         elif module_id == "bao_cao":
-            # S-BC-01: Reports - use RevenueReportScreen as default
+            # S-BC-HUB: Reports Hub with 5 tabs
             import logging
             logger = logging.getLogger("car_management")
             from app.infrastructure.database.connection import get_connection
             conn = self._db_conn if self._db_conn else get_connection()
             logger.info("[Module] bao_cao - conn: %s, session: %s" % (conn, self._session))
             if conn and self._session:
-                from app.presentation.screens.revenue_report_screen import RevenueReportScreen
-                screen = RevenueReportScreen(conn, self._session)
+                from app.presentation.screens.reports_hub_screen import ReportsHubScreen
+                screen = ReportsHubScreen(conn, self._session)
                 return screen
 
         elif module_id == "kho":
@@ -647,6 +647,31 @@ class MainWindow(QMainWindow):
         dialog = CampaignFormDialog(self._db_conn, self._session, campaign, self)
         dialog.saved.connect(self._on_campaign_saved)
         dialog.exec()
+    
+    def _show_promo_form(self, promo_id: int = None):
+        """Show promotion add/edit form dialog.
+
+        Args:
+            promo_id: Promotion ID to edit, or None for add new.
+        """
+        from app.presentation.screens.promo_form_dialog import PromoFormDialog
+
+        promo = None
+        if promo_id:
+            from app.application.services.khuyen_mai_service import KhuyenMaiService
+            service = KhuyenMaiService(self._db_conn)
+            promo = service.get_by_id(promo_id)
+
+        dialog = PromoFormDialog(self._db_conn, self._session, promo, self)
+        dialog.saved.connect(self._on_promo_saved)
+        dialog.exec()
+    
+    def _on_promo_saved(self):
+        """Handle promotion saved signal - refresh list."""
+        if self.content_area.has_screen("khuyen_mai"):
+            screen = self.content_area.get_screen("khuyen_mai")
+            if hasattr(screen, 'refresh'):
+                screen.refresh()
 
     def _on_campaign_saved(self):
         """Handle campaign saved signal - refresh list."""

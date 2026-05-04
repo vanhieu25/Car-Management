@@ -108,12 +108,12 @@ class CustomerFormDialog(QDialog):
         form_layout.setSpacing(12)
         
         # ho_ten (required)
-        ho_ten_layout = QHBoxLayout()
-        ho_ten_layout.setSpacing(8)
+        ho_ten_row = QHBoxLayout()
+        ho_ten_row.setSpacing(8)
         
         label = QLabel("Họ tên *:")
         label.setMinimumWidth(100)
-        ho_ten_layout.addWidget(label)
+        ho_ten_row.addWidget(label)
         
         self._ho_ten_input = QLineEdit()
         self._ho_ten_input.setPlaceholderText("Nhập họ tên đầy đủ...")
@@ -129,23 +129,21 @@ class CustomerFormDialog(QDialog):
                 border: 2px solid #0066cc;
             }
         """)
-        ho_ten_layout.addWidget(self._ho_ten_input, stretch=1)
+        ho_ten_row.addWidget(self._ho_ten_input, stretch=1)
         
         self._ho_ten_error = QLabel("")
         self._ho_ten_error.setStyleSheet("color: #ff3b30; font-size: 12px;")
-        ho_ten_error_layout = QHBoxLayout()
-        ho_ten_error_layout.addWidget(self._ho_ten_input)
-        ho_ten_error_layout.addWidget(self._ho_ten_error)
-        form_layout.addLayout(ho_ten_error_layout)
-        form_layout.addLayout(ho_ten_layout)
+        ho_ten_row.addWidget(self._ho_ten_error)
+        
+        form_layout.addLayout(ho_ten_row)
         
         # so_dien_thoai (required, unique)
-        sdt_layout = QHBoxLayout()
-        sdt_layout.setSpacing(8)
+        sdt_row = QHBoxLayout()
+        sdt_row.setSpacing(8)
         
         sdt_label = QLabel("SĐT *:")
         sdt_label.setMinimumWidth(100)
-        sdt_layout.addWidget(sdt_label)
+        sdt_row.addWidget(sdt_label)
         
         self._sdt_input = QLineEdit()
         self._sdt_input.setPlaceholderText("VD: 0989123456")
@@ -161,23 +159,21 @@ class CustomerFormDialog(QDialog):
                 border: 2px solid #0066cc;
             }
         """)
-        sdt_layout.addWidget(self._sdt_input, stretch=1)
+        sdt_row.addWidget(self._sdt_input, stretch=1)
         
         self._sdt_warning = QLabel("")
         self._sdt_warning.setStyleSheet("color: #ff9500; font-size: 12px;")
-        sdt_warning_layout = QHBoxLayout()
-        sdt_warning_layout.addWidget(self._sdt_input)
-        sdt_warning_layout.addWidget(self._sdt_warning)
-        form_layout.addLayout(sdt_warning_layout)
-        form_layout.addLayout(sdt_layout)
+        sdt_row.addWidget(self._sdt_warning)
+        
+        form_layout.addLayout(sdt_row)
         
         # email (required)
-        email_layout = QHBoxLayout()
-        email_layout.setSpacing(8)
+        email_row = QHBoxLayout()
+        email_row.setSpacing(8)
         
         email_label = QLabel("Email *:")
         email_label.setMinimumWidth(100)
-        email_layout.addWidget(email_label)
+        email_row.addWidget(email_label)
         
         self._email_input = QLineEdit()
         self._email_input.setPlaceholderText("VD: contact@example.com")
@@ -193,15 +189,13 @@ class CustomerFormDialog(QDialog):
                 border: 2px solid #0066cc;
             }
         """)
-        email_layout.addWidget(self._email_input, stretch=1)
+        email_row.addWidget(self._email_input, stretch=1)
         
         self._email_error = QLabel("")
         self._email_error.setStyleSheet("color: #ff3b30; font-size: 12px;")
-        email_error_layout = QHBoxLayout()
-        email_error_layout.addWidget(self._email_input)
-        email_error_layout.addWidget(self._email_error)
-        form_layout.addLayout(email_error_layout)
-        form_layout.addLayout(email_layout)
+        email_row.addWidget(self._email_error)
+        
+        form_layout.addLayout(email_row)
         
         # dia_chi (optional)
         dc_layout = QHBoxLayout()

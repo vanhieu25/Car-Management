@@ -1,0 +1,192 @@
+<mxfile host="app.diagrams.net" modified="2026-05-04T07:14:00.000Z" agent="Miao" version="21.0.0">
+  <diagram name="Car Management - Class Diagram" id="car-mgmt-class">
+    <mxGraphModel dx="1800" dy="1200" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1800" pageHeight="1400" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+
+        <!-- Header / Title -->
+        <mxCell id="title1" value="Car Management System - Class Diagram" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=20;fontStyle=1" vertex="1" parent="1">
+          <mxGeometry x="700" y="20" width="400" height="40" as="geometry" />
+        </mxCell>
+
+        <!-- ==================== BASE ENTITY ==================== -->
+        <mxCell id="base1" value="BaseEntity&#xa;─────────────&#xa;id: int&#xa;created_at: str&#xa;updated_at: str&#xa;created_by: int" style="verticalAlign=top;align=left;spacingLeft=10;spacingRight=10;spacingTop=6;spacingBottom=6;fontSize=10;fontFamily=Consolas;movable=1;resizable=1;deletable=1" vertex="1" parent="1">
+          <mxGeometry x="800" y="80" width="200" height="100" as="geometry" />
+        </mxCell>
+
+        <!-- ==================== VAI TRO (top left) ==================== -->
+        <mxCell id="vt1" value="VaiTro&#xa;──────────&#xa;ma_vai_tro: str&#xa;ten_vai_tro: str&#xa;mo_ta: str" style="verticalAlign=top;align=left;spacingLeft=10;spacingRight=10;spacingTop=6;spacingBottom=6;fontSize=10;fontFamily=Consolas;movable=1;resizable=1;deletable=1" vertex="1" parent="1">
+          <mxGeometry x="40" y="80" width="200" height="90" as="geometry" />
+        </mxCell>
+
+        <!-- ==================== NHAN VIEN ==================== -->
+        <mxCell id="nv1" value="NhanVien&#xa;────────────&#xa;username: str&#xa;ho_ten: str&#xa;email: str&#xa;so_dien_thoai: str&#xa;dia_chi: str&#xa;vai_tro_id: int&#xa;trang_thai: str&#xa;so_hop_dong: int&#xa;doanh_thu: int" style="verticalAlign=top;align=left;spacingLeft=10;spacingRight=10;spacingTop=6;spacingBottom=6;fontSize=10;fontFamily=Consolas;movable=1;resizable=1;deletable=1" vertex="1" parent="1">
+          <mxGeometry x="40" y="220" width="220" height="200" as="geometry" />
+        </mxCell>
+
+        <!-- VaiTro → NhanVien -->
+        <mxCell id="rel_vt_nv" style="endArrow=diamond;endFill=1;startArrow=none;html=1;exitX=1;exitY=0.5;exitPerimeter=0;entryX=0;entryY=0.5;entryPerimeter=0;dashed=0" edge="1" parent="1" source="vt1" target="nv1">
+          <mxGeometry width="50" height="50" relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="lbl_vt_nv" value="1..* : 1" style="text;html=1;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=10;fontColor=#666666" vertex="1" parent="1">
+          <mxGeometry x="260" y="180" width="50" height="20" as="geometry" />
+        </mxCell>
+
+        <!-- ==================== KHACH HANG ==================== -->
+        <mxCell id="kh1" value="KhachHang&#xa;──────────────&#xa;ho_ten: str&#xa;so_dien_thoai: str&#xa;email: str&#xa;dia_chi: str&#xa;ngay_sinh: str&#xa;phan_loai: str&#xa;tong_gia_tri_mua: int&#xa;so_xe_da_mua: int" style="verticalAlign=top;align=left;spacingLeft=10;spacingRight=10;spacingTop=6;spacingBottom=6;fontSize=10;fontFamily=Consolas;movable=1;resizable=1;deletable=1" vertex="1" parent="1">
+          <mxGeometry x="40" y="480" width="220" height="170" as="geometry" />
+        </mxCell>
+
+        <!-- ==================== XE ==================== -->
+        <mxCell id="xe1" value="Xe&#xa;────────────&#xa;ma_xe: str&#xa;hang: str&#xa;dong_xe: str&#xa;nam_san_xuat: int&#xa;mau_sac: str&#xa;gia_ban: int&#xa;so_luong_ton: int&#xa;muc_toi_thieu: int&#xa;trang_thai: str" style="verticalAlign=top;align=left;spacingLeft=10;spacingRight=10;spacingTop=6;spacingBottom=6;fontSize=10;fontFamily=Consolas;movable=1;resizable=1;deletable=1" vertex="1" parent="1">
+          <mxGeometry x="300" y="220" width="220" height="190" as="geometry" />
+        </mxCell>
+
+        <!-- ==================== PHU KIEN ==================== -->
+        <mxCell id="pk1" value="PhuKien&#xa;─────────────&#xa;ma_pk: str&#xa;ten_pk: str&#xa;phan_loai: str&#xa;gia_ban: int&#xa;ton_kho: int&#xa;mo_ta: str" style="verticalAlign=top;align=left;spacingLeft=10;spacingRight=10;spacingTop=6;spacingBottom=6;fontSize=10;fontFamily=Consolas;movable=1;resizable=1;deletable=1" vertex="1" parent="1">
+          <mxGeometry x="300" y="480" width="220" height="130" as="geometry" />
+        </mxCell>
+
+        <!-- ==================== COMBO PHU KIEN ==================== -->
+        <mxCell id="cpk1" value="ComboPhuKien&#xa;──────────────&#xa;ten_combo: str&#xa;he_so_giam: float&#xa;mo_ta: str" style="verticalAlign=top;align=left;spacingLeft=10;spacingRight=10;spacingTop=6;spacingBottom=6;fontSize=10;fontFamily=Consolas;movable=1;resizable=1;deletable=1" vertex="1" parent="1">
+          <mxGeometry x="300" y="640" width="220" height="80" as="geometry" />
+        </mxCell>
+
+        <!-- ==================== KHUYEN MAI ==================== -->
+        <mxCell id="km1" value="KhuyenMai&#xa;──────────────&#xa;ten_km: str&#xa;mo_ta: str&#xa;loai_km: str&#xa;gia_tri: int&#xa;kieu_gia_tri: str&#xa;tu_ngay: str&#xa;den_ngay: str&#xa;trang_thai: str&#xa;so_luong_cho_phep: int&#xa;so_luong_da_su_dung: int" style="verticalAlign=top;align=left;spacingLeft=10;spacingRight=10;spacingTop=6;spacingBottom=6;fontSize=10;fontFamily=Consolas;movable=1;resizable=1;deletable=1" vertex="1" parent="1">
+          <mxGeometry x="560" y="480" width="230" height="190" as="geometry" />
+        </mxCell>
+
+        <!-- ==================== HOP DONG ==================== -->
+        <mxCell id="hd1" value="HopDong&#xa;─────────────&#xa;ma_hop_dong: str&#xa;khach_hang_id: int&#xa;xe_id: int&#xa;nhan_vien_id: int&#xa;khuyen_mai_id: int&#xa;gia_xe: int&#xa;tong_gia_phu_kien: int&#xa;tien_giam_km: int&#xa;tong_tien: int&#xa;trang_thai: str&#xa;ngay_tao: str&#xa;ngay_thanh_toan: str&#xa;ngay_giao_xe: str" style="verticalAlign=top;align=left;spacingLeft=10;spacingRight=10;spacingTop=6;spacingBottom=6;fontSize=10;fontFamily=Consolas;movable=1;resizable=1;deletable=1" vertex="1" parent="1">
+          <mxGeometry x="560" y="220" width="230" height="240" as="geometry" />
+        </mxCell>
+
+        <!-- KhachHang → HopDong -->
+        <mxCell id="rel_kh_hd" style="endArrow=diamond;endFill=1;startArrow=none;html=1;dashed=0" edge="1" parent="1" source="kh1" target="hd1">
+          <mxGeometry width="50" height="50" relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="lbl_kh_hd" value="1 : N" style="text;html=1;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=10;fontColor=#666666" vertex="1" parent="1">
+          <mxGeometry x="270" y="350" width="40" height="20" as="geometry" />
+        </mxCell>
+
+        <!-- Xe → HopDong -->
+        <mxCell id="rel_xe_hd" style="endArrow=diamond;endFill=1;startArrow=none;html=1;dashed=0" edge="1" parent="1" source="xe1" target="hd1">
+          <mxGeometry width="50" height="50" relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="lbl_xe_hd" value="1 : N" style="text;html=1;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=10;fontColor=#666666" vertex="1" parent="1">
+          <mxGeometry x="520" y="280" width="40" height="20" as="geometry" />
+        </mxCell>
+
+        <!-- NhanVien → HopDong -->
+        <mxCell id="rel_nv_hd" style="endArrow=diamond;endFill=1;startArrow=none;html=1;dashed=0" edge="1" parent="1" source="nv1" target="hd1">
+          <mxGeometry width="50" height="50" relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="lbl_nv_hd" value="1 : N" style="text;html=1;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=10;fontColor=#666666" vertex="1" parent="1">
+          <mxGeometry x="270" y="280" width="40" height="20" as="geometry" />
+        </mxCell>
+
+        <!-- KhuyenMai → HopDong -->
+        <mxCell id="rel_km_hd" style="endArrow=diamond;endFill=1;startArrow=none;html=1;dashed=0" edge="1" parent="1" source="km1" target="hd1">
+          <mxGeometry width="50" height="50" relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="lbl_km_hd" value="1 : N" style="text;html=1;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=10;fontColor=#666666" vertex="1" parent="1">
+          <mxGeometry x="520" y="440" width="40" height="20" as="geometry" />
+        </mxCell>
+
+        <!-- ==================== BAO HANH ==================== -->
+        <mxCell id="bh1" value="BaoHanh&#xa;─────────────&#xa;hop_dong_id: int&#xa;xe_id: int&#xa;khach_hang_id: int&#xa;thoi_han_bh: int&#xa;ngay_bat_dau: str&#xa;ngay_ket_thuc: str&#xa;pham_vi: str&#xa;trang_thai: str" style="verticalAlign=top;align=left;spacingLeft=10;spacingRight=10;spacingTop=6;spacingBottom=6;fontSize=10;fontFamily=Consolas;movable=1;resizable=1;deletable=1" vertex="1" parent="1">
+          <mxGeometry x="830" y="220" width="220" height="170" as="geometry" />
+        </mxCell>
+
+        <!-- HopDong → BaoHanh -->
+        <mxCell id="rel_hd_bh" style="endArrow=diamond;endFill=1;startArrow=none;html=1;dashed=0" edge="1" parent="1" source="hd1" target="bh1">
+          <mxGeometry width="50" height="50" relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="lbl_hd_bh" value="1 : N" style="text;html=1;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=10;fontColor=#666666" vertex="1" parent="1">
+          <mxGeometry x="790" y="300" width="40" height="20" as="geometry" />
+        </mxCell>
+
+        <!-- ==================== TRA GOP ==================== -->
+        <mxCell id="tg1" value="TraGop&#xa;────────────&#xa;hop_dong_id: int&#xa;ngan_hang: str&#xa;so_tien_vay: int&#xa;lai_suat_nam: float&#xa;so_ky: int&#xa;so_tien_tra_thang: int&#xa;trang_thai: str" style="verticalAlign=top;align=left;spacingLeft=10;spacingRight=10;spacingTop=6;spacingBottom=6;fontSize=10;fontFamily=Consolas;movable=1;resizable=1;deletable=1" vertex="1" parent="1">
+          <mxGeometry x="830" y="420" width="220" height="150" as="geometry" />
+        </mxCell>
+
+        <!-- HopDong → TraGop -->
+        <mxCell id="rel_hd_tg" style="endArrow=diamond;endFill=1;startArrow=none;html=1;dashed=0" edge="1" parent="1" source="hd1" target="tg1">
+          <mxGeometry width="50" height="50" relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="lbl_hd_tg" value="1 : 1" style="text;html=1;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=10;fontColor=#666666" vertex="1" parent="1">
+          <mxGeometry x="790" y="400" width="40" height="20" as="geometry" />
+        </mxCell>
+
+        <!-- ==================== BAO DUONG ==================== -->
+        <mxCell id="bd1" value="BaoDuong&#xa;─────────────&#xa;khach_hang_id: int&#xa;xe_id: int&#xa;nhan_vien_id: int&#xa;ngay_du_kien: str&#xa;ngay_thuc_te: str&#xa;km_xe: int&#xa;noi_dung: str&#xa;chi_phi: int&#xa;trang_thai: str" style="verticalAlign=top;align=left;spacingLeft=10;spacingRight=10;spacingTop=6;spacingBottom=6;fontSize=10;fontFamily=Consolas;movable=1;resizable=1;deletable=1" vertex="1" parent="1">
+          <mxGeometry x="830" y="620" width="220" height="190" as="geometry" />
+        </mxCell>
+
+        <!-- ==================== CUU HO ==================== -->
+        <mxCell id="ch1" value="CuuHo&#xa;────────────&#xa;khach_hang_id: int&#xa;xe_id: int&#xa;nhan_vien_id: int&#xa;vi_tri: str&#xa;mo_ta: str&#xa;thoi_gian_yeu_cau: str&#xa;thoi_gian_xu_ly: str&#xa;trang_thai: str&#xa;chi_phi: int" style="verticalAlign=top;align=left;spacingLeft=10;spacingRight=10;spacingTop=6;spacingBottom=6;fontSize=10;fontFamily=Consolas;movable=1;resizable=1;deletable=1" vertex="1" parent="1">
+          <mxGeometry x="830" y="850" width="220" height="190" as="geometry" />
+        </mxCell>
+
+        <!-- ==================== CHIEN DICH MARKETING ==================== -->
+        <mxCell id="cd1" value="ChienDichMk&#xa;───────────────&#xa;ten_chien_dich: str&#xa;kenh_tiep_thi: str&#xa;ngay_bat_dau: str&#xa;ngay_ket_thuc: str&#xa;ngan_sach: int&#xa;muc_tieu: str&#xa;so_luong_lead_muc_tieu: int&#xa;trang_thai: str" style="verticalAlign=top;align=left;spacingLeft=10;spacingRight=10;spacingTop=6;spacingBottom=6;fontSize=10;fontFamily=Consolas;movable=1;resizable=1;deletable=1" vertex="1" parent="1">
+          <mxGeometry x="300" y="760" width="230" height="170" as="geometry" />
+        </mxCell>
+
+        <!-- ==================== LEAD ==================== -->
+        <mxCell id="lead1" value="Lead&#xa;────────────&#xa;chien_dich_id: int&#xa;ho_ten: str&#xa;so_dien_thoai: str&#xa;email: str&#xa;nguon: str&#xa;nhu_cau: str&#xa;nhan_vien_phu_trach_id: int&#xa;trang_thai: str&#xa;khach_hang_id: int" style="verticalAlign=top;align=left;spacingLeft=10;spacingRight=10;spacingTop=6;spacingBottom=6;fontSize=10;fontFamily=Consolas;movable=1;resizable=1;deletable=1" vertex="1" parent="1">
+          <mxGeometry x="40" y="700" width="220" height="180" as="geometry" />
+        </mxCell>
+
+        <!-- ChienDichMk → Lead -->
+        <mxCell id="rel_cd_lead" style="endArrow=diamond;endFill=1;startArrow=none;html=1;dashed=0" edge="1" parent="1" source="cd1" target="lead1">
+          <mxGeometry width="50" height="50" relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="lbl_cd_lead" value="1 : N" style="text;html=1;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=10;fontColor=#666666" vertex="1" parent="1">
+          <mxGeometry x="270" y="770" width="40" height="20" as="geometry" />
+        </mxCell>
+
+        <!-- ==================== KHIEU NAI ==================== -->
+        <mxCell id="kn1" value="KhieuNai&#xa;─────────────&#xa;khach_hang_id: int&#xa;hop_dong_id: int&#xa;nhan_vien_xu_ly_id: int&#xa;tieu_de: str&#xa;noi_dung: str&#xa;muc_do: str&#xa;nguon_goc: str&#xa;trang_thai: str&#xa;ngay_xu_ly: str&#xa;ngay_dong: str&#xa;danh_gia_hai_long: int" style="verticalAlign=top;align=left;spacingLeft=10;spacingRight=10;spacingTop=6;spacingBottom=6;fontSize=10;fontFamily=Consolas;movable=1;resizable=1;deletable=1" vertex="1" parent="1">
+          <mxGeometry x="40" y="920" width="220" height="220" as="geometry" />
+        </mxCell>
+
+        <!-- ==================== NHA CUNG CAP ==================== -->
+        <mxCell id="ncc1" value="NhaCungCap&#xa;──────────────&#xa;ma_ncc: str&#xa;ten_ncc: str&#xa;dia_chi: str&#xa;so_dien_thoai: str&#xa;email: str&#xa;nguoi_lien_he: str&#xa;diem_chat_luong: int&#xa;diem_thoi_gian_giao: int&#xa;diem_gia_ca: int&#xa;diem_tong: int" style="verticalAlign=top;align=left;spacingLeft=10;spacingRight=10;spacingTop=6;spacingBottom=6;fontSize=10;fontFamily=Consolas;movable=1;resizable=1;deletable=1" vertex="1" parent="1">
+          <mxGeometry x="300" y="970" width="220" height="200" as="geometry" />
+        </mxCell>
+
+        <!-- ==================== AUDIT LOG ==================== -->
+        <mxCell id="al1" value="AuditLog&#xa;────────────&#xa;nhan_vien_id: int&#xa;hanh_dong: str&#xa;bang_anh_huong: str&#xa;ban_ghi_id: int&#xa;noi_dung: str&#xa;thoi_gian: str" style="verticalAlign=top;align=left;spacingLeft=10;spacingRight=10;spacingTop=6;spacingBottom=6;fontSize=10;fontFamily=Consolas;movable=1;resizable=1;deletable=1" vertex="1" parent="1">
+          <mxGeometry x="560" y="970" width="220" height="120" as="geometry" />
+        </mxCell>
+
+        <!-- ==================== SYSTEM SETTINGS ==================== -->
+        <mxCell id="ss1" value="SystemSettings&#xa;───────────────&#xa;ma_settings: str&#xa;gia_tri: str&#xa;mo_ta: str" style="verticalAlign=top;align=left;spacingLeft=10;spacingRight=10;spacingTop=6;spacingBottom=6;fontSize=10;fontFamily=Consolas;movable=1;resizable=1;deletable=1" vertex="1" parent="1">
+          <mxGeometry x="560" y="850" width="220" height="80" as="geometry" />
+        </mxCell>
+
+        <!-- ==================== GROUP HEADERS ==================== -->
+        <mxCell id="grp1" value="Domain Entities" style="text;html=1;strokeColor=#4a86e8;fillColor=#4a86e8;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=14;fontStyle=1;fontColor=#ffffff" vertex="1" parent="1">
+          <mxGeometry x="560" y="80" width="140" height="24" as="geometry" />
+        </mxCell>
+        <mxCell id="grp2" value="Sales / Contract" style="text;html=1;strokeColor=#34c759;fillColor=#34c759;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=14;fontStyle=1;fontColor=#ffffff" vertex="1" parent="1">
+          <mxGeometry x="830" y="80" width="140" height="24" as="geometry" />
+        </mxCell>
+        <mxCell id="grp3" value="Marketing" style="text;html=1;strokeColor=#ff9500;fillColor=#ff9500;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=14;fontStyle=1;fontColor=#ffffff" vertex="1" parent="1">
+          <mxGeometry x="40" y="650" width="140" height="24" as="geometry" />
+        </mxCell>
+        <mxCell id="grp4" value="Support / Service" style="text;html=1;strokeColor=#5856d6;fillColor=#5856d6;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=14;fontStyle=1;fontColor=#ffffff" vertex="1" parent="1">
+          <mxGeometry x="830" y="570" width="160" height="24" as="geometry" />
+        </mxCell>
+        <mxCell id="grp5" value="Inventory / Warehouse" style="text;html=1;strokeColor=#af52de;fillColor=#af52de;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=14;fontStyle=1;fontColor=#ffffff" vertex="1" parent="1">
+          <mxGeometry x="40" y="430" width="190" height="24" as="geometry" />
+        </mxCell>
+
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

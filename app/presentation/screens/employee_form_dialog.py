@@ -512,7 +512,6 @@ class EmployeeFormDialog(QDialog):
                     ho_ten=self._ho_ten_input.text().strip(),
                     email=self._email_input.text().strip(),
                     so_dien_thoai=self._sdt_input.text().strip() or None,
-                    dia_chi=self._dc_input.text().strip() or None,
                 )
                 
                 self._nv_service.update(self._nhan_vien.id, data)

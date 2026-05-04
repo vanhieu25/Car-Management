@@ -155,12 +155,12 @@ class SupplierFormDialog(QDialog):
         form_layout.setSpacing(12)
         
         # ma_ncc (required, only in add mode)
-        ma_ncc_layout = QHBoxLayout()
-        ma_ncc_layout.setSpacing(8)
+        ma_ncc_row = QHBoxLayout()
+        ma_ncc_row.setSpacing(8)
         
         label = QLabel("Mã NCC *:")
         label.setMinimumWidth(100)
-        ma_ncc_layout.addWidget(label)
+        ma_ncc_row.addWidget(label)
         
         self._ma_ncc_input = QLineEdit()
         self._ma_ncc_input.setPlaceholderText("Nhập mã nhà cung cấp...")
@@ -176,23 +176,21 @@ class SupplierFormDialog(QDialog):
                 border: 2px solid #0066cc;
             }
         """)
-        ma_ncc_layout.addWidget(self._ma_ncc_input, stretch=1)
+        ma_ncc_row.addWidget(self._ma_ncc_input, stretch=1)
         
         self._ma_ncc_error = QLabel("")
         self._ma_ncc_error.setStyleSheet("color: #ff3b30; font-size: 12px;")
-        ma_ncc_error_layout = QHBoxLayout()
-        ma_ncc_error_layout.addWidget(self._ma_ncc_input)
-        ma_ncc_error_layout.addWidget(self._ma_ncc_error)
-        form_layout.addLayout(ma_ncc_error_layout)
-        form_layout.addLayout(ma_ncc_layout)
+        ma_ncc_row.addWidget(self._ma_ncc_error)
+        
+        form_layout.addLayout(ma_ncc_row)
         
         # ten_ncc (required)
-        ten_ncc_layout = QHBoxLayout()
-        ten_ncc_layout.setSpacing(8)
+        ten_ncc_row = QHBoxLayout()
+        ten_ncc_row.setSpacing(8)
         
         label = QLabel("Tên NCC *:")
         label.setMinimumWidth(100)
-        ten_ncc_layout.addWidget(label)
+        ten_ncc_row.addWidget(label)
         
         self._ten_ncc_input = QLineEdit()
         self._ten_ncc_input.setPlaceholderText("Nhập tên nhà cung cấp...")
@@ -208,23 +206,21 @@ class SupplierFormDialog(QDialog):
                 border: 2px solid #0066cc;
             }
         """)
-        ten_ncc_layout.addWidget(self._ten_ncc_input, stretch=1)
+        ten_ncc_row.addWidget(self._ten_ncc_input, stretch=1)
         
         self._ten_ncc_error = QLabel("")
         self._ten_ncc_error.setStyleSheet("color: #ff3b30; font-size: 12px;")
-        ten_ncc_error_layout = QHBoxLayout()
-        ten_ncc_error_layout.addWidget(self._ten_ncc_input)
-        ten_ncc_error_layout.addWidget(self._ten_ncc_error)
-        form_layout.addLayout(ten_ncc_error_layout)
-        form_layout.addLayout(ten_ncc_layout)
+        ten_ncc_row.addWidget(self._ten_ncc_error)
+        
+        form_layout.addLayout(ten_ncc_row)
         
         # dia_chi
-        dia_chi_layout = QHBoxLayout()
-        dia_chi_layout.setSpacing(8)
+        dia_chi_row = QHBoxLayout()
+        dia_chi_row.setSpacing(8)
         
         label = QLabel("Địa chỉ:")
         label.setMinimumWidth(100)
-        dia_chi_layout.addWidget(label)
+        dia_chi_row.addWidget(label)
         
         self._dia_chi_input = QLineEdit()
         self._dia_chi_input.setPlaceholderText("Nhập địa chỉ...")
@@ -240,16 +236,17 @@ class SupplierFormDialog(QDialog):
                 border: 2px solid #0066cc;
             }
         """)
-        dia_chi_layout.addWidget(self._dia_chi_input, stretch=1)
-        form_layout.addLayout(dia_chi_layout)
+        dia_chi_row.addWidget(self._dia_chi_input, stretch=1)
+        
+        form_layout.addLayout(dia_chi_row)
         
         # so_dien_thoai
-        sdt_layout = QHBoxLayout()
-        sdt_layout.setSpacing(8)
+        sdt_row = QHBoxLayout()
+        sdt_row.setSpacing(8)
         
         label = QLabel("SĐT:")
         label.setMinimumWidth(100)
-        sdt_layout.addWidget(label)
+        sdt_row.addWidget(label)
         
         self._sdt_input = QLineEdit()
         self._sdt_input.setPlaceholderText("Nhập số điện thoại (10-11 số bắt đầu bằng 0)...")
@@ -265,23 +262,21 @@ class SupplierFormDialog(QDialog):
                 border: 2px solid #0066cc;
             }
         """)
-        sdt_layout.addWidget(self._sdt_input, stretch=1)
+        sdt_row.addWidget(self._sdt_input, stretch=1)
         
         self._sdt_error = QLabel("")
         self._sdt_error.setStyleSheet("color: #ff3b30; font-size: 12px;")
-        sdt_error_layout = QHBoxLayout()
-        sdt_error_layout.addWidget(self._sdt_input)
-        sdt_error_layout.addWidget(self._sdt_error)
-        form_layout.addLayout(sdt_error_layout)
-        form_layout.addLayout(sdt_layout)
+        sdt_row.addWidget(self._sdt_error)
+        
+        form_layout.addLayout(sdt_row)
         
         # email
-        email_layout = QHBoxLayout()
-        email_layout.setSpacing(8)
+        email_row = QHBoxLayout()
+        email_row.setSpacing(8)
         
         label = QLabel("Email:")
         label.setMinimumWidth(100)
-        email_layout.addWidget(label)
+        email_row.addWidget(label)
         
         self._email_input = QLineEdit()
         self._email_input.setPlaceholderText("Nhập email (VD: ncc@example.com)...")
@@ -297,23 +292,21 @@ class SupplierFormDialog(QDialog):
                 border: 2px solid #0066cc;
             }
         """)
-        email_layout.addWidget(self._email_input, stretch=1)
+        email_row.addWidget(self._email_input, stretch=1)
         
         self._email_error = QLabel("")
         self._email_error.setStyleSheet("color: #ff3b30; font-size: 12px;")
-        email_error_layout = QHBoxLayout()
-        email_error_layout.addWidget(self._email_input)
-        email_error_layout.addWidget(self._email_error)
-        form_layout.addLayout(email_error_layout)
-        form_layout.addLayout(email_layout)
+        email_row.addWidget(self._email_error)
+        
+        form_layout.addLayout(email_row)
         
         # nguoi_lien_he
-        nguoi_lh_layout = QHBoxLayout()
-        nguoi_lh_layout.setSpacing(8)
+        nguoi_lh_row = QHBoxLayout()
+        nguoi_lh_row.setSpacing(8)
         
         label = QLabel("Người liên hệ:")
         label.setMinimumWidth(100)
-        nguoi_lh_layout.addWidget(label)
+        nguoi_lh_row.addWidget(label)
         
         self._nguoi_lh_input = QLineEdit()
         self._nguoi_lh_input.setPlaceholderText("Nhập tên người liên hệ...")
@@ -329,8 +322,9 @@ class SupplierFormDialog(QDialog):
                 border: 2px solid #0066cc;
             }
         """)
-        nguoi_lh_layout.addWidget(self._nguoi_lh_input, stretch=1)
-        form_layout.addLayout(nguoi_lh_layout)
+        nguoi_lh_row.addWidget(self._nguoi_lh_input, stretch=1)
+        
+        form_layout.addLayout(nguoi_lh_row)
         
         form_group.setLayout(form_layout)
         layout.addWidget(form_group)
