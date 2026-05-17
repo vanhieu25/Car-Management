@@ -49,6 +49,7 @@ class NhanVien(BaseEntity):
     last_password_change: Optional[str] = None
     so_hop_dong: int = 0
     doanh_thu: int = 0
+    dai_ly_id: Optional[int] = None
 
 
 @dataclass
@@ -89,6 +90,7 @@ class KhachHang(BaseEntity):
     phan_loai: str = "Thuong"
     tong_gia_tri_mua: int = 0
     so_xe_da_mua: int = 0
+    trang_thai: str = "active"
 
 
 @dataclass
@@ -110,6 +112,7 @@ class HopDong(BaseEntity):
     ngay_giao_xe: Optional[str] = None
     ly_do_huy: Optional[str] = None
     ghi_chu: str = ""
+    da_thanh_toan: int = 0
 
 
 @dataclass
@@ -153,14 +156,45 @@ class KhuyenMai(BaseEntity):
 class BaoHanh(BaseEntity):
     """Bảo hành entity."""
 
-    hop_dong_id: int = 0
-    xe_id: int = 0
+    hop_dong_id: Optional[int] = None
+    xe_id: Optional[int] = None
     khach_hang_id: int = 0
     thoi_han_bh: int = 24
     ngay_bat_dau: str = ""
     ngay_ket_thuc: str = ""
     pham_vi: str = ""
     trang_thai: str = "con_hieu_luc"
+    so_khung: Optional[str] = None
+    so_may: Optional[str] = None
+    is_external: bool = False
+    loai_bh: str = "bao_hanh"
+    dai_ly_ban_id: Optional[int] = None
+    so_policy: Optional[str] = None
+    phi_bh: int = 0
+
+
+@dataclass
+class BaoHiem(BaseEntity):
+    """Bảo hiểm entity (tái bảo hiểm, TNDS, tai_nan, chao_no, that_lac).
+
+    For external vehicles: linked via bao_hanh_id
+    For dealership vehicles: linked via xe_id + hop_dong_id
+    """
+
+    bao_hanh_id: int = 0
+    xe_id: Optional[int] = None
+    hop_dong_id: Optional[int] = None
+    cong_ty_bh_id: Optional[int] = None
+    dai_ly_ban_id: Optional[int] = None
+    loai_bh: str = "tnds"
+    so_policy: str = ""
+    ngay_mua: str = ""
+    ngay_hieu_luc: str = ""
+    ngay_het_han: str = ""
+    phi_bh: int = 0
+    gia_tri_bh: int = 0
+    trang_thai: str = "con_hieu_luc"
+    ghi_chu: str = ""
 
 
 @dataclass
@@ -264,6 +298,18 @@ class SystemSettings(BaseEntity):
 
 
 @dataclass
+class CongTyBH(BaseEntity):
+    """Công ty bảo hiểm entity."""
+
+    ma_cty: str = ""
+    ten_cty: str = ""
+    dia_chi: str = ""
+    so_dien_thoai: str = ""
+    email: str = ""
+    trang_thai: str = "hoat_dong"
+
+
+@dataclass
 class BaoDuong(BaseEntity):
     """Bảo dưỡng entity."""
 
@@ -293,3 +339,15 @@ class CuuHo(BaseEntity):
     trang_thai: str = "tiep_nhan"
     chi_phi: int = 0
     ghi_chu: str = ""
+
+
+@dataclass
+class DaiLy(BaseEntity):
+    """Đại lý entity."""
+
+    ma_dai_ly: str = ""
+    ten_dai_ly: str = ""
+    dia_chi: str = ""
+    so_dien_thoai: str = ""
+    email: str = ""
+    trang_thai: str = "hoat_dong"

@@ -1,7 +1,7 @@
 """Reusable input widgets with validation."""
 
 import re
-from PyQt6.QtCore import Qt, pyqtSignal
+from PyQt6.QtCore import Qt, pyqtSignal, QEvent
 from PyQt6.QtGui import QFont, QIntValidator, QDoubleValidator
 from PyQt6.QtWidgets import (
     QLineEdit,
@@ -303,11 +303,13 @@ class InlineNumericEdit(QWidget):
 
     def _on_display_clicked(self, event):
         """Enter edit mode on single click."""
+        if not self.isEnabled():
+            return
         self._start_edit()
 
     def _on_wheel(self, event):
         """Increment/decrement value on wheel scroll (when not editing)."""
-        if self._editing:
+        if self._editing or not self.isEnabled():
             return
         
         delta = event.angleDelta().y()
@@ -320,7 +322,6 @@ class InlineNumericEdit(QWidget):
 
     def _on_edit_keypress(self, event):
         """Handle key presses in edit mode."""
-        from PyQt6.QtCore import QEvent
         if event.key() in (Qt.Key.Key_Return, Qt.Key.Key_Enter):
             self._accept_edit()
             event.accept()
@@ -440,6 +441,27 @@ class InlineNumericEdit(QWidget):
         if self._is_float:
             return float(self._value)
         return int(self._value)
+
+    def setEnabled(self, enabled: bool):
+        """Disable editing when widget is disabled."""
+        if not enabled and self._editing:
+            self._value = self._original_value
+            self._editing = False
+            self._edit.setVisible(False)
+            self._display.setVisible(True)
+        super().setEnabled(enabled)
+        self._display.setEnabled(enabled)
+        self._edit.setEnabled(enabled)
+
+    def setDisabled(self, disabled: bool):
+        """Disable editing when widget is disabled (convenience method)."""
+        self.setEnabled(not disabled)
+
+    def event(self, event):
+        """Handle focus events - ignore when disabled."""
+        if event.type() == QEvent.Type.FocusIn and not self.isEnabled():
+            return False
+        return super().event(event)
 
     def setValue(self, value):
         """Set the current value.

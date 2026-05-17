@@ -594,7 +594,7 @@ class RescueRequestFormDialog(QDialog):
                     khach_hang_id=self._khach_hang_id,
                     xe_id=self._xe_id,
                     vi_tri=self._vt_input.text().strip(),
-                    mo_ta=self._mt_text.toPlainText().trimmed(),
+                    mo_ta=self._mt_text.toPlainText().strip(),
                     chi_phi=self._cp_spin.value(),
                     thoi_gian_den_du_kien=tg_du_kien if self._tg_datetime.dateTime() else None,
                     nhan_vien_id=self._nv_combo.currentData(),

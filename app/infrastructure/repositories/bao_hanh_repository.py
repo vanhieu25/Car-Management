@@ -230,15 +230,21 @@ class BaoHanhRepository(BaseRepository[BaoHanh]):
         kh_row = cursor.fetchone()
         bh["khach_hang"] = dict(kh_row) if kh_row else {}
 
-        # Xe
-        cursor = self.conn.execute("SELECT * FROM xe WHERE id = ?", (bh["xe_id"],))
-        xe_row = cursor.fetchone()
-        bh["xe"] = dict(xe_row) if xe_row else {}
+        # Xe (may be null for external)
+        if bh.get("xe_id"):
+            cursor = self.conn.execute("SELECT * FROM xe WHERE id = ?", (bh["xe_id"],))
+            xe_row = cursor.fetchone()
+            bh["xe"] = dict(xe_row) if xe_row else {}
+        else:
+            bh["xe"] = {}
 
-        # Hop dong
-        cursor = self.conn.execute("SELECT * FROM hop_dong WHERE id = ?", (bh["hop_dong_id"],))
-        hd_row = cursor.fetchone()
-        bh["hop_dong"] = dict(hd_row) if hd_row else {}
+        # Hop dong (may be null for external)
+        if bh.get("hop_dong_id"):
+            cursor = self.conn.execute("SELECT * FROM hop_dong WHERE id = ?", (bh["hop_dong_id"],))
+            hd_row = cursor.fetchone()
+            bh["hop_dong"] = dict(hd_row) if hd_row else {}
+        else:
+            bh["hop_dong"] = {}
 
         # Yeu cau
         cursor = self.conn.execute(
@@ -257,6 +263,7 @@ class BaoHanhRepository(BaseRepository[BaoHanh]):
         self,
         trang_thai: str = None,
         search_keyword: str = None,
+        is_external: str = None,
         limit: int = 100,
         offset: int = 0,
     ) -> tuple[List[dict], int]:
@@ -265,6 +272,7 @@ class BaoHanhRepository(BaseRepository[BaoHanh]):
         Args:
             trang_thai: Filter by status ('con_hieu_luc', 'het_han', 'sap_het_han').
             search_keyword: Search by ma BH, ten KH.
+            is_external: Filter by external flag ('0', '1', None for all).
             limit: Max results.
             offset: Pagination offset.
 
@@ -275,12 +283,10 @@ class BaoHanhRepository(BaseRepository[BaoHanh]):
         params = []
 
         if trang_thai == "con_hieu_luc":
-            # Còn hiệu lực: chưa hết hạn
             today = datetime.now().strftime("%Y-%m-%d")
             conditions.append("bh.trang_thai = 'con_hieu_luc' AND bh.ngay_ket_thuc >= ?")
             params.append(today)
         elif trang_thai == "sap_het_han":
-            # Sắp hết: trong 30 ngày
             today = datetime.now().strftime("%Y-%m-%d")
             from datetime import timedelta
             future = (datetime.now() + timedelta(days=30)).strftime("%Y-%m-%d")
@@ -289,16 +295,18 @@ class BaoHanhRepository(BaseRepository[BaoHanh]):
         elif trang_thai == "het_han":
             conditions.append("(bh.trang_thai = 'het_han' OR bh.ngay_ket_thuc < ?)")
             params.append(datetime.now().strftime("%Y-%m-%d"))
-        # else: "tat_ca" - no filter
 
         if search_keyword:
             keyword = f"%{search_keyword}%"
-            conditions.append("(bh.ma_bh LIKE ? OR kh.ho_ten LIKE ?)")
+            conditions.append("(bh.id LIKE ? OR kh.ho_ten LIKE ?)")
             params.extend([keyword, keyword])
+
+        if is_external is not None and is_external in ("0", "1"):
+            conditions.append("bh.is_external = ?")
+            params.append(int(is_external))
 
         where_clause = " AND ".join(conditions) if conditions else "1=1"
 
-        # Count
         count_query = f"""
             SELECT COUNT(*) FROM bao_hanh bh
             LEFT JOIN khach_hang kh ON bh.khach_hang_id = kh.id
@@ -307,7 +315,6 @@ class BaoHanhRepository(BaseRepository[BaoHanh]):
         count_cursor = self.conn.execute(count_query, params)
         total = count_cursor.fetchone()[0]
 
-        # Data
         data_query = f"""
             SELECT bh.*,
                    kh.ho_ten as kh_ho_ten,
@@ -329,3 +336,50 @@ class BaoHanhRepository(BaseRepository[BaoHanh]):
         items = [dict(row) for row in cursor.fetchall()]
 
         return items, total
+
+    def find_by_so_khung(self, so_khung: str) -> Optional[BaoHanh]:
+        """Find warranty by chassis number (for external vehicles)."""
+        cursor = self.conn.execute(
+            "SELECT * FROM bao_hanh WHERE so_khung = ? AND is_external = 1",
+            (so_khung,)
+        )
+        row = cursor.fetchone()
+        return BaoHanh.from_row(row) if row else None
+
+    def find_by_so_may(self, so_may: str) -> Optional[BaoHanh]:
+        """Find warranty by engine number (for external vehicles)."""
+        cursor = self.conn.execute(
+            "SELECT * FROM bao_hanh WHERE so_may = ? AND is_external = 1",
+            (so_may,)
+        )
+        row = cursor.fetchone()
+        return BaoHanh.from_row(row) if row else None
+
+    def find_external_by_so_khung_so_may(
+        self, so_khung: str, so_may: str
+    ) -> Optional[BaoHanh]:
+        """Find external warranty by both chassis and engine number."""
+        cursor = self.conn.execute(
+            """SELECT * FROM bao_hanh
+               WHERE so_khung = ? AND so_may = ? AND is_external = 1""",
+            (so_khung, so_may)
+        )
+        row = cursor.fetchone()
+        return BaoHanh.from_row(row) if row else None
+
+    def create_external(self, bh: BaoHanh) -> BaoHanh:
+        """Create a warranty for an external vehicle (no hop_dong)."""
+        data = bh.to_dict()
+        data.pop("id", None)
+        data.pop("created_at", None)
+        data.pop("updated_at", None)
+        data["is_external"] = 1
+
+        columns = list(data.keys())
+        placeholders = ["?" for _ in columns]
+        values = [data[col] for col in columns]
+
+        sql = f"""INSERT INTO bao_hanh ({', '.join(columns)}) VALUES ({', '.join(placeholders)})"""
+        cursor = self.conn.execute(sql, values)
+        bh.id = cursor.lastrowid
+        return bh

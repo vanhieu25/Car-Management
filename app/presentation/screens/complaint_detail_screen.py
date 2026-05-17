@@ -116,14 +116,27 @@ class ComplaintDetailScreen(QWidget):
                 border: 1px solid #d2d2d7;
                 border-radius: 8px;
                 padding: 12px;
+                background: white;
+            }
+            QTabBar {
+                background: transparent;
             }
             QTabBar::tab {
                 padding: 8px 16px;
                 border-radius: 6px;
+                background-color: #f5f5f7;
+                color: #1d1d1f;
+                font-weight: 500;
+            }
+            QTabBar::tab:hover {
+                background-color: #e5e5ea;
             }
             QTabBar::tab:selected {
                 background-color: #0071e3;
                 color: white;
+            }
+            QTabBar::tab:disabled {
+                color: #d2d2d7;
             }
         """)
 
@@ -145,6 +158,7 @@ class ComplaintDetailScreen(QWidget):
 
         main_layout.addWidget(self._tabs)
         self.setLayout(main_layout)
+        self.setMinimumHeight(600)
 
     def _create_content_tab(self) -> QWidget:
         """Create content tab with complaint details."""
@@ -297,11 +311,10 @@ class ComplaintDetailScreen(QWidget):
         ])
         form_layout.addRow("Chuyển sang:", self._status_combo)
 
-        form_layout.addRow("Lý do *:", None)
         self._ly_do_input = QTextEdit()
         self._ly_do_input.setPlaceholderText("Nhập lý do cập nhật trạng thái...")
         self._ly_do_input.setMaximumHeight(80)
-        form_layout.addRow("", self._ly_do_input)
+        form_layout.addRow("Lý do *:", self._ly_do_input)
 
         self._btn_update_status = QPushButton("Cập nhật")
         self._btn_update_status.setStyleSheet("""
@@ -425,6 +438,10 @@ class ComplaintDetailScreen(QWidget):
                 self._tabs.setTabEnabled(1, False)  # Phân công
                 self._tabs.setTabEnabled(2, False)  # Cập nhật
                 self._tabs.setTabEnabled(3, False)  # Đóng
+            else:
+                self._tabs.setTabEnabled(1, True)
+                self._tabs.setTabEnabled(2, True)
+                self._tabs.setTabEnabled(3, True)
 
         except KhieuNaiNotFoundError:
             QMessageBox.warning(self, "Lỗi", "Khiếu nại không tồn tại")

@@ -73,7 +73,8 @@ class ContentArea(QStackedWidget):
         # Remove from stacked widget
         screen = self._screens.pop(module_id)
         self.removeWidget(screen)
-        
+        screen.deleteLater()
+
         return True
     
     def show_screen(self, module_id: str) -> bool:

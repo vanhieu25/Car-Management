@@ -92,6 +92,36 @@ class BaoDuongRepository(BaseRepository[BaoDuong]):
         )
         return cursor.rowcount > 0
 
+    def update_status(self, id: int, new_status: str, ngay_thuc_te: str = None) -> bool:
+        """Update status of bao_duong record.
+
+        Args:
+            id: BaoDuong ID.
+            new_status: New status value.
+            ngay_thuc_te: Actual completion date (set when status='hoan_thanh').
+
+        Returns:
+            True if updated, False otherwise.
+        """
+        from datetime import datetime
+        now = datetime.now().isoformat()
+        if new_status == 'hoan_thanh' and ngay_thuc_te:
+            cursor = self.conn.execute(
+                """UPDATE bao_duong
+                   SET trang_thai = ?, ngay_thuc_te = ?, updated_at = ?
+                   WHERE id = ?""",
+                (new_status, ngay_thuc_te, now, id)
+            )
+        else:
+            cursor = self.conn.execute(
+                """UPDATE bao_duong
+                   SET trang_thai = ?, updated_at = ?
+                   WHERE id = ?""",
+                (new_status, now, id)
+            )
+        self.conn.commit()
+        return cursor.rowcount > 0
+
     def has_active_records(self, id: int) -> bool:
         """Check if bao_duong has active (non-cancelled) records.
         

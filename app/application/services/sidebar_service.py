@@ -29,14 +29,18 @@ SIDEBAR_MODULES = [
     ("khach_hang", "Khách hàng", "👥", "khach_hang", 2, "Ctrl+3", "Nghiệp vụ", 1),
     ("nhan_vien", "Nhân viên", "👤", "nhan_vien", 3, "Ctrl+4", "Nghiệp vụ", 1),
     ("hop_dong", "Hợp đồng", "📄", "hop_dong", 4, "Ctrl+5", "Nghiệp vụ", 1),
+    ("thanh_toan_hd", "Thanh toán HĐ", "💰", "hop_dong", 5, None, "Nghiệp vụ", 1),
     ("kho", "Kho hàng", "📦", "nha_cung_cap", 5, "Ctrl+6", "Nghiệp vụ", 1),
     
     # Nghiệp vụ mở rộng
     ("phu_kien", "Phụ kiện", "🔧", "phu_kien", 10, "Ctrl+7", "Mở rộng", 2),
     ("khuyen_mai", "Khuyến mãi", "🎁", "khuyen_mai", 11, None, "Mở rộng", 2),
     ("bao_hanh", "Bảo hành", "🛡️", "bao_hanh", 12, "Ctrl+8", "Mở rộng", 2),
-    ("nha_cung_cap", "Nhà cung cấp", "🏭", "nha_cung_cap", 13, None, "Mở rộng", 2),
-    ("tra_gop", "Trả góp", "💳", "tra_gop", 14, None, "Mở rộng", 2),
+    ("yeu_cau_bh", "Yêu cầu bảo hành", "🔧", "bao_hanh", 13, None, "Mở rộng", 2),
+    ("bao_hiem", "Bảo hiểm", "🔖", "bao_hiem", 14, None, "Mở rộng", 2),
+    ("thanh_toan_bh", "Thanh toán BH", "💰", "bao_hiem", 15, None, "Mở rộng", 2),
+    ("nha_cung_cap", "Nhà cung cấp", "🏭", "nha_cung_cap", 16, None, "Mở rộng", 2),
+    ("tra_gop", "Trả góp", "💳", "tra_gop", 18, None, "Mở rộng", 2),
     
     # Hậu mãi
     ("bao_duong", "Bảo dưỡng", "🔧", "bao_duong", 20, None, "Hậu mãi", 3),

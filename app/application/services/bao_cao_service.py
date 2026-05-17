@@ -627,10 +627,11 @@ class BaoCaoService:
             from_dt = datetime.strptime(from_date, "%Y-%m-%d")
             to_dt = datetime.strptime(to_date, "%Y-%m-%d")
 
+            # Auto-swap if from_date is after to_date
             if from_dt > to_dt:
-                raise ValidationError(
-                    f"Ngày bắt đầu ({from_date}) phải trước hoặc bằng ngày kết thúc ({to_date})"
-                )
+                from_dt, to_dt = to_dt, from_dt
+                from_date = from_dt.strftime("%Y-%m-%d")
+                to_date = to_dt.strftime("%Y-%m-%d")
         except ValueError as e:
             raise ValidationError(f"Định dạng ngày không hợp lệ: {e}. Dùng YYYY-MM-DD.")
 

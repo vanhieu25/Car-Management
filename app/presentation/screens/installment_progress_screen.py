@@ -18,7 +18,7 @@ from typing import Optional
 from PyQt6.QtWidgets import (
     QWidget, QVBoxLayout, QHBoxLayout, QLabel, QTableWidget,
     QTableWidgetItem, QPushButton, QHeaderView, QMessageBox,
-    QGroupBox, QProgressBar, QScrollArea
+    QGroupBox, QProgressBar, QScrollArea, QAbstractItemView
 )
 from PyQt6.QtCore import Qt, pyqtSignal
 from PyQt6.QtGui import QColor, QFont
@@ -94,10 +94,13 @@ class InstallmentProgressScreen(QWidget):
         scroll = QScrollArea()
         scroll.setWidgetResizable(True)
         scroll.setStyleSheet("border: none;")
+        scroll.setMinimumHeight(600)
 
         content_widget = QWidget()
+        content_widget.setStyleSheet("background-color: #f5f5f7;")
         content_layout = QVBoxLayout(content_widget)
         content_layout.setSpacing(16)
+        content_layout.setContentsMargins(24, 24, 24, 24)
 
         # Installment details header
         details_group = QGroupBox("Thông tin trả góp")
@@ -203,6 +206,7 @@ class InstallmentProgressScreen(QWidget):
                 border-radius: 8px;
                 padding: 16px;
                 font-weight: 600;
+                min-width: 700px;
             }
             QGroupBox::title {
                 subcontrol-origin: margin;
@@ -213,10 +217,12 @@ class InstallmentProgressScreen(QWidget):
         schedule_layout = QVBoxLayout(schedule_group)
 
         self._schedule_table = QTableWidget()
-        self._schedule_table.setColumnCount(5)
+        self._schedule_table.setColumnCount(4)
         self._schedule_table.setHorizontalHeaderLabels([
-            "Kỳ", "Ngày đến hạn", "Số tiền", "Trạng thái", "Thao tác"
+            "Kỳ", "Ngày đến hạn", "Số tiền", "Trạng thái"
         ])
+        self._schedule_table.setSelectionBehavior(QAbstractItemView.SelectionBehavior.SelectRows)
+        self._schedule_table.setSelectionMode(QAbstractItemView.SelectionMode.SingleSelection)
         self._schedule_table.setStyleSheet("""
             QTableWidget {
                 border: 1px solid #e5e5ea;
@@ -231,12 +237,48 @@ class InstallmentProgressScreen(QWidget):
             QTableWidget::item {
                 padding: 6px;
             }
+            QTableWidget::item:selected {
+                background-color: #0066cc;
+                color: white;
+            }
         """)
         self._schedule_table.setEditTriggers(QTableWidget.EditTrigger.NoEditTriggers)
         header = self._schedule_table.horizontalHeader()
-        header.setSectionResizeMode(QHeaderView.ResizeMode.Stretch)
-        self._schedule_table.setMinimumHeight(300)
+        header.setSectionResizeMode(QHeaderView.ResizeMode.ResizeToContents)
+        header.setMinimumSectionSize(120)
+        header.setSectionResizeMode(1, QHeaderView.ResizeMode.Stretch)
+        self._schedule_table.verticalHeader().setVisible(False)
+        self._schedule_table.setMinimumHeight(400)
+        self._schedule_table.itemSelectionChanged.connect(self._on_selection_changed)
         schedule_layout.addWidget(self._schedule_table)
+
+        # Payment button below table
+        btn_layout = QHBoxLayout()
+        btn_layout.addStretch()
+
+        self._pay_btn = QPushButton("💰 Ghi nhận thanh toán")
+        self._pay_btn.setEnabled(False)
+        self._pay_btn.setStyleSheet("""
+            QPushButton {
+                background-color: #007aff;
+                color: white;
+                border: none;
+                border-radius: 6px;
+                padding: 10px 20px;
+                font-size: 14px;
+                font-weight: 500;
+            }
+            QPushButton:hover {
+                background-color: #0066cc;
+            }
+            QPushButton:disabled {
+                background-color: #d2d2d7;
+                color: #86868b;
+            }
+        """)
+        self._pay_btn.clicked.connect(self._on_pay_clicked)
+        btn_layout.addWidget(self._pay_btn)
+        schedule_layout.addLayout(btn_layout)
 
         content_layout.addWidget(schedule_group)
 
@@ -364,46 +406,41 @@ class InstallmentProgressScreen(QWidget):
             color_hex = status_colors.get(ls.trang_thai, "#8e8e93")
             item_status.setBackground(QColor(color_hex))
             item_status.setForeground(QColor(255, 255, 255))
+            item_status.setData(Qt.ItemDataRole.UserRole, ls.id)
+            item_status.setData(Qt.ItemDataRole.UserRole + 1, ls.trang_thai)
             self._schedule_table.setItem(row, 3, item_status)
 
-            # Thao tác - button if chua_tra
-            if ls.trang_thai == "chua_tra":
-                pay_btn = QPushButton("💰 Ghi nhận thanh toán")
-                pay_btn.setStyleSheet("""
-                    QPushButton {
-                        background-color: #007aff;
-                        color: white;
-                        border: none;
-                        border-radius: 4px;
-                        padding: 6px 12px;
-                        font-size: 13px;
-                    }
-                    QPushButton:hover {
-                        background-color: #0066cc;
-                    }
-                """)
-                pay_btn.clicked.connect(lambda checked, lid=ls.id: self._on_record_payment(lid))
-                self._schedule_table.setCellWidget(row, 4, pay_btn)
+        # Store lich_su list for reference
+        self._lich_su_list = lich_su_list
+        self._selected_lich_su_id = None
+        self._pay_btn.setEnabled(False)
+
+    def _on_selection_changed(self):
+        """Handle row selection change."""
+        selected = self._schedule_table.selectedItems()
+        if not selected:
+            self._pay_btn.setEnabled(False)
+            self._selected_lich_su_id = None
+            return
+
+        # Get the selected row
+        row = selected[0].row()
+        item = self._schedule_table.item(row, 3)
+        if item:
+            ls_id = item.data(Qt.ItemDataRole.UserRole)
+            status = item.data(Qt.ItemDataRole.UserRole + 1)
+            if status == "chua_tra":
+                self._selected_lich_su_id = ls_id
+                self._pay_btn.setEnabled(True)
             else:
-                # Show payment date if paid
-                if ls.trang_thai == "da_tra" and ls.ngay_thuc_te:
-                    ngay_tra = ls.ngay_thuc_te[:10]
-                    note_label = QLabel(f"Đã trả ngày {ngay_tra}")
-                    note_label.setStyleSheet("color: #34c759; font-size: 12px;")
-                    self._schedule_table.setCellWidget(row, 4, note_label)
-                elif ls.trang_thai == "qua_han":
-                    note_label = QLabel("⚠️ Quá hạn")
-                    note_label.setStyleSheet("color: #ff3b30; font-size: 12px; font-weight: 600;")
-                    self._schedule_table.setCellWidget(row, 4, note_label)
-                else:
-                    self._schedule_table.setItem(row, 4, QTableWidgetItem(""))
+                self._selected_lich_su_id = None
+                self._pay_btn.setEnabled(False)
 
-    def _on_record_payment(self, lich_su_id: int):
-        """Handle record payment button click.
+    def _on_pay_clicked(self):
+        """Handle pay button click."""
+        if not self._selected_lich_su_id:
+            return
 
-        Args:
-            lich_su_id: tra_gop_lich_su ID.
-        """
         reply = QMessageBox.question(
             self,
             "Xác nhận thanh toán",
@@ -417,13 +454,12 @@ class InstallmentProgressScreen(QWidget):
 
         try:
             self._service.record_payment(
-                lich_su_id=lich_su_id,
+                lich_su_id=self._selected_lich_su_id,
                 nhan_vien_id=self._session.nhan_vien_id if self._session else None,
             )
-
             QMessageBox.information(self, "Thành công", "Đã ghi nhận thanh toán thành công!")
-            self._load_data()  # Refresh
-
+            self._schedule_table.clearSelection()
+            self._load_data()
         except Exception as e:
             QMessageBox.critical(self, "Lỗi", f"Không thể ghi nhận thanh toán: {str(e)}")
 

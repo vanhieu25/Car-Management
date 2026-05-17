@@ -334,9 +334,9 @@ class ContractListScreen(QWidget):
         if self._status_combo.currentText() != "Tất cả":
             params["trang_thai"] = status_map.get(self._status_combo.currentText())
         
-        # Date range
+        # Date range - using < next day so records on end date are included
         date_from = self._date_from.date().toString("yyyy-MM-dd")
-        date_to = self._date_to.date().toString("yyyy-MM-dd")
+        date_to = self._date_to.date().addDays(1).toString("yyyy-MM-dd")
         params["ngay_tao_from"] = date_from
         params["ngay_tao_to"] = date_to
         

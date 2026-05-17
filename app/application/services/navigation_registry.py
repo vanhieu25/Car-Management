@@ -20,6 +20,7 @@ class ModuleId(Enum):
     PHU_KIEN = "phu_kien"
     KHUYEN_MAI = "khuyen_mai"
     BAO_HANH = "bao_hanh"
+    BAO_HIEM = "bao_hiem"
     NHA_CUNG_CAP = "nha_cung_cap"
     TRA_GOP = "tra_gop"
     BAO_DUONG = "bao_duong"

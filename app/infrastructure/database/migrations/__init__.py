@@ -23,6 +23,20 @@ from app.infrastructure.database.migrations.migration_020_report_views import ru
 from app.infrastructure.database.migrations.migration_021_dashboard_indexes import run as run_021
 from app.infrastructure.database.migrations.migration_022_nv_kpi_columns import run as run_022
 from app.infrastructure.database.migrations.migration_023_sit_missing_columns import run as run_023
+from app.infrastructure.database.migrations.migration_024_bao_hanh_external import run as run_024
+from app.infrastructure.database.migrations.migration_025_bao_hiem import run as run_025
+from app.infrastructure.database.migrations.migration_026_bao_hiem_table import run as run_026
+from app.infrastructure.database.migrations.migration_027_dai_ly import run as run_027
+from app.infrastructure.database.migrations.migration_028_cong_ty_bh import run as run_028
+from app.infrastructure.database.migrations.migration_029_bao_hiem_extend import run as run_029
+from app.infrastructure.database.migrations.migration_030_fix_ncc_score import run as run_030
+from app.infrastructure.database.migrations.migration_031_bao_hiem_gia_tri import run as run_031
+from app.infrastructure.database.migrations.migration_032_cuu_ho_trang_thai import run as run_032
+from app.infrastructure.database.migrations.migration_033_bao_hiem_da_thanh_toan import run as run_033
+from app.infrastructure.database.migrations.migration_034_khach_hang_trang_thai import run as run_034
+from app.infrastructure.database.migrations.migration_035_hop_dong_da_thanh_toan import run as run_035
+from app.infrastructure.database.migrations.migration_036_nhan_vien_dia_chi import run as run_036
+from app.infrastructure.database.migrations.migration_037_nha_cung_cap_recreate import run as run_037
 
 
 MIGRATIONS = [
@@ -49,4 +63,18 @@ MIGRATIONS = [
     (21, "021_dashboard_indexes", run_021),
     (22, "022_nv_kpi_columns", run_022),
     (23, "023_sit_missing_columns", run_023),
+    (24, "024_bao_hanh_external", run_024),
+    (25, "025_bao_hiem", run_025),
+    (26, "026_bao_hiem_table", run_026),
+    (27, "027_dai_ly", run_027),
+    (28, "028_cong_ty_bh", run_028),
+    (29, "029_bao_hiem_extend", run_029),
+    (30, "030_fix_ncc_score", run_030),
+    (31, "031_bao_hiem_gia_tri", run_031),
+    (32, "032_cuu_ho_trang_thai", run_032),
+    (33, "033_bao_hiem_da_thanh_toan", run_033),
+    (34, "034_khach_hang_trang_thai", run_034),
+    (35, "035_hop_dong_da_thanh_toan", run_035),
+    (36, "036_nhan_vien_dia_chi", run_036),
+    (37, "037_nha_cung_cap_recreate", run_037),
 ]

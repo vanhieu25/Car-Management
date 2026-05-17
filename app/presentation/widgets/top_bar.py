@@ -44,13 +44,13 @@ class TopBar(QWidget):
         
         # Logo placeholder
         self.logo_label = QLabel("🚗")
-        self.logo_label.setStyleSheet("font-size: 24px;")
+        self.logo_label.setStyleSheet("font-size: 24px; background: transparent;")
         left_layout.addWidget(self.logo_label)
         
         # Dealer name
         self.dealer_name_label = QLabel("Đại lý xe hơi")
         self.dealer_name_label.setStyleSheet(
-            "color: #ffffff; font-size: 15px; font-weight: 600;"
+            "color: #333333; font-size: 15px; font-weight: 600; background: transparent;"
         )
         left_layout.addWidget(self.dealer_name_label)
         
@@ -62,14 +62,14 @@ class TopBar(QWidget):
         
         # User info
         self.user_label = QLabel()
-        self.user_label.setStyleSheet("color: #ffffff; font-size: 14px;")
+        self.user_label.setStyleSheet("color: #333333; font-size: 14px; background: transparent;")
         right_layout.addWidget(self.user_label)
         
         # Dropdown button
         self.menu_btn = QPushButton("▼")
         self.menu_btn.setFixedWidth(24)
         self.menu_btn.setStyleSheet(
-            "background: transparent; color: #ffffff; border: none; font-size: 10px;"
+            "background: transparent; color: #333333; border: none; font-size: 10px;"
         )
         right_layout.addWidget(self.menu_btn)
         
@@ -88,7 +88,7 @@ class TopBar(QWidget):
         
         # Apply stylesheet
         self.setStyleSheet(
-            "background-color: #000000;"
+            "background-color: #ffffff;"
         )
     
     def _setup_connections(self):
@@ -142,4 +142,4 @@ class TopBar(QWidget):
         
         # Reset to emoji
         self.logo_label.setText("🚗")
-        self.logo_label.setStyleSheet("font-size: 24px;")
+        self.logo_label.setStyleSheet("font-size: 24px; background: transparent;")

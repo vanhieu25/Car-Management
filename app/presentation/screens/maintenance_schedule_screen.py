@@ -18,7 +18,7 @@ from PyQt6.QtWidgets import (
     QWidget, QVBoxLayout, QHBoxLayout, QLabel, QTableWidget,
     QTableWidgetItem, QPushButton, QLineEdit, QComboBox,
     QHeaderView, QAbstractItemView, QMessageBox, QGroupBox,
-    QCalendarWidget, QStackedWidget, QDateEdit
+    QCalendarWidget, QStackedWidget, QDateEdit, QDialog
 )
 from PyQt6.QtCore import Qt, pyqtSignal, QDate
 from PyQt6.QtGui import QColor, QFont
@@ -114,7 +114,25 @@ class MaintenanceScheduleScreen(QWidget):
             """)
             self._delete_btn.clicked.connect(self._on_delete_clicked)
             action_layout.addWidget(self._delete_btn)
-        
+
+            self._status_btn = QPushButton("🔄 Cập nhật trạng thái")
+            self._status_btn.setStyleSheet("""
+                QPushButton {
+                    background-color: #ff9500;
+                    color: white;
+                    border: none;
+                    border-radius: 6px;
+                    padding: 10px 20px;
+                    font-size: 14px;
+                    font-weight: 500;
+                }
+                QPushButton:hover {
+                    background-color: #e68600;
+                }
+            """)
+            self._status_btn.clicked.connect(self._on_status_clicked)
+            action_layout.addWidget(self._status_btn)
+
         action_layout.addStretch()
         
         layout.addLayout(action_layout)
@@ -586,14 +604,11 @@ class MaintenanceScheduleScreen(QWidget):
             }
             
             for row_idx, row in enumerate(rows):
-                # Store ID
-                item_id = QTableWidgetItem(str(row[0]))
-                item_id.setData(Qt.ItemDataRole.UserRole, row[0])
-                
                 # Ngày
                 ngay_du_kien = row[1] or ""
                 ngay_formatted = ngay_du_kien[:10] if ngay_du_kien else "N/A"
                 item_ngay = QTableWidgetItem(ngay_formatted)
+                item_ngay.setData(Qt.ItemDataRole.UserRole, row[0])
                 
                 # Giờ
                 gio = ngay_du_kien[11:16] if len(ngay_du_kien) > 16 else "08:00"
@@ -652,23 +667,35 @@ class MaintenanceScheduleScreen(QWidget):
     
     def _get_selected_id(self) -> int:
         """Get selected maintenance ID from current table.
-        
+
         Returns:
             Maintenance ID or -1 if none selected.
         """
-        # Determine which table is visible
-        if self._current_view == "calendar":
-            table = self._schedule_table
-        else:
-            table = self._list_table
-        
-        selected_rows = table.selectionModel().selectedRows()
-        if not selected_rows:
-            return -1
-        row = selected_rows[0].row()
-        item = table.item(row, 0)
-        if item:
-            return item.data(Qt.ItemDataRole.UserRole)
+        table = self._schedule_table if self._current_view == "calendar" else self._list_table
+
+        # First try selection model
+        sm = table.selectionModel()
+        if sm and sm.hasSelection():
+            rows = sm.selectedRows()
+            if rows:
+                row = rows[0].row()
+                item = table.item(row, 0)
+                if item:
+                    val = item.data(Qt.ItemDataRole.UserRole)
+                    print(f"[_get_selected_id] via selectionModel: row={row}, val={val}")
+                    return val if val is not None else -1
+
+        # Fallback: try current row
+        curr_row = table.currentRow()
+        print(f"[_get_selected_id] currentRow={curr_row}")
+        if curr_row >= 0:
+            item = table.item(curr_row, 0)
+            if item:
+                val = item.data(Qt.ItemDataRole.UserRole)
+                print(f"[_get_selected_id] via currentRow: row={curr_row}, val={val}")
+                return val if val is not None else -1
+
+        print(f"[_get_selected_id] returning -1")
         return -1
     
     def _on_delete_clicked(self):
@@ -677,22 +704,79 @@ class MaintenanceScheduleScreen(QWidget):
         if item_id < 0:
             QMessageBox.warning(self, "Chưa chọn", "Vui lòng chọn lịch bảo dưỡng cần xoá.")
             return
+
+        # Debug: inspect selected item
+        table = self._schedule_table if self._current_view == "calendar" else self._list_table
+        curr_row = table.currentRow()
+        print(f"[DEBUG] Delete: current_view={self._current_view}, currentRow={curr_row}, item_id={item_id}")
+        if curr_row >= 0:
+            col0 = table.item(curr_row, 0)
+            if col0:
+                print(f"[DEBUG] col0 text='{col0.text()}', UserRole={col0.data(Qt.ItemDataRole.UserRole)}")
+            for c in range(table.columnCount()):
+                it = table.item(curr_row, c)
+                if it:
+                    print(f"[DEBUG] col{c}: '{it.text()}', UserRole={it.data(Qt.ItemDataRole.UserRole)}")
         
         reply = QMessageBox.question(
             self,
             "Xác nhận xoá",
-            "Bạn có chắc muốn xoá lịch bảo dưỡng này?\n\nHành động này không thể hoàn tác.",
+            f"Bạn có chắc muốn xoá lịch bảo dưỡng #{item_id}?\n\nHành động này không thể hoàn tác.",
             QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No
         )
         if reply != QMessageBox.StandardButton.Yes:
             return
-        
+
         try:
+            # First verify what we're deleting
+            print(f"[DEBUG] About to delete bao_duong id={item_id}")
+            cursor = self._db_conn.execute("SELECT id, trang_thai FROM bao_duong WHERE id=?", (item_id,))
+            row = cursor.fetchone()
+            print(f"[DEBUG] Current record: id={row[0] if row else 'NOT FOUND'}, trang_thai={row[1] if row else 'N/A'}")
+
             self._bd_service.delete(item_id)
             QMessageBox.information(self, "Thành công", "Đã xoá thành công")
             self._load_data()
         except Exception as e:
+            import traceback
+            traceback.print_exc()
             QMessageBox.critical(self, "Lỗi", f"Không thể xoá: {str(e)}")
+
+    def _on_status_clicked(self):
+        """Handle status update button click."""
+        item_id = self._get_selected_id()
+        if item_id < 0:
+            QMessageBox.warning(self, "Chưa chọn", "Vui lòng chọn lịch bảo dưỡng.")
+            return
+
+        # Get current record
+        bd = self._bd_service.get_by_id(item_id)
+        if not bd:
+            QMessageBox.warning(self, "Lỗi", "Không tìm thấy lịch bảo dưỡng.")
+            return
+
+        # Get allowed transitions
+        allowed = BaoDuongService.VALID_TRANG_THAI_TRANSITIONS.get(bd.trang_thai, [])
+        if not allowed:
+            QMessageBox.information(
+                self,
+                "Không thể đổi",
+                "Trạng thái hiện tại không thể chuyển sang trạng thái khác."
+            )
+            return
+
+        # Show dialog
+        from app.presentation.screens.maintenance_status_dialog import MaintenanceStatusDialog
+        dialog = MaintenanceStatusDialog(bd.trang_thai, allowed, self)
+
+        if dialog.exec() == QDialog.DialogCode.Accepted:
+            new_status, ngay_thuc_te = dialog.get_values()
+            try:
+                self._bd_service.update_status(item_id, new_status, ngay_thuc_te)
+                QMessageBox.information(self, "Thành công", "Đã cập nhật trạng thái thành công.")
+                self._load_data()
+            except Exception as e:
+                QMessageBox.critical(self, "Lỗi", f"Không thể cập nhật: {str(e)}")
 
     def refresh(self):
         """Refresh the data."""

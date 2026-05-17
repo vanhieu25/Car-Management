@@ -16,6 +16,7 @@ class KhuyenMaiPhamVi:
     khuyen_mai_id: int
     loai_ap_dung: str  # 'all', 'hang', 'dong_xe', 'xe'
     gia_tri_ap_dung: str = None
+    created_at: str = None
 
 
 class KhuyenMaiRepository(BaseRepository[KhuyenMai]):

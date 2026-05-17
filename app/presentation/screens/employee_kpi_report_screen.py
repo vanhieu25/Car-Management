@@ -26,6 +26,7 @@ from PyQt6.QtCore import Qt
 from PyQt6.QtGui import QColor, QPainter, QPen, QFont
 
 from app.application.services.bao_cao_service import BaoCaoService
+from app.application.services.session import CurrentSession
 from app.infrastructure.exporters.excel_exporter import ExcelExporter
 
 

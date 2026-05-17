@@ -161,11 +161,14 @@ class KhachHangRepository(BaseRepository[KhachHang]):
             )
             conditions.append(f"({birthday_conditions})")
             params.extend(target_dates)
-        
+
+        # Always exclude inactive customers (soft-deleted)
+        conditions.append("COALESCE(trang_thai, 'active') = 'active'")
+
         where_clause = " AND ".join(conditions) if conditions else "1=1"
-        
+
         query = f"""
-            SELECT * FROM khach_hang 
+            SELECT * FROM khach_hang
             WHERE {where_clause}
             ORDER BY ho_ten
             LIMIT ? OFFSET ?
@@ -197,9 +200,12 @@ class KhachHangRepository(BaseRepository[KhachHang]):
         if filter.phan_loai:
             conditions.append("phan_loai = ?")
             params.append(filter.phan_loai)
-        
+
+        # Always exclude inactive customers (soft-deleted)
+        conditions.append("COALESCE(trang_thai, 'active') = 'active'")
+
         where_clause = " AND ".join(conditions) if conditions else "1=1"
-        
+
         cursor = self.conn.execute(
             f"SELECT COUNT(*) FROM khach_hang WHERE {where_clause}",
             params

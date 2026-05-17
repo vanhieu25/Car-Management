@@ -85,6 +85,20 @@ class YeuCauSearchResult:
     total_pages: int
 
 
+@dataclass
+class ExternalBaoHanhData:
+    """Data for creating external warranty (no contract)."""
+    khach_hang_id: int = 0
+    so_khung: str = ""
+    so_may: str = ""
+    hang_xe: str = ""
+    dong_xe: str = ""
+    thoi_han_bh: int = 24
+    ngay_bat_dau: str = ""
+    pham_vi: str = ""
+    nhan_vien_id: int = None
+
+
 class BaoHanhService:
     """Service for warranty management operations."""
 
@@ -128,6 +142,7 @@ class BaoHanhService:
         self,
         trang_thai: str = None,
         search_keyword: str = None,
+        is_external: str = None,
         page: int = 1,
         page_size: int = 50,
     ) -> YeuCauSearchResult:
@@ -136,6 +151,7 @@ class BaoHanhService:
         Args:
             trang_thai: Filter by status ('con_hieu_luc', 'sap_het_han', 'het_han', 'tat_ca').
             search_keyword: Search by BH code or customer name.
+            is_external: Filter by external flag ('0', '1', None for all).
             page: Page number (1-indexed).
             page_size: Results per page.
 
@@ -146,6 +162,7 @@ class BaoHanhService:
         items, total = self._repo.get_all_with_filter(
             trang_thai=trang_thai,
             search_keyword=search_keyword,
+            is_external=is_external,
             limit=page_size,
             offset=offset,
         )
@@ -228,7 +245,7 @@ class BaoHanhService:
                 )
             )
 
-            bh_id = cursor.lastrowid if hasattr(cursor, 'lastrowid') else self.conn.execute("SELECT last_insert_rowid()").fetchone()[0]
+            bh_id = self.conn.execute("SELECT last_insert_rowid()").fetchone()[0]
 
             self.conn.execute("COMMIT")
         except Exception as e:
@@ -446,6 +463,82 @@ class BaoHanhService:
 
         renderer = PdfRenderer(template_dir, css_path)
         return renderer.render_warranty(bh_id, output_path, self.conn)
+
+    def create_external_warranty(
+        self, data: ExternalBaoHanhData
+    ) -> Dict[str, Any]:
+        """Create a warranty for a vehicle sold by another dealership.
+
+        BR-BH-02: ngay_ket_thuc = ngay_bat_dau + thoi_han_bh months
+        No hop_dong_id required.
+
+        Args:
+            data: ExternalBaoHanhData with customer info and vehicle ID.
+
+        Returns:
+            Dict with created warranty details.
+
+        Raises:
+            ValidationError: If vehicle already has an external warranty.
+        """
+        # Check if external warranty already exists for this chassis/engine
+        existing = self._repo.find_external_by_so_khung_so_may(
+            data.so_khung, data.so_may
+        )
+        if existing:
+            return self._repo.get_warranty_with_details(existing.id)
+
+        # Calculate end date
+        thoi_han_bh = data.thoi_han_bh or self._settings_service.get_warranty_months()
+        start_date = datetime.fromisoformat(data.ngay_bat_dau[:10])
+        ngay_ket_thuc = (
+            start_date + relativedelta(months=thoi_han_bh)
+        ).strftime("%Y-%m-%d")
+        now = datetime.now().isoformat()
+
+        from app.domain.entities import BaoHanh
+        bh = BaoHanh(
+            hop_dong_id=None,
+            xe_id=None,
+            khach_hang_id=data.khach_hang_id,
+            thoi_han_bh=thoi_han_bh,
+            ngay_bat_dau=data.ngay_bat_dau[:10],
+            ngay_ket_thuc=ngay_ket_thuc,
+            pham_vi=data.pham_vi or "Bảo hành toàn diện theo điều khoản chuẩn của nhà sản xuất",
+            trang_thai="con_hieu_luc",
+            so_khung=data.so_khung,
+            so_may=data.so_may,
+            is_external=True,
+            created_at=now,
+            created_by=data.nhan_vien_id,
+        )
+
+        self._repo.create_external(bh)
+
+        # Audit log
+        self._audit_service.log_create(
+            action="CREATE_BH_EXTERNAL",
+            nhan_vien_id=data.nhan_vien_id,
+            table="bao_hanh",
+            record_id=bh.id,
+            record_data={"so_khung": data.so_khung, "so_may": data.so_may},
+        )
+
+        return self._repo.get_warranty_with_details(bh.id)
+
+    def find_by_so_khung(self, so_khung: str) -> Optional[Dict[str, Any]]:
+        """Find warranty by chassis number."""
+        bh = self._repo.find_by_so_khung(so_khung)
+        if bh:
+            return self._repo.get_warranty_with_details(bh.id)
+        return None
+
+    def find_by_so_may(self, so_may: str) -> Optional[Dict[str, Any]]:
+        """Find warranty by engine number."""
+        bh = self._repo.find_by_so_may(so_may)
+        if bh:
+            return self._repo.get_warranty_with_details(bh.id)
+        return None
 
     def _suggest_phan_loai(self, mo_ta: str) -> str:
         """Suggest classification based on description keywords.

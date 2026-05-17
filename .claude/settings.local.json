@@ -1,0 +1,13 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(python *)",
+      "WebFetch(domain:minimax-algeng-chat-tts-us.oss-us-east-1.aliyuncs.com)",
+      "Bash(sqlite3 *)",
+      "Bash(python3 *)",
+      "Bash(chcp 65001)",
+      "Bash(pip install *)",
+      "Bash(powershell *)"
+    ]
+  }
+}

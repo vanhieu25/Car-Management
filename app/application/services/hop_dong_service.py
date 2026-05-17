@@ -661,6 +661,111 @@ class HopDongService:
 
         return updated
 
+    def record_payment(
+        self,
+        hop_dong_id: int,
+        so_tien: int,
+        loai_thanh_toan: str = 'thanhtoan_dot',
+        nhan_vien_id: int = None,
+    ) -> HopDong:
+        """Record a payment for contract and update status.
+
+        Auto-update status according to business rules:
+        - `moi_tao` + cọc ≥ 10% → keep as `moi_tao` (but payment recorded)
+        - `moi_tao` + thanh toán đầy đủ (≥ tong_tien) → `da_thanh_toan`
+
+        Args:
+            hop_dong_id: Contract ID.
+            so_tien: Payment amount in VND.
+            loai_thanh_toan: 'dat_coc' | 'thanhtoan_dot' | 'thanhtoan_du'
+            nhan_vien_id: Employee ID processing payment.
+
+        Returns:
+            Updated HopDong entity.
+
+        Raises:
+            HopDongNotFoundError: If contract not found.
+            InvalidStateTransitionError: If contract not in valid state.
+        """
+        hop_dong = self._repo.find_by_id(hop_dong_id)
+        if not hop_dong:
+            raise HopDongNotFoundError(
+                f"Không tìm thấy hợp đồng với ID {hop_dong_id}"
+            )
+
+        # Only allow payment for moi_tao status
+        if hop_dong.trang_thai not in ("moi_tao",):
+            raise InvalidStateTransitionError(
+                f"Không thể thanh toán hợp đồng ở trạng thái '{hop_dong.trang_thai}'"
+            )
+
+        # Validate amount
+        if so_tien <= 0:
+            raise ValidationError("Số tiền thanh toán phải lớn hơn 0")
+
+        # Calculate minimum deposit (10% of total)
+        min_deposit = int(hop_dong.tong_tien * 0.1)
+
+        # Determine new status
+        new_status = hop_dong.trang_thai
+
+        if loai_thanh_toan == 'thanhtoan_du':
+            # Full payment - must be >= 100% of total
+            if so_tien >= hop_dong.tong_tien:
+                new_status = 'da_thanh_toan'
+        elif loai_thanh_toan == 'dat_coc':
+            # Deposit - just validate minimum 10%
+            if so_tien < min_deposit:
+                raise ValidationError(
+                    f"Đặt cọc tối thiểu phải >= {min_deposit:,} VND (10% tổng tiền)".replace(",", ".")
+                )
+        # 'thanhtoan_dot' allows any amount >= min_deposit
+
+        # Update within savepoint
+        sp_name = "sp_payment"
+        try:
+            self.conn.execute(f"SAVEPOINT {sp_name}")
+
+            now = datetime.now().isoformat()
+
+            # Always update da_thanh_toan (accumulate payments)
+            self.conn.execute(
+                """UPDATE hop_dong
+                   SET da_thanh_toan = da_thanh_toan + ?,
+                       updated_at = ?
+                   WHERE id = ?""",
+                (so_tien, now, hop_dong_id)
+            )
+
+            if new_status != hop_dong.trang_thai:
+                self.conn.execute(
+                    """UPDATE hop_dong
+                       SET trang_thai = ?,
+                           ngay_thanh_toan = ?,
+                           updated_at = ?
+                       WHERE id = ?""",
+                    (new_status, now, now, hop_dong_id)
+                )
+
+            self.conn.execute(f"RELEASE SAVEPOINT {sp_name}")
+            self.conn.commit()
+        except Exception as e:
+            self.conn.execute(f"ROLLBACK TO SAVEPOINT {sp_name}")
+            raise
+
+        # Audit log
+        updated = self._repo.find_by_id(hop_dong_id)
+        self._audit_service.log_update(
+            action="RECORD_HD_PAYMENT",
+            nhan_vien_id=nhan_vien_id,
+            table="hop_dong",
+            record_id=hop_dong_id,
+            before=hop_dong.to_dict(),
+            after=updated.to_dict(),
+        )
+
+        return updated
+
     def cancel(
         self,
         hop_dong_id: int,

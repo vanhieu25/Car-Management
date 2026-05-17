@@ -155,12 +155,11 @@ class PdfRenderer:
         settings = {}
         for row in cursor.fetchall():
             settings[row[0]] = row[1]
-        hop_dong["system_settings"] = settings
 
         # Add helper functions/filters for template
         hop_dong["format_vnd"] = self._format_vnd
 
-        return hop_dong
+        return {"hop_dong": hop_dong, "system_settings": settings, "format_vnd": self._format_vnd}
 
     def _load_warranty_data(self, bh_id: int, conn) -> dict:
         """Load warranty data with all relations.
@@ -178,6 +177,7 @@ class PdfRenderer:
             raise ValueError(f"Không tìm thấy bảo hành với ID {bh_id}")
 
         bh = dict(row)
+        is_external = bh.get("is_external", 0) == 1
 
         # Load customer
         cursor = conn.execute(
@@ -187,21 +187,27 @@ class PdfRenderer:
         kh_row = cursor.fetchone()
         bh["khach_hang"] = dict(kh_row) if kh_row else {}
 
-        # Load vehicle
-        cursor = conn.execute(
-            "SELECT * FROM xe WHERE id = ?",
-            (bh["xe_id"],)
-        )
-        xe_row = cursor.fetchone()
-        bh["xe"] = dict(xe_row) if xe_row else {}
+        # Load vehicle (may be null for external)
+        if bh.get("xe_id"):
+            cursor = conn.execute(
+                "SELECT * FROM xe WHERE id = ?",
+                (bh["xe_id"],)
+            )
+            xe_row = cursor.fetchone()
+            bh["xe"] = dict(xe_row) if xe_row else {}
+        else:
+            bh["xe"] = {}
 
-        # Load hop dong
-        cursor = conn.execute(
-            "SELECT * FROM hop_dong WHERE id = ?",
-            (bh["hop_dong_id"],)
-        )
-        hd_row = cursor.fetchone()
-        bh["hop_dong"] = dict(hd_row) if hd_row else {}
+        # Load hop dong (may be null for external)
+        if bh.get("hop_dong_id"):
+            cursor = conn.execute(
+                "SELECT * FROM hop_dong WHERE id = ?",
+                (bh["hop_dong_id"],)
+            )
+            hd_row = cursor.fetchone()
+            bh["hop_dong"] = dict(hd_row) if hd_row else {}
+        else:
+            bh["hop_dong"] = {}
 
         # Load warranty requests
         cursor = conn.execute(
@@ -219,12 +225,11 @@ class PdfRenderer:
         settings = {}
         for row in cursor.fetchall():
             settings[row[0]] = row[1]
-        bh["system_settings"] = settings
 
         # Add helper functions for template
         bh["format_vnd"] = self._format_vnd
 
-        return bh
+        return {"bao_hanh": bh, "system_settings": settings, "format_vnd": self._format_vnd}
 
     @staticmethod
     def _format_vnd(amount: int) -> str:

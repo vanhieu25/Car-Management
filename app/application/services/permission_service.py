@@ -17,6 +17,7 @@ class Module(Enum):
     PHU_KIEN = "phu_kien"        # Phụ kiện
     KHUYEN_MAI = "khuyen_mai"     # Khuyến mãi
     BAO_HANH = "bao_hanh"        # Bảo hành
+    BAO_HIEM = "bao_hiem"        # Bảo hiểm
     NHA_CUNG_CAP = "nha_cung_cap"  # Nhà cung cấp
     TRA_GOP = "tra_gop"          # Trả góp
     BAO_DUONG = "bao_duong"      # Bảo dưỡng
@@ -64,6 +65,7 @@ PERMISSION_MATRIX = {
         Module.PHU_KIEN.value: [Action.VIEW, Action.CREATE, Action.UPDATE, Action.DELETE],
         Module.KHUYEN_MAI.value: [Action.VIEW, Action.CREATE, Action.UPDATE, Action.DELETE],
         Module.BAO_HANH.value: [Action.VIEW, Action.CREATE, Action.UPDATE, Action.DELETE],
+        Module.BAO_HIEM.value: [Action.VIEW, Action.CREATE, Action.UPDATE, Action.DELETE],
         Module.NHA_CUNG_CAP.value: [Action.VIEW, Action.CREATE, Action.UPDATE, Action.DELETE],
         Module.TRA_GOP.value: [Action.VIEW, Action.CREATE, Action.UPDATE, Action.DELETE],
         Module.BAO_DUONG.value: [Action.VIEW, Action.CREATE, Action.UPDATE, Action.DELETE],
@@ -84,6 +86,7 @@ PERMISSION_MATRIX = {
         Module.PHU_KIEN.value: [Action.VIEW],
         Module.KHUYEN_MAI.value: [Action.VIEW],
         Module.BAO_HANH.value: [],  # No access
+        Module.BAO_HIEM.value: [],  # No access
         Module.NHA_CUNG_CAP.value: [],  # No access
         Module.TRA_GOP.value: [Action.VIEW],
         Module.BAO_DUONG.value: [],  # No access
@@ -103,6 +106,7 @@ PERMISSION_MATRIX = {
         Module.PHU_KIEN.value: [Action.VIEW],
         Module.KHUYEN_MAI.value: [],  # No access
         Module.BAO_HANH.value: [Action.VIEW, Action.CREATE, Action.UPDATE],
+        Module.BAO_HIEM.value: [Action.VIEW, Action.CREATE, Action.UPDATE],
         Module.NHA_CUNG_CAP.value: [],  # No access
         Module.TRA_GOP.value: [],  # No access
         Module.BAO_DUONG.value: [Action.VIEW, Action.CREATE, Action.UPDATE],

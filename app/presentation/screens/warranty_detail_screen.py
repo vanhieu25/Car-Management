@@ -21,7 +21,7 @@ from typing import Optional, Dict, Any
 from PyQt6.QtWidgets import (
     QWidget, QVBoxLayout, QHBoxLayout, QLabel, QTableWidget,
     QTableWidgetItem, QPushButton, QMessageBox, QGroupBox,
-    QScrollArea, QApplication
+    QScrollArea, QApplication, QAbstractItemView, QDialog
 )
 from PyQt6.QtCore import Qt, pyqtSignal
 from PyQt6.QtGui import QFont, QColor
@@ -64,7 +64,8 @@ class WarrantyDetailScreen(QWidget):
         self._bh_service = BaoHanhService(db_conn)
         self._bh_id = bh_id
         self._warranty_data: Optional[Dict] = None
-        
+        self._selected_request = None
+
         self._setup_ui()
         self._load_data()
     
@@ -176,6 +177,16 @@ class WarrantyDetailScreen(QWidget):
         self._scope_section_layout.addWidget(self._scope_content)
         scroll_layout.addWidget(self._scope_section)
         
+        # Insurance section
+        self._insurance_section = self._create_section_group("Bảo hiểm", "insurance_section")
+        self._insurance_layout = QVBoxLayout(self._insurance_section)
+
+        self._insurance_info_label = QLabel("Chưa có bảo hiểm")
+        self._insurance_info_label.setStyleSheet("font-size: 14px; color: #86868b; font-style: italic;")
+        self._insurance_layout.addWidget(self._insurance_info_label)
+
+        scroll_layout.addWidget(self._insurance_section)
+
         # Warranty requests section
         self._requests_section = self._create_section_group("Yêu cầu bảo hành", "requests_section")
         self._requests_layout = QVBoxLayout(self._requests_section)
@@ -185,6 +196,8 @@ class WarrantyDetailScreen(QWidget):
         self._requests_table.setHorizontalHeaderLabels([
             "ID", "Ngày yêu cầu", "Loại", "Mô tả", "Kỹ thuật phụ trách", "Trạng thái"
         ])
+        self._requests_table.setSelectionBehavior(QAbstractItemView.SelectionBehavior.SelectRows)
+        self._requests_table.setSelectionMode(QAbstractItemView.SelectionMode.SingleSelection)
         self._requests_table.setEditTriggers(QTableWidget.EditTrigger.NoEditTriggers)
         self._requests_table.setStyleSheet("""
             QTableWidget {
@@ -198,8 +211,41 @@ class WarrantyDetailScreen(QWidget):
                 font-weight: 600;
                 font-size: 13px;
             }
+            QTableWidget::item:selected {
+                background-color: #0066cc;
+                color: white;
+            }
         """)
+        self._requests_table.itemSelectionChanged.connect(self._on_request_selection_changed)
         self._requests_layout.addWidget(self._requests_table)
+
+        # Status update button below table
+        btn_row = QHBoxLayout()
+        btn_row.addStretch()
+        self._update_status_btn = QPushButton("🔄 Cập nhật trạng thái")
+        self._update_status_btn.setEnabled(False)
+        self._update_status_btn.setStyleSheet("""
+            QPushButton {
+                background-color: #ff9500;
+                color: white;
+                border: none;
+                border-radius: 6px;
+                padding: 10px 20px;
+                font-size: 14px;
+                font-weight: 500;
+            }
+            QPushButton:hover {
+                background-color: #e68600;
+            }
+            QPushButton:disabled {
+                background-color: #d2d2d7;
+                color: #86868b;
+            }
+        """)
+        self._update_status_btn.clicked.connect(self._on_update_status_clicked)
+        btn_row.addWidget(self._update_status_btn)
+        self._requests_layout.addLayout(btn_row)
+
         scroll_layout.addWidget(self._requests_section)
         
         scroll_layout.addStretch()
@@ -228,6 +274,26 @@ class WarrantyDetailScreen(QWidget):
         self._request_btn.clicked.connect(self._on_create_request)
         self._action_layout.addWidget(self._request_btn)
         
+        # Insurance section
+        self._buy_insurance_btn = QPushButton("+ Mua bảo hiểm")
+        self._buy_insurance_btn.setStyleSheet("""
+            QPushButton {
+                background-color: #34c759;
+                color: white;
+                border: none;
+                border-radius: 6px;
+                padding: 8px 16px;
+                font-size: 13px;
+                font-weight: 600;
+            }
+            QPushButton:hover {
+                background-color: #2da44e;
+            }
+        """)
+        self._buy_insurance_btn.clicked.connect(self._on_buy_insurance)
+
+        self._action_layout.addWidget(self._buy_insurance_btn)
+
         self._print_btn = QPushButton("🖨️ In phiếu BH")
         self._print_btn.setStyleSheet("""
             QPushButton {
@@ -295,9 +361,10 @@ class WarrantyDetailScreen(QWidget):
         yeu_cau_list = data.get("yeu_cau_list", [])
         
         # Header
+        is_external = bh.get("is_external", 0) == 1
         self._title_label.setText(f"Chi tiết bảo hành - BH{bh.get('id', '')}")
         self._bh_id_label.setText(f"BH{bh.get('id', '')}")
-        
+
         # Status badge
         trang_thai = bh.get("trang_thai", "con_hieu_luc")
         status_labels = {
@@ -307,18 +374,24 @@ class WarrantyDetailScreen(QWidget):
         label, color = status_labels.get(trang_thai, ("N/A", "#8e8e93"))
         self._status_badge.setText(
             f"<span style='background:{color}; color:white; padding:4px 12px; border-radius:12px; font-size:13px; font-weight:600;'>{label}</span>"
+            + (f"&nbsp;<span style='background:#ff9500; color:white; padding:4px 12px; border-radius:12px; font-size:13px; font-weight:600;'>BH Ngoài</span>" if is_external else "")
         )
-        
-        # Contract
-        self._contract_label.setText(f"Hợp đồng: {hd.get('ma_hop_dong', 'N/A')}")
-        
+
+        # Contract or external info
+        if is_external:
+            so_khung = bh.get("so_khung") or "N/A"
+            so_may = bh.get("so_may") or "N/A"
+            self._contract_label.setText(f"Ngoài | Khung: {so_khung} | Máy: {so_may}")
+        else:
+            self._contract_label.setText(f"Hợp đồng: {hd.get('ma_hop_dong', 'N/A')}")
+
         # Period
         ngay_bat_dau = bh.get("ngay_bat_dau", "")[:10] if bh.get("ngay_bat_dau") else "N/A"
         ngay_ket_thuc = bh.get("ngay_ket_thuc", "")[:10] if bh.get("ngay_ket_thuc") else "N/A"
         thoi_han = bh.get("thoi_han_bh", 24)
         self._period_dates_label.setText(f"{ngay_bat_dau} — {ngay_ket_thuc}")
         self._period_duration_label.setText(f"Thời hạn: {thoi_han} tháng")
-        
+
         # Customer
         if kh:
             self._kh_content.setText(
@@ -326,19 +399,74 @@ class WarrantyDetailScreen(QWidget):
                 f"SĐT: {kh.get('so_dien_thoai', 'N/A')} | Email: {kh.get('email', 'N/A')}<br>"
                 f"Địa chỉ: {kh.get('dia_chi', 'N/A')}"
             )
-        
+
         # Vehicle
-        if xe:
+        if is_external:
+            # External vehicle info from bao_hanh record
+            hang = bh.get("hang_xe", "") or ""
+            dong = bh.get("dong_xe", "") or ""
+            xe_text = f"<b>{hang} {dong}</b>".strip() if hang or dong else "Xe ngoài"
+            so_khung = bh.get("so_khung") or "N/A"
+            so_may = bh.get("so_may") or "N/A"
+            self._xe_content.setText(
+                f"{xe_text}<br>"
+                f"Số khung: {so_khung} | Số máy: {so_may}"
+            )
+        elif xe:
             self._xe_content.setText(
                 f"<b>{xe.get('hang', 'N/A')} {xe.get('dong_xe', 'N/A')}</b><br>"
                 f"Mã xe: {xe.get('ma_xe', 'N/A')} | Màu: {xe.get('mau_sac', 'N/A')}<br>"
                 f"Năm SX: {xe.get('nam_san_xuat', 'N/A')}"
             )
+        else:
+            self._xe_content.setText("Không có thông tin xe")
         
         # Scope
         pham_vi = bh.get("pham_vi", "Bảo hành toàn diện theo điều khoản chuẩn của nhà sản xuất")
         self._scope_content.setText(pham_vi)
-        
+
+        # Insurance
+        from app.application.services.bao_hiem_service import BaoHiemService
+        bh_insurance_service = BaoHiemService(self._db_conn)
+        insurances = bh_insurance_service.get_by_bao_hanh(self._bh_id)
+
+        if insurances:
+            # Show the latest insurance
+            latest = insurances[0]
+            loai_labels = {
+                "tnds": "TNDS",
+                "tai_nan": "Tai nạn",
+                "chao_no": "Cháy nổ",
+                "that_lac": "Thất lạc",
+                "khac": "Khác",
+            }
+            loai = loai_labels.get(latest.loai_bh, latest.loai_bh)
+            phi = f"{latest.phi_bh:,} đ" if latest.phi_bh else "0 đ"
+            ngay_het_han = latest.ngay_het_han[:10] if latest.ngay_het_han else "N/A"
+
+            # Dai ly ban
+            if latest.dai_ly_ban_id:
+                cursor = self._db_conn.execute(
+                    "SELECT ho_ten FROM nhan_vien WHERE id = ?",
+                    (latest.dai_ly_ban_id,)
+                )
+                row = cursor.fetchone()
+                dl_ban = row[0] if row else "Đại lý khác"
+            else:
+                dl_ban = "Chính đại lý"
+
+            self._insurance_info_label.setText(
+                f"<b>{loai}</b> | Policy: {latest.so_policy or '(chưa có)'}<br>"
+                f"Phí: {phi} | Hết hạn: {ngay_het_han}<br>"
+                f"Đại lý bán: {dl_ban}"
+            )
+            self._insurance_info_label.setStyleSheet("font-size: 14px; color: #3c3c43;")
+            self._buy_insurance_btn.setText("+ Mua thêm BH")
+        else:
+            self._insurance_info_label.setText("Chưa có bảo hiểm")
+            self._insurance_info_label.setStyleSheet("font-size: 14px; color: #86868b; font-style: italic;")
+            self._buy_insurance_btn.setText("+ Mua bảo hiểm")
+
         # Requests table
         self._requests_table.setRowCount(len(yeu_cau_list))
         if not yeu_cau_list:
@@ -386,10 +514,92 @@ class WarrantyDetailScreen(QWidget):
         """Handle create request button."""
         self.create_request_clicked.emit(self._bh_id)
     
+    def _on_buy_insurance(self):
+        """Handle buy insurance button."""
+        from app.presentation.screens.main_window import MainWindow
+        # Emit a signal that MainWindow can catch
+        # For now, we'll use a custom approach
+        parent = self.parent()
+        while parent and not isinstance(parent, MainWindow):
+            parent = parent.parent()
+        if parent:
+            parent._show_bao_hiem_form(warranty_id=self._bh_id)
+
     def _on_print(self):
         """Handle print button."""
         self.print_warranty_clicked.emit(self._bh_id)
-    
+
+    def _on_request_selection_changed(self):
+        """Handle request row selection."""
+        selected = self._requests_table.selectedItems()
+        if not selected:
+            self._update_status_btn.setEnabled(False)
+            self._selected_request = None
+            return
+
+        row = selected[0].row()
+        item = self._requests_table.item(row, 0)
+        if item:
+            req_id = int(item.text()) if item.text().isdigit() else None
+            if req_id:
+                # Get the status from column 5
+                status_item = self._requests_table.item(row, 5)
+                status_map = {
+                    "Mới": "moi",
+                    "Đang xử lý": "dang_xu_ly",
+                    "Hoàn thành": "da_hoan_thanh",
+                    "Đóng": "da_dong",
+                }
+                status_text = status_item.text() if status_item else ""
+                current_status = status_map.get(status_text, "")
+                self._selected_request = {"id": req_id, "trang_thai": current_status}
+                # Only enable if status allows transition
+                valid_transitions = {
+                    "moi": ["dang_xu_ly", "da_dong"],
+                    "dang_xu_ly": ["da_hoan_thanh", "da_dong"],
+                }
+                self._update_status_btn.setEnabled(current_status in valid_transitions)
+                return
+
+        self._update_status_btn.setEnabled(False)
+        self._selected_request = None
+
+    def _on_update_status_clicked(self):
+        """Handle update status button click."""
+        if not self._selected_request:
+            QMessageBox.warning(self, "Chưa chọn", "Vui lòng chọn một yêu cầu bảo hành.")
+            return
+
+        req_id = self._selected_request["id"]
+        current_status = self._selected_request["trang_thai"]
+
+        valid_transitions = {
+            "moi": ["dang_xu_ly", "da_dong"],
+            "dang_xu_ly": ["da_hoan_thanh", "da_dong"],
+        }
+        allowed = valid_transitions.get(current_status, [])
+
+        if not allowed:
+            QMessageBox.information(self, "Không thể đổi", "Trạng thái hiện tại không thể chuyển tiếp.")
+            return
+
+        from app.presentation.screens.warranty_request_status_dialog import WarrantyRequestStatusDialog
+        dialog = WarrantyRequestStatusDialog(current_status, allowed, 0, self)
+
+        if dialog.exec() == QDialog.DialogCode.Accepted:
+            new_status, chi_phi = dialog.get_values()
+            try:
+                self._bh_service.update_request(
+                    req_id=req_id,
+                    trang_thai=new_status,
+                    chi_phi=chi_phi,
+                    nhan_vien_id_current=self._session.nhan_vien_id if self._session else None,
+                )
+                QMessageBox.information(self, "Thành công", "Đã cập nhật trạng thái thành công!")
+                self._load_data()
+            except Exception as e:
+                QMessageBox.critical(self, "Lỗi", f"Không thể cập nhật: {str(e)}")
+
     def refresh(self):
         """Refresh warranty data."""
         self._load_data()

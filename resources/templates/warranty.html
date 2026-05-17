@@ -247,10 +247,11 @@
         </div>
 
         <!-- Warranty Title -->
-        <div class="warranty-title">PHIẾU BẢO HÀNH</div>
+        <div class="warranty-title">PHIẾU BẢO HÀNH{% if bao_hanh and bao_hanh.is_external %} - XE NGOÀI{% endif %}</div>
         <div class="warranty-code">
-            Mã bảo hành: BH{{ bao_hanh.id if bao_hanh else '' }} |
-            Mã hợp đồng: {{ hop_dong.ma_hop_dong if hop_dong else '' }}
+            Mã bảo hành: BH{{ bao_hanh.id if bao_hanh else '' }}
+            {% if hop_dong and hop_dong.ma_hop_dong %}| Mã hợp đồng: {{ hop_dong.ma_hop_dong }}{% endif %}
+            {% if bao_hanh and bao_hanh.is_external %}| <span style="color:#ff9500;">Bảo hành xe ngoài</span>{% endif %}
         </div>
 
         <!-- Warranty Period -->
@@ -297,9 +298,27 @@
 
         <!-- Vehicle Info -->
         <div class="section">
-            <div class="section-title">II. THÔNG TIN XE</div>
+            <div class="section-title">II. THÔNG TIN XE{% if bao_hanh and bao_hanh.is_external %} (Bảo hành xe ngoài){% endif %}</div>
             <div class="section-content">
                 <table class="info-table">
+                    {% if bao_hanh and bao_hanh.is_external %}
+                    <tr>
+                        <td class="label">Hãng xe:</td>
+                        <td class="value">{{ bao_hanh.hang_xe if bao_hanh.hang_xe else 'N/A' }}</td>
+                    </tr>
+                    <tr>
+                        <td class="label">Dòng xe:</td>
+                        <td class="value">{{ bao_hanh.dong_xe if bao_hanh.dong_xe else 'N/A' }}</td>
+                    </tr>
+                    <tr>
+                        <td class="label">Số khung:</td>
+                        <td class="value">{{ bao_hanh.so_khung if bao_hanh.so_khung else 'N/A' }}</td>
+                    </tr>
+                    <tr>
+                        <td class="label">Số máy:</td>
+                        <td class="value">{{ bao_hanh.so_may if bao_hanh.so_may else 'N/A' }}</td>
+                    </tr>
+                    {% else %}
                     <tr>
                         <td class="label">Hãng xe:</td>
                         <td class="value">{{ xe.hang if xe else '' }}</td>
@@ -320,6 +339,7 @@
                         <td class="label">Mã xe:</td>
                         <td class="value">{{ xe.ma_xe if xe else '' }}</td>
                     </tr>
+                    {% endif %}
                 </table>
             </div>
         </div>

@@ -1,15 +1,12 @@
 """Warranty request form dialog - S-BH-03 - Create warranty request.
 
 Features:
-- Form fields:
   - ngay_yeu_cau: date picker
   - loai_yeu_cau: dropdown (bao_duong, sua_chua, thay_the)
-  - mo_ta_tinh_trang: text area for description
-  - phan_loai: auto-suggested based on mo_ta keywords (mien_phi/tinh_phi)
+  - phan_loai: mien_phi/tinh_phi
   - chi_phi_du_kien: number input (0 for mien_phi)
   - nhan_vien_id: dropdown of technicians
 - Validation: ngay_yeu_cau <= ngay_ket_thuc BH
-- Auto-suggest classification based on keywords (BR-BH-04)
 
 References:
 - BR-BH-04: Classification (mien_phi/tinh_phi)
@@ -30,18 +27,6 @@ from PyQt6.QtGui import QFont
 from app.application.services.bao_hanh_service import BaoHanhService, BaoHanhYeuCauData
 from app.application.services.session import CurrentSession
 from app.presentation.widgets.inputs import InlineNumericEdit
-
-
-# Keywords that indicate customer fault (tinh_phi)
-CUSTOMER_FAULT_KEYWORDS = [
-    "va đập", "va dap", "đập", "dap",
-    "ngập nước", "ngap nuoc", "ngập", "ngap",
-    "tai nan", "tai nạn",
-    "sử dụng sai", "su dung sai",
-    "không bảo dưỡng", "khong bao duong",
-    "tự sửa", "tu sua",
-    "rơi", "roi",
-]
 
 
 class WarrantyRequestFormDialog(QDialog):
@@ -67,7 +52,8 @@ class WarrantyRequestFormDialog(QDialog):
         self._session = session
         self._bh_service = BaoHanhService(db_conn)
         self._bh_id = bh_id
-        
+        self._max_date = None
+
         self._setup_ui()
         self._load_warranty_info()
     
@@ -118,11 +104,9 @@ class WarrantyRequestFormDialog(QDialog):
         loai_layout = QHBoxLayout()
         loai_layout.addWidget(QLabel("Loại yêu cầu:"))
         self._loai_yeu_cau = QComboBox()
-        self._loai_yeu_cau.addItems([
-            ("sua_chua", "Sửa chữa"),
-            ("bao_duong", "Bảo dưỡng"),
-            ("thay_the", "Thay thế"),
-        ])
+        self._loai_yeu_cau.addItem("Sửa chữa", "sua_chua")
+        self._loai_yeu_cau.addItem("Bảo dưỡng", "bao_duong")
+        self._loai_yeu_cau.addItem("Thay thế", "thay_the")
         self._loai_yeu_cau.setStyleSheet("""
             QComboBox {
                 padding: 8px;
@@ -135,35 +119,23 @@ class WarrantyRequestFormDialog(QDialog):
         loai_layout.addWidget(self._loai_yeu_cau)
         loai_layout.addStretch()
         layout.addLayout(loai_layout)
-        
-        # Mo ta tinh trang
-        mo_ta_label = QLabel("Mô tả tình trạng:")
-        mo_ta_label.setStyleSheet("font-weight: 600;")
-        layout.addWidget(mo_ta_label)
-        
-        self._mo_ta = QTextEdit()
-        self._mo_ta.setPlaceholderText("Mô tả chi tiết vấn đề của xe...")
-        self._mo_ta.setMinimumHeight(100)
-        self._mo_ta.setStyleSheet("""
-            QTextEdit {
-                padding: 10px;
+
+        # Phan loai (selectable)
+        phan_loai_layout = QHBoxLayout()
+        phan_loai_layout.addWidget(QLabel("Phân loại:"))
+        self._phan_loai = QComboBox()
+        self._phan_loai.addItem("Miễn phí (lỗi nhà sản xuất)", "mien_phi")
+        self._phan_loai.addItem("Tính phí (lỗi khách hàng)", "tinh_phi")
+        self._phan_loai.setStyleSheet("""
+            QComboBox {
+                padding: 8px;
                 border: 1px solid #d2d2d7;
                 border-radius: 6px;
-                font-size: 13px;
-            }
-            QTextEdit:focus {
-                border: 2px solid #0066cc;
+                font-size: 14px;
+                min-width: 250px;
             }
         """)
-        self._mo_ta.textChanged.connect(self._on_mo_ta_changed)
-        layout.addWidget(self._mo_ta)
-        
-        # Phan loai (auto-suggest)
-        phan_loai_layout = QHBoxLayout()
-        phan_loai_layout.addWidget(QLabel("Phân loại (đề xuất):"))
-        self._phan_loai_label = QLabel("—")
-        self._phan_loai_label.setStyleSheet("font-weight: 600; color: #34c759;")
-        phan_loai_layout.addWidget(self._phan_loai_label)
+        phan_loai_layout.addWidget(self._phan_loai)
         phan_loai_layout.addStretch()
         layout.addLayout(phan_loai_layout)
         
@@ -271,14 +243,25 @@ class WarrantyRequestFormDialog(QDialog):
             bh = data
             kh = data.get("khach_hang", {})
             xe = data.get("xe", {})
-            
+            is_external = bh.get("is_external", 0) == 1
+
             # Display warranty info
             ngay_bat_dau = bh.get("ngay_bat_dau", "")[:10] if bh.get("ngay_bat_dau") else "N/A"
             ngay_ket_thuc = bh.get("ngay_ket_thuc", "")[:10] if bh.get("ngay_ket_thuc") else "N/A"
-            self._bh_info_label.setText(
-                f"BH{bh.get('id', '')} — {xe.get('hang', '')} {xe.get('dong_xe', '')} — "
-                f"KH: {kh.get('ho_ten', '')} — Hạn: {ngay_bat_dau} đến {ngay_ket_thuc}"
-            )
+
+            if is_external:
+                hang = bh.get("hang_xe", "") or ""
+                dong = bh.get("dong_xe", "") or ""
+                xe_text = f"{hang} {dong}".strip() if hang or dong else "Xe ngoài"
+                self._bh_info_label.setText(
+                    f"BH{bh.get('id', '')} — {xe_text} — "
+                    f"KH: {kh.get('ho_ten', '')} — Hạn: {ngay_bat_dau} đến {ngay_ket_thuc}"
+                )
+            else:
+                self._bh_info_label.setText(
+                    f"BH{bh.get('id', '')} — {xe.get('hang', '')} {xe.get('dong_xe', '')} — "
+                    f"KH: {kh.get('ho_ten', '')} — Hạn: {ngay_bat_dau} đến {ngay_ket_thuc}"
+                )
             
             # Load technicians
             cursor = self._db_conn.execute(
@@ -294,39 +277,13 @@ class WarrantyRequestFormDialog(QDialog):
         except Exception as e:
             QMessageBox.critical(self, "Lỗi", f"Không thể tải thông tin: {str(e)}")
             self.reject()
-    
-    def _on_mo_ta_changed(self):
-        """Handle description change - auto-suggest classification."""
-        mo_ta = self._mo_ta.toPlainText().lower()
-        
-        is_customer_fault = False
-        for keyword in CUSTOMER_FAULT_KEYWORDS:
-            if keyword in mo_ta:
-                is_customer_fault = True
-                break
-        
-        if is_customer_fault:
-            self._phan_loai_label.setText("Tính phí (lỗi khách hàng)")
-            self._phan_loai_label.setStyleSheet("font-weight: 600; color: #ff3b30;")
-            self._chi_phi.setEnabled(True)
-        else:
-            self._phan_loai_label.setText("Miễn phí (lỗi nhà sản xuất)")
-            self._phan_loai_label.setStyleSheet("font-weight: 600; color: #34c759;")
-            self._chi_phi.setEnabled(False)
-            self._chi_phi.setValue(0)
-    
+
     def _on_submit(self):
         """Handle submit button."""
-        # Validate
-        mo_ta = self._mo_ta.toPlainText().strip()
-        if not mo_ta:
-            QMessageBox.warning(self, "Lỗi", "Vui lòng nhập mô tả tình trạng!")
-            return
-        
         ngay_yeu_cau = self._ngay_yeu_cau.date().toString("yyyy-MM-dd")
         
         # Check date is within warranty period
-        if self._ngay_yeu_cau.date() > self._max_date:
+        if self._max_date and self._ngay_yeu_cau.date() > self._max_date:
             QMessageBox.warning(
                 self, "Lỗi",
                 f"Ngày yêu cầu không được sau ngày kết thúc BH ({self._max_date.toString('yyyy-MM-dd')})"
@@ -334,7 +291,7 @@ class WarrantyRequestFormDialog(QDialog):
             return
         
         loai_yeu_cau = self._loai_yeu_cau.currentData()
-        phan_loai = "tinh_phi" if "Tính phí" in self._phan_loai_label.text() else "mien_phi"
+        phan_loai = self._phan_loai.currentData()
         chi_phi = self._chi_phi.value() if phan_loai == "tinh_phi" else 0
         nhan_vien_id = self._ky_thuat_vien.currentData()
         ghi_chu = self._ghi_chu.toPlainText().strip()
@@ -342,7 +299,7 @@ class WarrantyRequestFormDialog(QDialog):
         data = BaoHanhYeuCauData(
             ngay_yeu_cau=ngay_yeu_cau,
             loai_yeu_cau=loai_yeu_cau,
-            mo_ta_tinh_trang=mo_ta,
+            mo_ta_tinh_trang="",
             phan_loai=phan_loai,
             chi_phi=chi_phi,
             nhan_vien_id=nhan_vien_id,

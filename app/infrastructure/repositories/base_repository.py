@@ -56,6 +56,7 @@ class BaseRepository(Generic[T]):
 
         sql = f"INSERT INTO {self.table_name} ({', '.join(columns)}) VALUES ({', '.join(placeholders)})"
         cursor = self.conn.execute(sql, values)
+        self.conn.commit()
         entity.id = cursor.lastrowid
         return entity
 

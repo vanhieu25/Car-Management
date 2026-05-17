@@ -67,7 +67,16 @@ class BaoDuongService:
     """Service for maintenance/bao_duong operations."""
 
     VALID_TRANG_THAI = ['cho_xac_nhan', 'da_xac_nhan', 'dang_thuc_hien', 'hoan_thanh', 'huy']
-    VALID_TRANG_THAI_UPDATE = ['da_xac_nhan', 'dang_thuc_hien', 'da_hoan_thanh', 'huy']
+    VALID_TRANG_THAI_UPDATE = ['da_xac_nhan', 'dang_thuc_hien', 'hoan_thanh', 'huy']
+
+    # BR-HM-02: State machine for status transitions
+    VALID_TRANG_THAI_TRANSITIONS = {
+        'cho_xac_nhan':  ['da_xac_nhan', 'huy'],
+        'da_xac_nhan':   ['dang_thuc_hien', 'huy'],
+        'dang_thuc_hien': ['hoan_thanh', 'huy'],
+        'hoan_thanh':    [],
+        'huy':           [],
+    }
 
     def __init__(self, conn: sqlite3.Connection):
         """Initialize with database connection.
@@ -273,3 +282,32 @@ class BaoDuongService:
 
         # Soft delete by setting trang_thai to 'huy'
         return self._repo.soft_delete(id)
+
+    def update_status(self, id: int, new_status: str, ngay_thuc_te: str = None) -> bool:
+        """Update status of a BaoDuong record with transition validation.
+
+        Args:
+            id: BaoDuong ID.
+            new_status: New status to transition to.
+            ngay_thuc_te: Actual completion date (required when new_status='hoan_thanh').
+
+        Returns:
+            True if updated.
+
+        Raises:
+            BaoDuongNotFoundError: If not found.
+            ValidationError: If transition is not allowed.
+        """
+        bd = self.get_by_id(id)
+        if not bd:
+            raise BaoDuongNotFoundError(f"Không tìm thấy bảo dưỡng với ID {id}")
+
+        current = bd.trang_thai
+        allowed = self.VALID_TRANG_THAI_TRANSITIONS.get(current, [])
+        if new_status not in allowed:
+            raise ValidationError(
+                f"Không thể chuyển từ trạng thái '{current}' sang '{new_status}'. "
+                f"Các trạng thái cho phép: {allowed}"
+            )
+
+        return self._repo.update_status(id, new_status, ngay_thuc_te)

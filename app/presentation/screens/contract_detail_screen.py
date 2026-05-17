@@ -78,13 +78,13 @@ class ContractDetailScreen(QWidget):
         
         # Header
         header_layout = QHBoxLayout()
-        
+
         self._title_label = QLabel("Chi tiết hợp đồng")
         self._title_label.setStyleSheet("font-size: 24px; font-weight: 600; color: #1d1d1f;")
         header_layout.addWidget(self._title_label)
-        
+
         header_layout.addStretch()
-        
+
         # Back button
         self._back_btn = QPushButton("← Quay lại")
         self._back_btn.setStyleSheet("""
@@ -383,7 +383,7 @@ class ContractDetailScreen(QWidget):
         }
         label, color = status_labels.get(status, ('N/A', '#8e8e93'))
         self._status_badge.setText(f"<span style='background:{color}; color:white; padding:4px 12px; border-radius:12px; font-size:13px; font-weight:600;'>{label}</span>")
-        
+
         # Dates
         ngay_tao = hd.get('ngay_tao', '')[:19] if hd.get('ngay_tao') else 'N/A'
         self._ngay_tao_label.setText(f"Tạo lúc: {ngay_tao} | NV: {nv.get('ho_ten', 'N/A')}")
@@ -608,10 +608,10 @@ class ContractDetailScreen(QWidget):
     def _on_print_pdf(self):
         """Handle print/PDF button."""
         from app.presentation.screens.pdf_preview_dialog import PdfPreviewDialog
-        
+
         dialog = PdfPreviewDialog(self._db_conn, self._hop_dong_id, parent=self)
         dialog.exec()
-    
+
     def refresh(self):
         """Refresh contract data."""
         self._load_data()

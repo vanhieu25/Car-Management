@@ -17,7 +17,7 @@ Signals:
     module_changed(module_id: str): Active module changed
 """
 
-from PyQt6.QtWidgets import QMainWindow, QWidget, QVBoxLayout, QHBoxLayout, QFrame
+from PyQt6.QtWidgets import QMainWindow, QWidget, QVBoxLayout, QHBoxLayout, QFrame, QMessageBox
 from PyQt6.QtCore import pyqtSignal, Qt, QTimer
 from PyQt6.QtGui import QKeySequence
 
@@ -354,8 +354,21 @@ class MainWindow(QMainWindow):
                 from app.presentation.screens.contract_list_screen import ContractListScreen
                 screen = ContractListScreen(conn, self._session)
                 screen.create_contract_clicked.connect(self._show_contract_wizard)
-                
+
                 screen.view_contract_clicked.connect(self._show_contract_detail)
+                return screen
+
+        elif module_id == "thanh_toan_hd":
+            # S-HD-PAY: Payment contract screen
+            import logging
+            logger = logging.getLogger("car_management")
+            from app.infrastructure.database.connection import get_connection
+            conn = self._db_conn if self._db_conn else get_connection()
+            logger.info("[Module] thanh_toan_hd - conn: %s, session: %s" % (conn, self._session))
+            if conn and self._session:
+                from app.presentation.screens.payment_contract_screen import PaymentContractScreen
+                screen = PaymentContractScreen(conn, self._session)
+                screen.back_clicked.connect(lambda: self.navigate_to("hop_dong"))
                 return screen
 
         elif module_id == "phu_kien":
@@ -382,8 +395,51 @@ class MainWindow(QMainWindow):
             if conn and self._session:
                 from app.presentation.screens.warranty_list_screen import WarrantyListScreen
                 screen = WarrantyListScreen(conn, self._session)
-                
+
                 screen.view_warranty_clicked.connect(self._show_warranty_detail)
+                screen.create_external_warranty_clicked.connect(self._show_external_warranty_form)
+                screen.create_internal_warranty_clicked.connect(self._show_internal_warranty_form)
+                return screen
+
+        elif module_id == "bao_hiem":
+            # S-BH-01: Insurance list
+            import logging
+            logger = logging.getLogger("car_management")
+            from app.infrastructure.database.connection import get_connection
+            conn = self._db_conn if self._db_conn else get_connection()
+            logger.info("[Module] bao_hiem - conn: %s, session: %s" % (conn, self._session))
+            if conn and self._session:
+                from app.presentation.screens.bao_hiem_list_screen import BaoHiemListScreen
+                screen = BaoHiemListScreen(conn, self._session)
+                screen.view_insurance_clicked.connect(self._show_bao_hiem_detail)
+                screen.create_insurance_clicked.connect(self._show_bao_hiem_form)
+                return screen
+
+        elif module_id == "thanh_toan_bh":
+            # S-BH-PAY: Payment insurance screen
+            import logging
+            logger = logging.getLogger("car_management")
+            from app.infrastructure.database.connection import get_connection
+            conn = self._db_conn if self._db_conn else get_connection()
+            logger.info("[Module] thanh_toan_bh - conn: %s, session: %s" % (conn, self._session))
+            if conn and self._session:
+                from app.presentation.screens.payment_insurance_screen import PaymentInsuranceScreen
+                screen = PaymentInsuranceScreen(conn, self._session)
+                screen.back_clicked.connect(lambda: self.navigate_to("bao_hiem"))
+                return screen
+
+        elif module_id == "yeu_cau_bh":
+            # S-BH-01a: Warranty request list
+            import logging
+            logger = logging.getLogger("car_management")
+            from app.infrastructure.database.connection import get_connection
+            conn = self._db_conn if self._db_conn else get_connection()
+            logger.info("[Module] yeu_cau_bh - conn: %s, session: %s" % (conn, self._session))
+            if conn and self._session:
+                from app.presentation.screens.warranty_request_list_screen import WarrantyRequestListScreen
+                screen = WarrantyRequestListScreen(conn, self._session)
+                screen.view_request_clicked.connect(self._show_warranty_request_detail)
+                screen.create_request_clicked.connect(self._show_warranty_request_form)
                 return screen
 
         elif module_id == "nha_cung_cap":
@@ -500,6 +556,9 @@ class MainWindow(QMainWindow):
         """
         from app.presentation.screens.vehicle_detail_screen import VehicleDetailScreen
 
+        if self.content_area.has_screen("xe_detail"):
+            self.content_area.unregister_screen("xe_detail")
+
         screen = VehicleDetailScreen(self._db_conn, self._session, xe_id, self)
         screen.edit_clicked.connect(self._show_vehicle_form)
         screen.close_clicked.connect(lambda: self.navigate_to("xe"))
@@ -542,6 +601,9 @@ class MainWindow(QMainWindow):
             khach_hang_id: Customer ID to display.
         """
         from app.presentation.screens.customer_detail_screen import CustomerDetailScreen
+
+        if self.content_area.has_screen("khach_hang_detail"):
+            self.content_area.unregister_screen("khach_hang_detail")
 
         screen = CustomerDetailScreen(self._db_conn, self._session, khach_hang_id, self)
         screen.edit_clicked.connect(self._show_customer_form)
@@ -594,9 +656,14 @@ class MainWindow(QMainWindow):
                 screen.refresh()
 
     def _on_stock_in_saved(self):
-        """Handle stock-in saved signal - refresh kho screen."""
+        """Handle stock-in saved signal - refresh kho screen and supplier detail."""
         if self.content_area.has_screen("kho"):
             screen = self.content_area.get_screen("kho")
+            if hasattr(screen, 'refresh'):
+                screen.refresh()
+        # Refresh supplier detail screen if visible (to update lich su nhap tab)
+        if self.content_area.has_screen("supplier_detail"):
+            screen = self.content_area.get_screen("supplier_detail")
             if hasattr(screen, 'refresh'):
                 screen.refresh()
 
@@ -771,13 +838,43 @@ class MainWindow(QMainWindow):
         """Show contract creation wizard."""
         from app.presentation.screens.contract_wizard_dialog import ContractWizardDialog
         dialog = ContractWizardDialog(self._db_conn, self._session, self)
+        dialog.saved.connect(self._on_contract_saved)
         dialog.exec()
+
+    def _on_contract_saved(self):
+        """Handle contract saved signal - refresh list."""
+        if self.content_area.has_screen("hop_dong"):
+            screen = self.content_area.get_screen("hop_dong")
+            if hasattr(screen, 'refresh'):
+                screen.refresh()
+        # Also refresh payment contract screen if visible
+        if self.content_area.has_screen("thanh_toan_hd"):
+            screen = self.content_area.get_screen("thanh_toan_hd")
+            if hasattr(screen, 'refresh'):
+                screen.refresh()
 
     def _show_contract_detail(self, hop_dong_id: int):
         """Show contract detail screen."""
         from app.presentation.screens.contract_detail_screen import ContractDetailScreen
+
+        # Unregister old screen if exists to avoid leaks
+        if self.content_area.has_screen("contract_detail"):
+            self.content_area.unregister_screen("contract_detail")
+
         screen = ContractDetailScreen(self._db_conn, self._session, hop_dong_id, self)
-        screen.closed.connect(lambda: self.navigate_to("hop_dong"))
+
+        def on_action_completed():
+            """Refresh list immediately when status changes."""
+            if self.content_area.has_screen("hop_dong"):
+                list_screen = self.content_area.get_screen("hop_dong")
+                if hasattr(list_screen, 'refresh'):
+                    list_screen.refresh()
+
+        def on_detail_closed():
+            self.navigate_to("hop_dong")
+
+        screen.action_completed.connect(on_action_completed)
+        screen.closed.connect(on_detail_closed)
         self.content_area.register_screen("contract_detail", screen)
         self.content_area.show_screen("contract_detail")
 
@@ -788,7 +885,14 @@ class MainWindow(QMainWindow):
             lich_bao_duong_id: Maintenance schedule ID to edit, or None for add new.
         """
         from app.presentation.screens.maintenance_form_dialog import MaintenanceFormDialog
-        dialog = MaintenanceFormDialog(self._db_conn, self._session, lich_bao_duong_id, self)
+        from app.application.services.bao_duong_service import BaoDuongService
+
+        bao_duong = None
+        if lich_bao_duong_id is not None:
+            bd_service = BaoDuongService(self._db_conn)
+            bao_duong = bd_service.get_by_id(lich_bao_duong_id)
+
+        dialog = MaintenanceFormDialog(self._db_conn, self._session, bao_duong, self)
         dialog.saved.connect(self._on_maintenance_saved)
         dialog.exec()
 
@@ -797,26 +901,204 @@ class MainWindow(QMainWindow):
         if self.content_area.has_screen("bao_duong"):
             screen = self.content_area.get_screen("bao_duong")
             if hasattr(screen, 'refresh'):
+                # Switch to list view to show newly added maintenance
+                screen._set_view("list")
                 screen.refresh()
 
     def _show_accessory_form(self, phu_kien_id: int = None):
         """Show accessory add/edit form dialog."""
         from app.presentation.screens.accessory_form_dialog import AccessoryFormDialog
         dialog = AccessoryFormDialog(self._db_conn, self._session, phu_kien_id, self)
+        dialog.saved.connect(self._on_accessory_saved)
         dialog.exec()
 
-    def _show_warranty_request_form(self):
+    def _on_accessory_saved(self):
+        """Handle accessory saved - refresh accessory list."""
+        if self.content_area.has_screen("phu_kien"):
+            screen = self.content_area.get_screen("phu_kien")
+            if hasattr(screen, 'refresh'):
+                screen.refresh()
+
+    def _show_warranty_request_form(self, bh_id: int = None):
         """Show warranty request form dialog."""
         from app.presentation.screens.warranty_request_form_dialog import WarrantyRequestFormDialog
-        dialog = WarrantyRequestFormDialog(self._db_conn, self._session, self)
+
+        if bh_id is None:
+            # Show dialog to get warranty ID
+            from PyQt6.QtWidgets import QInputDialog, QLineEdit
+            dialog = QInputDialog(self)
+            dialog.setWindowTitle("Tạo yêu cầu bảo hành")
+            dialog.setLabelText("Nhập mã bảo hành (BH ID):")
+            dialog.setInputMode(QInputDialog.InputMode.TextInput)
+            dialog.resize(400, 100)
+            if dialog.exec():
+                try:
+                    bh_id = int(dialog.textValue())
+                except ValueError:
+                    return
+            else:
+                return
+
+        dialog = WarrantyRequestFormDialog(self._db_conn, self._session, bh_id, self)
+        dialog.request_created.connect(self._on_warranty_request_created)
         dialog.exec()
+
+    def _print_warranty(self, bh_id: int):
+        """Print warranty PDF."""
+        from app.presentation.screens.warranty_print_dialog import WarrantyPrintDialog
+        dialog = WarrantyPrintDialog(self._db_conn, bh_id, self)
+        dialog.exec()
+
+    def _on_warranty_request_created(self):
+        """Handle warranty request created - refresh list."""
+        if self.content_area.has_screen("yeu_cau_bh"):
+            screen = self.content_area.get_screen("yeu_cau_bh")
+            if hasattr(screen, 'refresh'):
+                screen.refresh()
+        # Also refresh warranty list since requests belong to warranties
+        if self.content_area.has_screen("bao_hanh"):
+            screen = self.content_area.get_screen("bao_hanh")
+            if hasattr(screen, 'refresh'):
+                screen.refresh()
+        # Refresh thanh toan bao hiem screen if visible
+        if self.content_area.has_screen("thanh_toan_bh"):
+            screen = self.content_area.get_screen("thanh_toan_bh")
+            if hasattr(screen, 'refresh'):
+                screen.refresh()
+
+    def _show_warranty_request_detail(self, req_id: int):
+        """Show warranty request detail screen.
+
+        Args:
+            req_id: Warranty request ID to display.
+        """
+        from app.presentation.screens.warranty_detail_screen import WarrantyDetailScreen
+
+        # Get the bao_hanh_id from the request
+        cursor = self._db_conn.execute(
+            "SELECT bao_hanh_id FROM bao_hanh_yeu_cau WHERE id = ?", (req_id,)
+        )
+        row = cursor.fetchone()
+        if not row:
+            QMessageBox.warning(self, "Lỗi", "Không tìm thấy yêu cầu bảo hành")
+            return
+
+        bao_hanh_id = row[0]
+
+        if self.content_area.has_screen("warranty_request_detail"):
+            self.content_area.unregister_screen("warranty_request_detail")
+
+        screen = WarrantyDetailScreen(self._db_conn, self._session, bao_hanh_id, self)
+        screen.create_request_clicked.connect(self._show_warranty_request_form)
+        screen.closed.connect(lambda: self.navigate_to("yeu_cau_bh"))
+        self.content_area.register_screen("warranty_request_detail", screen)
+        self.content_area.show_screen("warranty_request_detail")
 
     def _show_warranty_detail(self, bao_hanh_id: int):
         """Show warranty detail screen."""
         from app.presentation.screens.warranty_detail_screen import WarrantyDetailScreen
+
+        # Unregister old screen if exists to avoid showing stale data
+        if self.content_area.has_screen("warranty_detail"):
+            self.content_area.unregister_screen("warranty_detail")
+
         screen = WarrantyDetailScreen(self._db_conn, self._session, bao_hanh_id, self)
+        screen.create_request_clicked.connect(self._show_warranty_request_form)
+        screen.print_warranty_clicked.connect(self._print_warranty)
+        screen.closed.connect(lambda: self.navigate_to("bao_hanh"))
         self.content_area.register_screen("warranty_detail", screen)
         self.content_area.show_screen("warranty_detail")
+
+    def _show_external_warranty_form(self):
+        """Show external warranty creation dialog."""
+        from app.presentation.screens.external_warranty_form_dialog import ExternalWarrantyCreateDialog
+        dialog = ExternalWarrantyCreateDialog(self._db_conn, self._session, self)
+        dialog.warranty_created.connect(self._on_external_warranty_created)
+        dialog.request_needed.connect(self._on_external_warranty_request_needed)
+        dialog.exec()
+
+    def _show_internal_warranty_form(self):
+        """Show internal warranty creation dialog."""
+        from app.presentation.screens.internal_warranty_form_dialog import InternalWarrantyCreateDialog
+        dialog = InternalWarrantyCreateDialog(self._db_conn, self._session, self)
+        dialog.warranty_created.connect(self._on_internal_warranty_created)
+        dialog.exec()
+
+    def _on_external_warranty_created(self, bh_id: int):
+        """Handle external warranty created event."""
+        # Refresh warranty list screen
+        if self.content_area.has_screen("bao_hanh"):
+            screen = self.content_area.get_screen("bao_hanh")
+            if hasattr(screen, 'refresh'):
+                screen.refresh()
+        # Refresh insurance list screen
+        if self.content_area.has_screen("bao_hiem"):
+            screen = self.content_area.get_screen("bao_hiem")
+            if hasattr(screen, 'refresh'):
+                screen.refresh()
+        # Refresh payment insurance screen if visible
+        if self.content_area.has_screen("thanh_toan_bh"):
+            screen = self.content_area.get_screen("thanh_toan_bh")
+            if hasattr(screen, 'refresh'):
+                screen.refresh()
+
+    def _on_internal_warranty_created(self, bh_id: int):
+        """Handle internal warranty created event."""
+        if self.content_area.has_screen("bao_hanh"):
+            screen = self.content_area.get_screen("bao_hanh")
+            if hasattr(screen, 'refresh'):
+                screen.refresh()
+        # Refresh insurance list screen
+        if self.content_area.has_screen("bao_hiem"):
+            screen = self.content_area.get_screen("bao_hiem")
+            if hasattr(screen, 'refresh'):
+                screen.refresh()
+        # Refresh payment insurance screen if visible
+        if self.content_area.has_screen("thanh_toan_bh"):
+            screen = self.content_area.get_screen("thanh_toan_bh")
+            if hasattr(screen, 'refresh'):
+                screen.refresh()
+
+    def _on_external_warranty_request_needed(self, bh_id: int):
+        """Handle request needed after external warranty created."""
+        self._show_warranty_detail(bh_id)
+
+    def _show_bao_hiem_detail(self, bao_hiem_id: int):
+        """Show insurance detail screen."""
+        from app.presentation.screens.bao_hiem_detail_screen import BaoHiemDetailScreen
+
+        if self.content_area.has_screen("bao_hiem_detail"):
+            self.content_area.unregister_screen("bao_hiem_detail")
+
+        screen = BaoHiemDetailScreen(self._db_conn, self._session, bao_hiem_id, self)
+        # Edit mode not yet supported in new cascade dialog
+        screen.closed.connect(lambda: self.navigate_to("bao_hiem"))
+        screen.action_completed.connect(lambda: self.navigate_to("bao_hiem"))
+        self.content_area.register_screen("bao_hiem_detail", screen)
+        self.content_area.show_screen("bao_hiem_detail")
+
+    def _show_bao_hiem_form(self, bao_hiem_id: int = None, warranty_id: int = None):
+        """Show insurance form dialog (create mode only)."""
+        from app.presentation.screens.bao_hiem_form_dialog import BaoHiemFormDialog
+
+        dialog = BaoHiemFormDialog(
+            self._db_conn,
+            self._session,
+            parent=self
+        )
+        dialog.insurance_saved.connect(self._on_bao_hiem_saved)
+        dialog.exec()
+
+    def _on_bao_hiem_saved(self):
+        """Handle insurance saved signal - refresh list."""
+        if self.content_area.has_screen("bao_hiem"):
+            screen = self.content_area.get_screen("bao_hiem")
+            if hasattr(screen, 'refresh'):
+                screen.refresh()
+        if self.content_area.has_screen("thanh_toan_bh"):
+            screen = self.content_area.get_screen("thanh_toan_bh")
+            if hasattr(screen, 'refresh'):
+                screen.refresh()
 
     def _show_supplier_form(self, nha_cung_cap_id: int = None):
         """Show supplier add/edit dialog.
@@ -848,10 +1130,15 @@ class MainWindow(QMainWindow):
         self.content_area.show_screen("supplier_detail")
 
     def _on_supplier_saved(self):
-        """Handle supplier saved event - refresh supplier list."""
+        """Handle supplier saved event - refresh supplier list and detail."""
         if hasattr(self, 'content_area') and self.content_area.has_screen("nha_cung_cap"):
             screen = self.content_area.get_screen("nha_cung_cap")
             screen.refresh()
+        # Refresh supplier detail screen if visible (to update thong tin tab)
+        if self.content_area.has_screen("supplier_detail"):
+            screen = self.content_area.get_screen("supplier_detail")
+            if hasattr(screen, 'refresh'):
+                screen.refresh()
 
     def _on_logout_requested(self):
         """Handle logout request."""
@@ -932,15 +1219,27 @@ class MainWindow(QMainWindow):
         Args:
             module_id: Module ID to navigate to.
         """
+        import logging
+        logger = logging.getLogger("car_management")
+
         if module_id in ["change_password", "profile"]:
             # Handle special modules
             return
 
+        logger.info(f"[navigate_to] module_id={module_id}, existing screens={list(self.content_area._screens.keys())}")
+
         if module_id in self.content_area._screens:
+            screen = self.content_area._screens.get(module_id)
+            logger.info(f"[navigate_to] Found existing screen: {type(screen).__name__}, has_refresh={hasattr(screen, 'refresh')}")
+            # Refresh existing screen if it has refresh method
+            if hasattr(screen, 'refresh'):
+                logger.info(f"[navigate_to] Calling refresh on {module_id}")
+                screen.refresh()
             self.sidebar.set_active(module_id)
             self.content_area.show_screen(module_id)
         else:
             # Load actual screen or placeholder
+            logger.info(f"[navigate_to] Creating new screen for {module_id}")
             screen = self._get_module_screen(module_id)
             self.content_area.register_screen(module_id, screen)
             self.content_area.show_screen(module_id)
